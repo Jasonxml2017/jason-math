@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <title>WMO真题全真模考 & 奥数错题管家</title>
+  <link rel="stylesheet" href="./css/main.css">
+  <link rel="stylesheet" href="./css/exam.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+  <script>
+    if (window.pdfjsLib) {
+      pdfjsLib.GlobalWorkerOptions.workerSrc = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
+    }
+  </script>
+</head>
+<body>
+  <header>
+    <div class="brand-row">
+      <div class="brand-name">📐 MathVault</div>
+      <span class="brand-badge">v4.3 (3.8-Flash)</span>
+      <div class="nav-tabs">
+        <div class="nav-tab active" id="tabExam">真题模考</div>
+        <div class="nav-tab" id="tabVault">错题管家</div>
+      </div>
+    </div>
+    <div class="header-actions">
+      <button class="btn btn-outline" id="btnExport" title="将全部错题与试卷备份到文件">💾 备份</button>
+      <button class="btn btn-outline" id="btnImport" title="从备份文件还原全部数据">📂 恢复</button>
+      <button class="btn btn-outline" id="btnOpenKey">🔑 Key</button>
+      <button class="btn btn-primary" id="topActionBtn" data-mode="exam">＋ 新真题</button>
+    </div>
+  </header>
+
+  <div class="container" id="viewExamHall">
+    <div class="exam-hall-intro">
+      <h3>WMO 31~35届全真模考大厅</h3>
+      <p>已预置全部5套真题标准答案与大题精解，随时开始模考！</p>
+    </div>
+    <div class="exam-grid" id="examListContainer"></div>
+  </div>
+
+  <div class="container" id="viewVault" style="display:none;">
+    <div class="vault-banner">
+      <div>
+        <h3>🎯 错题攻坚与深度分析</h3>
+        <p>可对选中错题进行批量分析，也可直接在下方卡片中单题一键分析</p>
+      </div>
+      <div class="vault-banner-actions">
+        <button class="btn btn-outline" id="btnSelectAllVault">全选/反选</button>
+        <button class="btn btn-info" id="btnBatchAnalyze">💡 批量分析思路</button>
+        <button class="btn btn-success" id="btnBatchSimilar">🤖 批量出相似题</button>
+        <button class="btn btn-primary" id="btnOpenAddModal">＋ 录入错题</button>
+      </div>
+    </div>
+    <div class="grid-list" id="qList"></div>
+  </div>
+
+  <div id="examView">
+    <div class="exam-header">
+      <span style="font-size:0.95rem; font-weight:700;" id="runningExamTitle">试卷标题</span>
+      <span style="font-size:1.1rem; font-weight:800; color:#38bdf8;" id="runningTimer">90:00</span>
+      <div>
+        <button class="btn btn-outline" id="btnExitExam" style="color:white; border-color:#64748b; background:transparent; padding:4px 8px;">退出</button>
+        <button class="btn btn-success" id="runningSubmitBtn" style="padding:4px 10px;">交卷</button>
+      </div>
+    </div>
+
+    <div id="snipTopBanner">
+      <span id="snipBannerText">请在左侧试卷上用鼠标或手指画框圈出题目...</span>
+      <button class="btn btn-outline" id="btnCancelSnipBanner" style="padding:2px 8px; font-size:0.75rem; background:white;">取消截图</button>
+    </div>
+
+    <div class="exam-body">
+      <div class="exam-left-paper" id="paperGalleryContainer">
+        <div id="paperContentWrapper" style="width:100%; margin:0 auto; display:flex; flex-direction:column; align-items:center; gap:16px;"></div>
+        <div id="snipConfirmBar">
+          <span style="font-size:0.85rem;">已框选题目区域</span>
+          <button class="btn btn-success" id="btnConfirmSnip" style="padding:5px 12px;">💾 保存该题</button>
+          <button class="btn btn-outline" id="btnCancelSnipBar" style="padding:5px 12px; color:white; background:transparent; border-color:#64748b;">取消</button>
+        </div>
+        <div class="zoom-floating-bar" id="zoomFloatingBar">
+          <button class="btn btn-outline" id="btnZoomOut" style="padding:3px 8px;">🔍−</button>
+          <span id="zoomLevelText" style="font-size:0.75rem; font-weight:bold; color:white; min-width:40px; text-align:center;">100%</span>
+          <button class="btn btn-outline" id="btnZoomIn" style="padding:3px 8px;">🔍＋</button>
+          <button class="btn btn-outline" id="btnZoomReset" style="padding:3px 8px;">↺ 还原</button>
+        </div>
+      </div>
+
+      <div class="exam-right-sheet">
+        <h4 style="font-size:0.9rem; margin-bottom:10px;">单选题（1~16题，每题5分）</h4>
+        <div class="bubble-grid" id="bubbleSheet"></div>
+        <h4 style="font-size:0.9rem; margin:15px 0 10px;">解答题（17~20题，每题10分）</h4>
+        <div id="faqSheet"></div>
+        <div id="examResultPanel" style="display:none; margin-top:15px;">
+          <div class="score-box">
+            <h3 id="finalScoreText">总分：0 / 120</h3>
+          </div>
+          <div id="wrongItemsContainer" style="margin-top:12px;"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="uploadExamModal">
+    <div class="modal">
+      <h3 style="margin-bottom:12px; font-size:1.1rem;" id="modalExamTitleText">编辑试卷</h3>
+      <div class="form-group">
+        <label>试卷名称</label>
+        <input type="text" id="newExamTitle" placeholder="如：第32届 WMO 省测">
+      </div>
+      <div class="form-group">
+        <label>限时（分钟）</label>
+        <input type="number" id="newExamDuration" value="90">
+      </div>
+      <div class="form-group">
+        <label>上传原卷（🔥支持直接选 PDF 文件或照片）</label>
+        <input type="file" id="newExamFiles" accept="image/*,.pdf,application/pdf" multiple>
+        <div class="loading-hint" id="pdfLoadingHint">⏳ 正在解析 PDF 页面并转换为高清原卷，请稍候...</div>
+        <div id="newExamPreview" style="display:flex; gap:8px; margin-top:8px; flex-wrap:wrap;"></div>
+      </div>
+      <div class="form-group">
+        <label>16道单选答案（连续填入16个大写字母）</label>
+        <input type="text" id="newExamKeys" placeholder="BBADDCACBACA..." maxlength="16">
+      </div>
+      <div class="form-group">
+        <label>解答题参考答案（分行填写）</label>
+        <textarea id="newExamFaqAns" style="height:90px;" placeholder="17. 6条; 710元&#10;18. 1元10枚..."></textarea>
+      </div>
+      <div class="modal-actions">
+        <button class="btn btn-outline" id="btnCloseExamModal">取消</button>
+        <button class="btn btn-primary" id="btnSaveExam">保存试卷</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="addModal">
+    <div class="modal">
+      <h3 style="margin-bottom:12px;">录入单题错题</h3>
+      <div class="dropzone" id="singleDropzone">
+        <div id="singlePasteText">📷 粘贴截图或从手机相册选取</div>
+        <img id="singlePreviewImg" style="display:none; max-width:100%; max-height:160px; margin:0 auto;" alt="">
+        <input type="file" id="singleImgFile" accept="image/*" style="display:none;">
+      </div>
+      <div class="form-group">
+        <label>题号/备注</label>
+        <input type="text" id="inpNote" placeholder="例如：第10题数阵图">
+      </div>
+      <div class="form-group">
+        <div style="display:flex; justify-content:space-between;">
+          <label>Gemini 智能解析</label>
+          <button class="btn btn-primary" id="btnGeminiSingle" style="padding:2px 8px; font-size:0.75rem;">🤖 调 Gemini</button>
+        </div>
+        <textarea id="inpAI" style="height:80px;" placeholder="点击右上角按钮生成小学化画图思路..."></textarea>
+      </div>
+      <div class="modal-actions">
+        <button class="btn btn-outline" id="btnCloseAddModal">取消</button>
+        <button class="btn btn-primary" id="btnSaveSingleQuestion">保存</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="analysisModal">
+    <div class="modal" style="max-width:760px;">
+      <div class="modal-head">
+        <h3 style="font-size:1.15rem; color:#0369a1;">💡 Gemini 深度思路与名师导图</h3>
+        <div style="display:flex; gap:6px;">
+          <button class="btn btn-outline" id="btnCopyAnalysis">📋 复制思路</button>
+          <button class="btn btn-primary" id="btnPrintAnalysis">🖨️ 打印导图</button>
+        </div>
+      </div>
+      <div class="analysis-output-box" id="analysisOutput">正在深度分析中...</div>
+      <div class="modal-actions">
+        <button class="btn btn-outline" id="btnCloseAnalysis">关闭</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="similarModal">
+    <div class="modal" style="max-width:750px;">
+      <div class="modal-head">
+        <h3 style="font-size:1.15rem; color:#15803d;">🎯 Gemini 举一反三 · 相似变式题</h3>
+        <div style="display:flex; gap:6px;">
+          <button class="btn btn-outline" id="btnCopySimilar">📋 复制题目</button>
+          <button class="btn btn-primary" id="btnPrintSimilar">🖨️ 打印练习卷</button>
+        </div>
+      </div>
+      <div class="analysis-output-box" id="similarOutput">正在生成中...</div>
+      <div class="modal-actions">
+        <button class="btn btn-outline" id="btnCloseSimilar">关闭</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="keyModal">
+    <div class="modal" style="max-width:400px;">
+      <h3>配置 Gemini API Key</h3>
+      <input type="text" id="inpApiKey" placeholder="AIzaSy..." style="width:100%; margin:10px 0;">
+      <div class="modal-actions">
+        <button class="btn btn-outline" id="btnCloseKeyModal">取消</button>
+        <button class="btn btn-primary" id="btnSaveApiKey">保存</button>
+      </div>
+    </div>
+  </div>
+
+  <script type="module" src="./js/app.js"></script>
+</body>
+</html>
