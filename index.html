@@ -84,7 +84,7 @@
   .btn-outline { background: white; border: 1px solid var(--border); color: var(--text); }
   .container { max-width: 1200px; margin: 18px auto; padding: 0 16px; }
 
-  /* ================= 仪表盘首页设计 ================= */
+  /* 仪表盘首页 */
   .greeting-banner {
     display: flex;
     justify-content: space-between;
@@ -105,8 +105,6 @@
     font-size: 0.88rem;
     font-weight: 700;
   }
-
-  /* 错题攻坚中枢大卡片 */
   .hero-vault-card {
     background: linear-gradient(135deg, #7c3aed 0%, #4f46e5 100%);
     color: white;
@@ -120,10 +118,9 @@
     flex-wrap: wrap;
     gap: 16px;
   }
-  .hero-vault-stats { display: flex; gap: 20px; align-items: center; margin-top: 10px; }
+  .hero-vault-stats { display: flex; gap: 15px; align-items: center; margin-top: 10px; flex-wrap: wrap; }
   .stat-pill { background: rgba(255, 255, 255, 0.2); padding: 4px 12px; border-radius: 12px; font-size: 0.85rem; }
 
-  /* 学科卡片网格 */
   .section-heading { font-size: 1.15rem; font-weight: 800; margin-bottom: 14px; display: flex; justify-content: space-between; align-items: center; }
   .subject-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 18px; margin-bottom: 30px; }
   .subject-card {
@@ -137,14 +134,11 @@
     box-shadow: 0 2px 10px rgba(0,0,0,0.02);
     transition: transform 0.2s, box-shadow 0.2s;
     cursor: pointer;
-    position: relative;
-    overflow: hidden;
   }
   .subject-card:hover { transform: translateY(-3px); box-shadow: 0 8px 24px rgba(0,0,0,0.06); }
   .subject-icon { width: 44px; height: 44px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; margin-bottom: 12px; }
-  .add-subject-card { border: 2px dashed #cbd5e1; background: transparent; align-items: center; justify-content: center; min-height: 180px; text-align: center; }
 
-  /* ================= 错题管家联动过滤栏 ================= */
+  /* 错题总库与联动过滤 */
   .vault-filter-panel {
     background: white;
     border: 1px solid var(--border);
@@ -169,7 +163,6 @@
   }
   .filter-chip.active { background: #0f172a; color: white; }
 
-  /* 错题卡片 */
   .q-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 16px; }
   .q-card {
     background: white;
@@ -183,6 +176,19 @@
   }
   .q-img-wrap { width: 100%; max-height: 200px; overflow: hidden; background: #f8fafc; border-radius: 8px; margin: 8px 0; border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; }
   .q-img-wrap img { max-width: 100%; max-height: 200px; object-fit: contain; }
+  
+  /* 纯文字字词卡片样式 */
+  .word-card-text {
+    font-size: 1.6rem;
+    font-weight: 800;
+    color: var(--chinese-color);
+    text-align: center;
+    padding: 20px 10px;
+    background: #fff1f2;
+    border-radius: 8px;
+    margin: 8px 0;
+    letter-spacing: 2px;
+  }
 
   /* 考场双屏与缩放 */
   #examView { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: #0f172a; z-index: 500; flex-direction: column; }
@@ -206,6 +212,7 @@
   .bubble-btn.selected { background: var(--primary); color: white; border-color: var(--primary); }
   .bubble-btn.correct { background: var(--success); color: white; border-color: var(--success); }
   .bubble-btn.wrong { background: var(--danger); color: white; border-color: var(--danger); }
+  
   .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); display: none; align-items: center; justify-content: center; z-index: 1000; padding: 16px; }
   .modal-overlay.active { display: flex; }
   .modal { background: white; width: 100%; max-width: 650px; max-height: 90vh; border-radius: 16px; padding: 22px; overflow-y: auto; }
@@ -215,104 +222,104 @@
   .ans-reveal { margin-top: 10px; padding: 10px; background: #f1f5f9; border-left: 4px solid var(--primary); border-radius: 4px; display: none; font-size: 0.85rem; }
   .ans-reveal.show { display: block; }
   .analysis-output-box { background: #f8fafc; border: 1px solid var(--border); border-radius: 10px; padding: 16px; font-size: 0.95rem; line-height: 1.65; white-space: pre-wrap; max-height: 60vh; overflow-y: auto; margin: 12px 0; }
+  
+  /* 错题弹窗分段选项卡 */
+  .modal-subtabs { display: flex; background: #e2e8f0; padding: 3px; border-radius: 8px; margin-bottom: 14px; }
+  .modal-subtab { flex: 1; text-align: center; padding: 6px; font-size: 0.85rem; font-weight: 700; cursor: pointer; border-radius: 6px; color: #64748b; }
+  .modal-subtab.active { background: white; color: var(--primary); }
 </style>
 </head>
 <body>
 
 <header>
   <div class="brand" onclick="switchNav('dashboard')">
-    <span>🍎 学科智学工作台</span>
-    <span style="font-size:0.7rem; font-weight:bold; background:#e0f2fe; color:#0369a1; padding:2px 8px; border-radius:12px;">v5.0 全科版</span>
+    <span>🍎 智学多学科管家</span>
+    <span style="font-size:0.7rem; font-weight:bold; background:#e0f2fe; color:#0369a1; padding:2px 8px; border-radius:12px;">v5.2 稳健版</span>
   </div>
   <div class="nav-tabs">
-    <div class="nav-tab active" id="tabNavDashboard" onclick="switchNav('dashboard')">🏠 仪表盘首页</div>
-    <div class="nav-tab" id="tabNavVault" onclick="switchNav('vault')">🎯 错题攻坚总库</div>
+    <div class="nav-tab active" id="tabNavDashboard" onclick="switchNav('dashboard')">🏠 首页工作台</div>
+    <div class="nav-tab" id="tabNavVault" onclick="switchNav('vault')">🎯 错题复习总库</div>
   </div>
   <div class="header-actions">
-    <button class="btn btn-outline" onclick="exportData()" title="备份全部学科与错题">💾 备份</button>
-    <button class="btn btn-outline" onclick="importData()" title="恢复全部数据">📂 恢复</button>
+    <button class="btn btn-outline" onclick="exportData()" title="备份全科数据">💾 备份</button>
+    <button class="btn btn-outline" onclick="importData()" title="恢复数据">📂 恢复</button>
     <button class="btn btn-outline" onclick="openKeyModal()">🔑 Key</button>
   </div>
 </header>
 
 <!-- ================= 页面 1：仪表盘首页 ================= -->
 <div class="container" id="viewDashboard">
-  <!-- 问候与比赛倒计时 -->
   <div class="greeting-banner">
     <div>
       <h2 style="font-size:1.3rem; margin-bottom:4px;">👋 欢迎回来，Jason！</h2>
-      <p style="font-size:0.85rem; color:var(--text-sub);">保持思考节奏，查漏补缺，每一个错题都是进步的台阶！</p>
+      <p style="font-size:0.85rem; color:var(--text-sub);">数学重在思维突破，语文英语抓好生字词与错题沉淀！</p>
     </div>
-    <div class="countdown-badge" id="wmoCountdownText">
-      🏆 距离 11-29 WMO 地方省测还有计算中...
-    </div>
+    <div class="countdown-badge" id="wmoCountdownText">🏆 距 11-29 WMO 地方省测还有计算中...</div>
   </div>
 
-  <!-- 核心通栏卡片：错题攻坚中枢 -->
   <div class="hero-vault-card">
     <div>
-      <span style="font-size:0.85rem; text-transform:uppercase; letter-spacing:1px; opacity:0.9;">Error Elimination Hub</span>
+      <span style="font-size:0.85rem; text-transform:uppercase; letter-spacing:1px; opacity:0.9;">Unified Error Review</span>
       <h3 style="font-size:1.5rem; margin:4px 0 8px;">🎯 全科错题复习中枢</h3>
       <div class="hero-vault-stats" id="dashboardVaultStats">
-        <span class="stat-pill">📐 数学: 0 道待攻克</span>
-        <span class="stat-pill">📖 语文: 0 道</span>
-        <span class="stat-pill">🔤 英语: 0 道</span>
+        <span class="stat-pill">📐 数学: 0 题待攻克</span>
+        <span class="stat-pill">📖 语文: 0 题</span>
+        <span class="stat-pill">🔤 英语: 0 题</span>
       </div>
     </div>
     <div style="display:flex; gap:10px;">
-      <button class="btn" style="background:white; color:#4f46e5; font-size:0.9rem; padding:8px 16px; font-weight:700;" onclick="startSmartReview()">⚡ 开启今日错题攻坚</button>
-      <button class="btn" style="background:rgba(255,255,255,0.2); color:white; border:1px solid rgba(255,255,255,0.4);" onclick="switchNav('vault')">全景题库</button>
+      <button class="btn" style="background:white; color:#4f46e5; font-size:0.9rem; padding:8px 16px; font-weight:700;" onclick="startSmartReview()">⚡ 开启今日攻坚</button>
+      <button class="btn" style="background:rgba(255,255,255,0.2); color:white; border:1px solid rgba(255,255,255,0.4);" onclick="switchNav('vault')">错题总库</button>
     </div>
   </div>
 
-  <!-- 学科工作台网格 -->
   <div class="section-heading">
-    <span>📚 我的学习科目</span>
-    <span style="font-size:0.82rem; color:var(--text-sub); font-weight:normal;">点击卡片进入专属学科题库</span>
+    <span>📚 学科专属空间</span>
+    <span style="font-size:0.82rem; color:var(--text-sub); font-weight:normal;">点击卡片进入学科错题或真题</span>
   </div>
   <div class="subject-grid" id="subjectGridContainer"></div>
 </div>
 
-<!-- ================= 页面 2：专属学科模考大厅（从首页点击学科卡片进入） ================= -->
+<!-- ================= 页面 2：专属学科主页 ================= -->
 <div class="container" id="viewSubjectPortal" style="display:none;">
-  <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:18px;">
+  <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:18px; flex-wrap:wrap; gap:8px;">
     <div>
       <button class="btn btn-outline" style="margin-bottom:8px;" onclick="switchNav('dashboard')">← 返回首页工作台</button>
-      <h2 style="font-size:1.35rem;" id="portalSubjectTitle">学科真题大厅</h2>
+      <h2 style="font-size:1.35rem;" id="portalSubjectTitle">学科空间</h2>
     </div>
-    <button class="btn btn-primary" onclick="openUploadExamModal()">＋ 录入新真题/单元测</button>
+    <!-- 动态按键：数学是【录入真题/错题】，其它学科是【录入错题】 -->
+    <div id="portalActionBtnContainer"></div>
   </div>
   <div class="exam-grid" id="portalExamList"></div>
 </div>
 
-<!-- ================= 页面 3：全科错题攻坚总库 ================= -->
+<!-- ================= 页面 3：全科错题复习总库 ================= -->
 <div class="container" id="viewVault" style="display:none;">
   <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px; flex-wrap:wrap; gap:8px;">
     <div>
-      <h2 style="font-size:1.3rem;">🎯 全科错题攻坚与智能复习</h2>
-      <p style="font-size:0.85rem; color:var(--text-sub);">按学科与模型多维筛选，一键调用 Gemini 进行名师思路导图分析</p>
+      <h2 style="font-size:1.3rem;">🎯 错题复习总库</h2>
+      <p style="font-size:0.85rem; color:var(--text-sub);">点击卡片【💡 思路导图】可秒开上次保存结果（语文自动组词拓展）</p>
     </div>
     <div style="display:flex; gap:6px; flex-wrap:wrap;">
       <button class="btn btn-outline" onclick="toggleSelectAllVault()">全选/反选</button>
       <button class="btn btn-primary" style="background:#0284c7;" onclick="analyzeThinkingWithGemini()">💡 批量分析思路</button>
       <button class="btn btn-success" onclick="generateSimilarWithGemini()">🤖 批量出相似题</button>
-      <button class="btn btn-primary" onclick="openAddModal()">＋ 手动录错题</button>
     </div>
   </div>
 
-  <!-- 3维联动智能过滤器 -->
   <div class="vault-filter-panel">
-    <!-- 1级：学科切换 -->
     <div class="filter-row">
       <span style="font-size:0.82rem; font-weight:700; color:#475569; min-width:48px;">学科：</span>
       <div id="filterSubjectChips" style="display:flex; gap:6px; flex-wrap:wrap;"></div>
     </div>
-    <!-- 2级：根据学科动态联动的知识模块 -->
     <div class="filter-row">
       <span style="font-size:0.82rem; font-weight:700; color:#475569; min-width:48px;">模块：</span>
       <div id="filterModuleChips" style="display:flex; gap:6px; flex-wrap:wrap;"></div>
     </div>
-    <!-- 3级：掌握状态与年级 -->
+    <div class="filter-row">
+      <span style="font-size:0.82rem; font-weight:700; color:#475569; min-width:48px;">年级：</span>
+      <div id="filterGradeChips" style="display:flex; gap:6px; flex-wrap:wrap;"></div>
+    </div>
     <div class="filter-row">
       <span style="font-size:0.82rem; font-weight:700; color:#475569; min-width:48px;">状态：</span>
       <div id="filterStatusChips" style="display:flex; gap:6px; flex-wrap:wrap;">
@@ -324,11 +331,10 @@
     </div>
   </div>
 
-  <!-- 错题卡片流 -->
   <div class="q-grid" id="qList"></div>
 </div>
 
-<!-- ================= 考场全屏视图 (PDF渲染、双指缩放、框选截题) ================= -->
+<!-- ================= 考场全屏视图 ================= -->
 <div id="examView">
   <div class="exam-header">
     <span style="font-size:1rem; font-weight:700;" id="runningExamTitle">试卷标题</span>
@@ -375,103 +381,101 @@
 </div>
 
 <!-- ================= 弹窗集合 ================= -->
-<!-- 上传/编辑真题弹窗 -->
+
+<!-- 语文/英语/通用【专属错题录入弹窗】（错字输入 vs 拍照裁剪） -->
+<div class="modal-overlay" id="errorEntryModal">
+  <div class="modal">
+    <h3 style="margin-bottom:12px;" id="errorEntryModalTitle">录入错题</h3>
+    
+    <!-- 两个子通道切换 -->
+    <div class="modal-subtabs">
+      <div class="modal-subtab active" id="tabEntryWord" onclick="switchErrorEntryTab('word')">✍️ 1. 错字/词语录入</div>
+      <div class="modal-subtab" id="tabEntryPhoto" onclick="switchErrorEntryTab('photo')">📸 2. 试卷拍照裁剪</div>
+    </div>
+
+    <!-- 公共标签栏：年级（记住上次选择）与模块 -->
+    <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin-bottom:12px;">
+      <div class="form-group">
+        <label>所属年级（已记住上次选择）</label>
+        <select id="inpEntryGrade">
+          <option value="四上">四年级上册 (四上)</option>
+          <option value="四下">四年级下册 (四下)</option>
+          <option value="五上">五年级上册 (五上)</option>
+          <option value="五下">五年级下册 (五下)</option>
+          <option value="六上">六年级上册 (六上)</option>
+          <option value="六下">六年级下册 (六下)</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>分类标签</label>
+        <select id="inpEntryModule"></select>
+      </div>
+    </div>
+
+    <!-- 通道 1：纯错字/词语输入 -->
+    <div id="panelEntryWord">
+      <div class="form-group">
+        <label>输入错字 / 听写词语 / 拼音</label>
+        <input type="text" id="inpWordText" placeholder="如：璧（和氏璧 / 璧玉）或 易错生字" style="font-size:1.1rem; font-weight:bold;">
+      </div>
+      <div class="form-group">
+        <label>纠正/释义/正音（选填）</label>
+        <input type="text" id="inpWordNote" placeholder="如：注意下半部分是‘玉’不是‘土’">
+      </div>
+    </div>
+
+    <!-- 通道 2：拍照裁切 -->
+    <div id="panelEntryPhoto" style="display:none;">
+      <div style="border:2px dashed #93c5fd; padding:15px; text-align:center; border-radius:8px; margin-bottom:10px; cursor:pointer;" onclick="document.getElementById('cameraPhotoFile').click()">
+        <div id="cameraPhotoText">📸 点击调起 iPad 相机拍照 / 从相册选择试卷</div>
+        <input type="file" id="cameraPhotoFile" accept="image/*" capture="environment" style="display:none;" onchange="handleCameraCropFile(this.files[0])">
+      </div>
+      <div id="cropWorkspace" style="display:none; position:relative; max-height:280px; overflow:auto; background:#334155; border-radius:8px; padding:10px; text-align:center;">
+        <div style="position:relative; display:inline-block;">
+          <img id="cropTargetImg" style="max-width:100%; display:block; user-select:none;">
+          <canvas id="cropModalCanvas" style="position:absolute; top:0; left:0; width:100%; height:100%; touch-action:none; cursor:crosshair;"></canvas>
+        </div>
+      </div>
+      <p style="font-size:0.75rem; color:#64748b; margin-top:4px;">拍照后，在图上用手指拖拽画框，自动裁切题目区域！</p>
+    </div>
+
+    <div style="display:flex; justify-content:flex-end; gap:8px; margin-top:16px;">
+      <button class="btn btn-outline" onclick="document.getElementById('errorEntryModal').classList.remove('active')">取消</button>
+      <button class="btn btn-primary" onclick="saveSubjectErrorEntry()">💾 保存到错题库</button>
+    </div>
+  </div>
+</div>
+
+<!-- 录入完整真题卷弹窗（仅数学或有整卷需求的科目使用） -->
 <div class="modal-overlay" id="uploadExamModal">
   <div class="modal">
     <h3 style="margin-bottom:12px;" id="modalExamTitleText">编辑试卷</h3>
+    <div class="form-group"><label>试卷名称</label><input type="text" id="newExamTitle" placeholder="如：第32届 WMO 地方省测"></div>
+    <div class="form-group"><label>考试限时（分钟）</label><input type="number" id="newExamDuration" value="90"></div>
     <div class="form-group">
-      <label>所属学科</label>
-      <select id="newExamSubject"></select>
-    </div>
-    <div class="form-group">
-      <label>试卷名称</label>
-      <input type="text" id="newExamTitle" placeholder="如：第32届 WMO 省测 / 语文期末测试">
-    </div>
-    <div class="form-group">
-      <label>限时（分钟）</label>
-      <input type="number" id="newExamDuration" value="90">
-    </div>
-    <div class="form-group">
-      <label>上传原卷（🔥支持选 PDF 文件或照片）</label>
+      <label>上传原卷（🔥支持 PDF 文件或多选照片）</label>
       <input type="file" id="newExamFiles" accept="image/*,.pdf,application/pdf" multiple onchange="handleExamFiles(this.files)">
       <div id="newExamPreview" style="display:flex; gap:8px; margin-top:8px; flex-wrap:wrap;"></div>
     </div>
-    <div class="form-group">
-      <label>16道单选答案（连续填入16个大写字母）</label>
-      <input type="text" id="newExamKeys" placeholder="BBADDCACBACA..." maxlength="16">
-    </div>
-    <div class="form-group">
-      <label>解答题参考答案（分行填写）</label>
-      <textarea id="newExamFaqAns" style="height:90px;" placeholder="17. 6条; 710元..."></textarea>
-    </div>
+    <div class="form-group"><label>16道单选答案（连续填16位大写字母）</label><input type="text" id="newExamKeys" placeholder="BBADDCACBACA..." maxlength="16"></div>
+    <div class="form-group"><label>解答题参考答案（分行填写）</label><textarea id="newExamFaqAns" style="height:80px;" placeholder="17. 6条; 710元..."></textarea></div>
     <div style="display:flex; justify-content:flex-end; gap:8px;">
       <button class="btn btn-outline" onclick="document.getElementById('uploadExamModal').classList.remove('active')">取消</button>
-      <button class="btn btn-primary" onclick="saveNewExam()">保存试卷</button>
+      <button class="btn btn-primary" onclick="saveNewExam()">保存</button>
     </div>
   </div>
 </div>
 
-<!-- 手动录入错题弹窗 -->
-<div class="modal-overlay" id="addModal">
-  <div class="modal">
-    <h3 style="margin-bottom:12px;">录入错题</h3>
-    <div class="form-group">
-      <label>所属学科</label>
-      <select id="inpAddSubject" onchange="updateAddModalModuleOptions()"></select>
-    </div>
-    <div class="form-group">
-      <label>知识模块</label>
-      <select id="inpAddModule"></select>
-    </div>
-    <div style="border:2px dashed #93c5fd; padding:15px; text-align:center; border-radius:8px; margin-bottom:10px; cursor:pointer;" onclick="document.getElementById('singleImgFile').click()">
-      <div id="singlePasteText">📷 粘贴原题截图（Ctrl+V）或点击上传</div>
-      <img id="singlePreviewImg" style="display:none; max-width:100%; max-height:160px; margin:0 auto;">
-      <input type="file" id="singleImgFile" accept="image/*" style="display:none;" onchange="handleSingleFile(this.files[0])">
-    </div>
-    <div class="form-group">
-      <label>题号/备注</label>
-      <input type="text" id="inpNote" placeholder="例如：第10题数阵图 / 看拼音写词语">
-    </div>
-    <div class="form-group">
-      <label>参考答案</label>
-      <input type="text" id="inpAns" placeholder="例如：选项 A 或 710元">
-    </div>
-    <div style="display:flex; justify-content:flex-end; gap:8px;">
-      <button class="btn btn-outline" onclick="document.getElementById('addModal').classList.remove('active')">取消</button>
-      <button class="btn btn-primary" onclick="saveSingleQuestion()">保存存库</button>
-    </div>
-  </div>
-</div>
-
-<!-- 新增学科弹窗 -->
-<div class="modal-overlay" id="newSubjectModal">
-  <div class="modal" style="max-width:420px;">
-    <h3>➕ 添加全新学科</h3>
-    <div class="form-group" style="margin-top:12px;">
-      <label>学科名称</label>
-      <input type="text" id="customSubjectName" placeholder="如：科学探索 / 物理进阶">
-    </div>
-    <div class="form-group">
-      <label>选择图标 (Emoji)</label>
-      <input type="text" id="customSubjectIcon" value="🔬">
-    </div>
-    <div class="form-group">
-      <label>初始知识模块（逗号分隔）</label>
-      <input type="text" id="customSubjectModules" value="力学基础, 声光现象, 物质实验">
-    </div>
-    <div style="display:flex; justify-content:flex-end; gap:8px;">
-      <button class="btn btn-outline" onclick="document.getElementById('newSubjectModal').classList.remove('active')">取消</button>
-      <button class="btn btn-primary" onclick="confirmAddCustomSubject()">确认创建</button>
-    </div>
-  </div>
-</div>
-
-<!-- Gemini 深度分析弹窗 -->
+<!-- Gemini 深度分析展示弹窗（支持查看保存快照与重刷） -->
 <div class="modal-overlay" id="analysisModal">
   <div class="modal" style="max-width:760px;">
-    <div style="display:flex; justify-content:space-between; align-items:center;">
-      <h3 style="color:#0369a1;">💡 Gemini 深度思路与名师导图</h3>
+    <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;">
+      <div style="display:flex; align-items:center; gap:8px;">
+        <h3 style="color:#0369a1;">💡 深度思路与名师导图</h3>
+        <span id="analysisSourceBadge" style="font-size:0.75rem; background:#e0f2fe; color:#0369a1; padding:2px 8px; border-radius:10px; font-weight:bold;"></span>
+      </div>
       <div style="display:flex; gap:6px;">
+        <button class="btn btn-outline" id="btnReAnalyze" onclick="reAnalyzeCurrentWithGemini()">🔄 重新由 AI 分析</button>
         <button class="btn btn-outline" onclick="copyAnalysisText()">📋 复制</button>
         <button class="btn btn-primary" onclick="printAnalysisContent()">🖨️ 打印</button>
       </div>
@@ -485,7 +489,7 @@
 <div class="modal-overlay" id="similarModal">
   <div class="modal" style="max-width:750px;">
     <div style="display:flex; justify-content:space-between; align-items:center;">
-      <h3 style="color:#15803d;">🎯 Gemini 举一反三 · 相似变式题</h3>
+      <h3 style="color:#15803d;">🎯 举一反三 · 相似变式题</h3>
       <div style="display:flex; gap:6px;">
         <button class="btn btn-outline" onclick="copySimilarText()">📋 复制</button>
         <button class="btn btn-primary" onclick="printSimilarContent()">🖨️ 打印</button>
@@ -509,45 +513,38 @@
 </div>
 
 <script>
-const GEMINI_MODEL = "gemini-3.8-flash";
+// 多模型备用容灾列表（自动避开 503 与 404）
+const GEMINI_MODELS = ["gemini-3.8-flash", "gemini-2.5-flash", "gemini-1.5-flash"];
 
-// ================= 学科体系动态定义（支持无限追加） =================
-let SUBJECTS = {
+// 学科与模块定义
+const SUBJECTS = {
   math: {
-    id: "math",
-    name: "数学思维",
-    icon: "📐",
-    desc: "WMO省测真题、高频奥数几何与行程模型",
-    color: "#2563eb",
-    bg: "#eff6ff",
+    id: "math", name: "数学思维", icon: "📐",
+    desc: "WMO竞赛真题、高频几何模型、行程工程与错题攻坚",
+    color: "#2563eb", bg: "#eff6ff",
     modules: ["几何模型", "行程问题", "数论整除", "计数组合", "计算与数列", "典型应用题"]
   },
   chinese: {
-    id: "chinese",
-    name: "语文素养",
-    icon: "📖",
-    desc: "看拼音写字、修改病句、文言诗词与阅读理解",
-    color: "#be123c",
-    bg: "#fff1f2",
-    modules: ["字词拼音", "修改病句", "文言诗词", "阅读理解", "语言表达"]
+    id: "chinese", name: "语文素养", icon: "📖",
+    desc: "易错生字词打卡、阅读理解、古诗文默写与作文",
+    color: "#be123c", bg: "#fff1f2",
+    modules: ["字词拼音", "修改病句", "文言诗词", "阅读理解", "表达应用", "其它错题"]
   },
   english: {
-    id: "english",
-    name: "英语进阶",
-    icon: "🔤",
-    desc: "易错词汇辨析、语法时态、完形填空与阅读理解",
-    color: "#059669",
-    bg: "#ecfdf5",
-    modules: ["词汇短语", "语法时态", "完形填空", "阅读理解", "句型转换"]
+    id: "english", name: "英语进阶", icon: "🔤",
+    desc: "易错单词听写、语法时态、完形填空与阅读理解",
+    color: "#059669", bg: "#ecfdf5",
+    modules: ["词汇短语", "语法时态", "完形填空", "阅读理解", "句型转换", "其它错题"]
   }
 };
 
 let currentPortalSubject = "math";
 let filterSubject = "";
 let filterModule = "";
+let filterGrade = "";
 let filterStatus = "";
 
-// ================= 数据库 IndexedDB =================
+// 数据库 IndexedDB
 let db = null;
 const DB_NAME = "MathVaultDB";
 const STORE_QUESTIONS = "questions";
@@ -555,15 +552,11 @@ const STORE_EXAMS = "exams";
 
 function initDB() {
   return new Promise((resolve) => {
-    const req = indexedDB.open(DB_NAME, 5);
+    const req = indexedDB.open(DB_NAME, 6);
     req.onupgradeneeded = (e) => {
       const database = e.target.result;
-      if (!database.objectStoreNames.contains(STORE_QUESTIONS)) {
-        database.createObjectStore(STORE_QUESTIONS, { keyPath: "id", autoIncrement: true });
-      }
-      if (!database.objectStoreNames.contains(STORE_EXAMS)) {
-        database.createObjectStore(STORE_EXAMS, { keyPath: "id", autoIncrement: true });
-      }
+      if (!database.objectStoreNames.contains(STORE_QUESTIONS)) database.createObjectStore(STORE_QUESTIONS, { keyPath: "id", autoIncrement: true });
+      if (!database.objectStoreNames.contains(STORE_EXAMS)) database.createObjectStore(STORE_EXAMS, { keyPath: "id", autoIncrement: true });
     };
     req.onsuccess = async (e) => {
       db = e.target.result;
@@ -573,7 +566,6 @@ function initDB() {
   });
 }
 
-// 预装 31~35 届 WMO 真题（自动归入数学科）
 async function preseedAllExams() {
   const defaultExams = [
     { title: "第31届 WMO 地方省测 (四年级)", subject: "math", duration: 90, keys: "BBADDCACBACA" + "BABC", keysFull: ["B","B","A","D","D","C","A","C","B","A","C","A","B","A","B","C"], faqAns: ["17. (1) 6条; (2) 最少710元", "18. 1元10枚、5角40枚、1角50枚", "19. (1) 2800米; (2) 8点50分", "20. (1) 891; (2) 10个"], pages: [] },
@@ -582,13 +574,9 @@ async function preseedAllExams() {
     { title: "第34届 WMO 地方省测 (四年级)", subject: "math", duration: 90, keys: "CDD BDDD CCBB CBB CB", keysFull: ["C","D","D","B","D","D","D","C","C","B","B","C","B","B","C","B"], faqAns: ["17. (1) 5400元; (2) 5640元; (3) 5616元", "18. (1) 400米; (2) 40秒", "19. (1) 小正方形6cm，大正方形21cm; (2) 300cm²", "20. (1) C; (2) 先, 右, 2格"], pages: [] },
     { title: "第35届 WMO 地方省测 (四年级)", subject: "math", duration: 90, keys: "ACBBAC ABBADC ACBC", keysFull: ["A","C","B","B","A","C","A","B","B","A","D","C","A","C","B","C"], faqAns: ["17. (1) 6分钟; (2) 54分钟", "18. (1) B; (2) 640cm², 52cm", "19. (1) 星期三; (2) 风之店; (3) 土之店", "20. (1) 6; (2) 5; (3) 3"], pages: [] }
   ];
-
   const currentExams = await dbGetAll(STORE_EXAMS);
   for (const def of defaultExams) {
-    const existing = currentExams.find(x => x.title.includes(def.title.slice(0, 5)));
-    if (!existing) {
-      await dbAdd(STORE_EXAMS, def);
-    }
+    if (!currentExams.find(x => x.title.includes(def.title.slice(0, 5)))) await dbAdd(STORE_EXAMS, def);
   }
 }
 
@@ -598,14 +586,12 @@ function dbAdd(storeName, item) {
     tx.objectStore(storeName).put(item).onsuccess = (e) => resolve(e.target.result);
   });
 }
-
 function dbGetAll(storeName) {
   return new Promise((resolve) => {
     const tx = db.transaction(storeName, "readonly");
     tx.objectStore(storeName).getAll().onsuccess = (e) => resolve(e.target.result || []);
   });
 }
-
 function dbDelete(storeName, id) {
   return new Promise((resolve) => {
     const tx = db.transaction(storeName, "readwrite");
@@ -613,7 +599,7 @@ function dbDelete(storeName, id) {
   });
 }
 
-// ================= 导航分发 =================
+// 导航分发
 function switchNav(viewName) {
   document.getElementById("viewDashboard").style.display = viewName === "dashboard" ? "block" : "none";
   document.getElementById("viewSubjectPortal").style.display = viewName === "portal" ? "block" : "none";
@@ -627,97 +613,246 @@ function switchNav(viewName) {
   if (viewName === "portal") renderSubjectPortal();
 }
 
-// ================= 1. 首页仪表盘渲染 =================
+// 1. 仪表盘渲染
 async function renderDashboard() {
-  // 计算 WMO 倒计时
   const targetDate = new Date("2026-11-29T09:00:00");
-  const now = new Date();
-  const diffDays = Math.ceil((targetDate - now) / (1000 * 60 * 60 * 24));
+  const diffDays = Math.ceil((targetDate - new Date()) / (1000 * 60 * 60 * 24));
   document.getElementById("wmoCountdownText").textContent = diffDays > 0 ? `🏆 距 11-29 WMO 地方省测还有 ${diffDays} 天` : `🏆 WMO 冲刺进行时！`;
 
-  // 统计各科错题数
   const questions = await dbGetAll(STORE_QUESTIONS);
   const mathCount = questions.filter(q => (q.subject || 'math') === 'math' && q.status !== '🟢 已斩杀').length;
   const chineseCount = questions.filter(q => q.subject === 'chinese' && q.status !== '🟢 已斩杀').length;
   const englishCount = questions.filter(q => q.subject === 'english' && q.status !== '🟢 已斩杀').length;
 
   document.getElementById("dashboardVaultStats").innerHTML = `
-    <span class="stat-pill">📐 数学: ${mathCount} 道待攻克</span>
-    <span class="stat-pill">📖 语文: ${chineseCount} 道</span>
-    <span class="stat-pill">🔤 英语: ${englishCount} 道</span>
+    <span class="stat-pill">📐 数学: ${mathCount} 题待攻克</span>
+    <span class="stat-pill">📖 语文: ${chineseCount} 题</span>
+    <span class="stat-pill">🔤 英语: ${englishCount} 题</span>
   `;
 
-  // 渲染学科卡片流
-  const grid = document.getElementById("subjectGridContainer");
-  const subjectList = Object.values(SUBJECTS);
-
-  grid.innerHTML = subjectList.map(sub => `
+  document.getElementById("subjectGridContainer").innerHTML = Object.values(SUBJECTS).map(sub => `
     <div class="subject-card" onclick="openSubjectPortal('${sub.id}')">
       <div>
         <div class="subject-icon" style="background:${sub.bg}; color:${sub.color};">${sub.icon}</div>
         <h4 style="font-size:1.15rem; margin-bottom:4px;">${sub.name}</h4>
         <p style="font-size:0.82rem; color:var(--text-sub); line-height:1.4;">${sub.desc}</p>
       </div>
-      <div style="display:flex; justify-content:space-between; align-items:center; margin-top:16px; border-top:1px solid #f1f5f9; padding-top:10px;">
-        <span style="font-size:0.8rem; font-weight:700; color:${sub.color};">进入题库 →</span>
+      <div style="margin-top:16px; border-top:1px solid #f1f5f9; padding-top:10px;">
+        <span style="font-size:0.82rem; font-weight:700; color:${sub.color};">${sub.id==='math'?'进入奥数真题/错题 →':'进入专属错题复习 →'}</span>
       </div>
     </div>
-  `).join('') + `
-    <div class="subject-card add-subject-card" onclick="document.getElementById('newSubjectModal').classList.add('active')">
-      <div style="font-size:2rem; color:#94a3b8; margin-bottom:6px;">＋</div>
-      <b style="color:#64748b;">添加新学科</b>
-      <p style="font-size:0.75rem; color:#94a3b8;">自定义科学/物理等科目</p>
-    </div>
-  `;
+  `).join('');
 }
 
 function openSubjectPortal(subjectId) {
   currentPortalSubject = subjectId;
   switchNav("portal");
 }
-
-// 快速开启今日复习
 function startSmartReview() {
-  filterSubject = "";
-  filterModule = "";
-  filterStatus = "🔴 待攻克";
+  filterSubject = ""; filterModule = ""; filterGrade = ""; filterStatus = "🔴 待攻克";
   switchNav("vault");
 }
 
-// ================= 2. 专属学科真题大厅渲染 =================
+// 2. 学科专属空间渲染（按需求严格区分按钮）
 async function renderSubjectPortal() {
   const currentSub = SUBJECTS[currentPortalSubject] || SUBJECTS.math;
-  document.getElementById("portalSubjectTitle").textContent = `${currentSub.icon} ${currentSub.name} · 真题与单元模考`;
+  document.getElementById("portalSubjectTitle").textContent = `${currentSub.icon} ${currentSub.name} · ${currentPortalSubject==='math'?'奥数真题与错题空间':'日常错题复习空间'}`;
 
-  const exams = await dbGetAll(STORE_EXAMS);
-  const filteredExams = exams.filter(e => (e.subject || 'math') === currentPortalSubject);
-  filteredExams.sort((a,b) => a.title.localeCompare(b.title, 'zh-Hans-CN', {numeric: true}));
-
-  const container = document.getElementById("portalExamList");
-  if (filteredExams.length === 0) {
-    container.innerHTML = `<div style="grid-column:1/-1; text-align:center; padding:40px; color:#94a3b8;">暂无本学科试卷，点击右上角【＋ 录入新真题】上传！</div>`;
-    return;
+  // 动态按钮配置：数学显示【录入真题/错题】，语文英语显示【录入错题】
+  const btnContainer = document.getElementById("portalActionBtnContainer");
+  if (currentPortalSubject === "math") {
+    btnContainer.innerHTML = `
+      <div style="display:flex; gap:6px;">
+        <button class="btn btn-primary" onclick="openUploadExamModal()">＋ 录入真题试卷</button>
+        <button class="btn btn-outline" onclick="openSubjectErrorEntryModal('math')">＋ 录入单题错题</button>
+      </div>
+    `;
+  } else {
+    btnContainer.innerHTML = `
+      <button class="btn btn-primary" style="background:${currentSub.color};" onclick="openSubjectErrorEntryModal('${currentPortalSubject}')">＋ 录入错题 (错字/拍照)</button>
+    `;
   }
 
-  container.innerHTML = filteredExams.map(ex => `
-    <div class="exam-card">
-      <div>
-        <h4 style="font-size:1.05rem;">${ex.title}</h4>
-        <div class="exam-meta">
-          <span>⏱ ${ex.duration}分钟</span>
-          <span>📄 原卷照片: ${ex.pages ? ex.pages.length : 0}张</span>
+  // 试卷列表仅数学主页重点呈现整套真题，其他科目呈现错题列表
+  const exams = await dbGetAll(STORE_EXAMS);
+  const filteredExams = exams.filter(e => (e.subject || 'math') === currentPortalSubject);
+  const container = document.getElementById("portalExamList");
+
+  if (currentPortalSubject === "math") {
+    container.innerHTML = filteredExams.map(ex => `
+      <div class="exam-card">
+        <div>
+          <h4 style="font-size:1.05rem;">${ex.title}</h4>
+          <div class="exam-meta"><span>⏱ ${ex.duration}分钟</span><span>📄 原卷照片: ${ex.pages ? ex.pages.length : 0}张</span></div>
+        </div>
+        <div style="display:flex; gap:8px; margin-top:10px;">
+          <button class="btn btn-primary" style="flex:1; justify-content:center;" onclick="startExam(${ex.id})">🚀 开始模考</button>
+          <button class="btn btn-outline" style="padding:6px 10px;" onclick="editExam(${ex.id})">✏️ 编辑</button>
+          <button class="btn btn-danger" style="padding:6px 10px;" onclick="deleteExam(${ex.id})">🗑️</button>
         </div>
       </div>
-      <div style="display:flex; gap:8px; margin-top:10px;">
-        <button class="btn btn-primary" style="flex:1; justify-content:center;" onclick="startExam(${ex.id})">🚀 开始模考</button>
-        <button class="btn btn-outline" style="padding:6px 10px;" onclick="editExam(${ex.id})">✏️ 编辑</button>
-        <button class="btn btn-danger" style="padding:6px 10px;" onclick="deleteExam(${ex.id})">🗑️</button>
-      </div>
-    </div>
-  `).join('');
+    `).join('');
+  } else {
+    // 语文和英语直接展示该学科的错题清单，方便快速复习
+    const allQuestions = await dbGetAll(STORE_QUESTIONS);
+    const subQuestions = allQuestions.filter(q => q.subject === currentPortalSubject);
+    if (subQuestions.length === 0) {
+      container.innerHTML = `<div style="grid-column:1/-1; text-align:center; padding:40px; color:#94a3b8;">暂无本学科错题。点击右上角【＋ 录入错题】输入错字或拍照！</div>`;
+      return;
+    }
+    container.innerHTML = subQuestions.map(q => renderQuestionCardHtml(q)).join('');
+  }
 }
 
-// ================= 3. 智能联动错题复习总库 =================
+// ================= 3. 语文/英语专属错题录入业务（记住前次标签） =================
+let activeEntryTab = "word"; // 'word' or 'photo'
+let activeCameraCropBase64 = "";
+
+function openSubjectErrorEntryModal(subjectKey) {
+  const sub = SUBJECTS[subjectKey] || SUBJECTS.chinese;
+  document.getElementById("errorEntryModalTitle").textContent = `${sub.icon} ${sub.name} · 录入错题`;
+
+  // 1. 恢复上一次选择的年级标签
+  const lastGrade = localStorage.getItem("LAST_GRADE_TAG") || "四上";
+  document.getElementById("inpEntryGrade").value = lastGrade;
+
+  // 2. 动态填充当前学科的模块分类
+  const lastModule = localStorage.getItem("LAST_MODULE_" + subjectKey) || sub.modules[0];
+  const modSelect = document.getElementById("inpEntryModule");
+  modSelect.innerHTML = sub.modules.map(m => `<option value="${m}" ${m===lastModule?'selected':''}>${m}</option>`).join('');
+
+  // 3. 重置字段
+  document.getElementById("inpWordText").value = "";
+  document.getElementById("inpWordNote").value = "";
+  activeCameraCropBase64 = "";
+  document.getElementById("cropWorkspace").style.display = "none";
+  document.getElementById("cameraPhotoText").style.display = "block";
+
+  switchErrorEntryTab(subjectKey === 'chinese' ? 'word' : 'photo');
+  document.getElementById("errorEntryModal").classList.add("active");
+}
+
+function switchErrorEntryTab(tab) {
+  activeEntryTab = tab;
+  document.getElementById("tabEntryWord").classList.toggle("active", tab === "word");
+  document.getElementById("tabEntryPhoto").classList.toggle("active", tab === "photo");
+  document.getElementById("panelEntryWord").style.display = tab === "word" ? "block" : "none";
+  document.getElementById("panelEntryPhoto").style.display = tab === "photo" ? "block" : "none";
+}
+
+// 拍照与画框裁切交互
+let cropModalImg = null;
+let cropStart = null;
+let cropBox = null;
+
+function handleCameraCropFile(file) {
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    const dataUrl = e.target.result;
+    const imgEl = document.getElementById("cropTargetImg");
+    imgEl.src = dataUrl;
+    imgEl.onload = () => {
+      document.getElementById("cropWorkspace").style.display = "block";
+      document.getElementById("cameraPhotoText").style.display = "none";
+      initCropModalCanvas(imgEl);
+    };
+  };
+  reader.readAsDataURL(file);
+}
+
+function initCropModalCanvas(imgEl) {
+  const canvas = document.getElementById("cropModalCanvas");
+  canvas.width = imgEl.clientWidth || 320;
+  canvas.height = imgEl.clientHeight || 240;
+  const ctx = canvas.getContext("2d");
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+  let isDrawing = false;
+  let sX = 0, sY = 0;
+
+  canvas.onpointerdown = (e) => {
+    isDrawing = true;
+    sX = e.offsetX; sY = e.offsetY;
+    canvas.setPointerCapture(e.pointerId);
+  };
+  canvas.onpointermove = (e) => {
+    if (!isDrawing) return;
+    const curX = e.offsetX, curY = e.offsetY;
+    const rX = Math.min(sX, curX), rY = Math.min(sY, curY);
+    const rW = Math.abs(curX - sX), rH = Math.abs(curY - sY);
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.fillStyle = "rgba(37, 99, 235, 0.25)";
+    ctx.fillRect(rX, rY, rW, rH);
+    ctx.strokeStyle = "#2563eb";
+    ctx.lineWidth = 2;
+    ctx.setLineDash([4, 4]);
+    ctx.strokeRect(rX, rY, rW, rH);
+  };
+  canvas.onpointerup = (e) => {
+    if (!isDrawing) return;
+    isDrawing = false;
+    canvas.releasePointerCapture(e.pointerId);
+    const curX = e.offsetX, curY = e.offsetY;
+    const rX = Math.min(sX, curX), rY = Math.min(sY, curY);
+    const rW = Math.abs(curX - sX), rH = Math.abs(curY - sY);
+
+    if (rW > 20 && rH > 20) {
+      // 裁切生成 Base64
+      const scaleX = imgEl.naturalWidth / canvas.width;
+      const scaleY = imgEl.naturalHeight / canvas.height;
+      const offCanvas = document.createElement("canvas");
+      offCanvas.width = rW * scaleX;
+      offCanvas.height = rH * scaleY;
+      offCanvas.getContext("2d").drawImage(
+        imgEl,
+        rX * scaleX, rY * scaleY, rW * scaleX, rH * scaleY,
+        0, 0, offCanvas.width, offCanvas.height
+      );
+      activeCameraCropBase64 = offCanvas.toDataURL("image/jpeg", 0.9);
+    }
+  };
+}
+
+async function saveSubjectErrorEntry() {
+  const grade = document.getElementById("inpEntryGrade").value;
+  const moduleTag = document.getElementById("inpEntryModule").value;
+  
+  // 核心：保存用户的标签偏好，下一次录入自动作为默认值
+  localStorage.setItem("LAST_GRADE_TAG", grade);
+  localStorage.setItem("LAST_MODULE_" + currentPortalSubject, moduleTag);
+
+  let item = {
+    subject: currentPortalSubject,
+    grade: grade,
+    module: moduleTag,
+    status: "🔴 待攻克",
+    updatedAt: new Date().toISOString()
+  };
+
+  if (activeEntryTab === "word") {
+    const wordText = document.getElementById("inpWordText").value.trim();
+    if (!wordText) { alert("请输入错字或词语！"); return; }
+    item.isWord = true;
+    item.note = wordText;
+    item.ans = document.getElementById("inpWordNote").value.trim();
+    item.img = ""; // 纯文字无需大图
+  } else {
+    if (!activeCameraCropBase64) { alert("请先拍照并在图片上画框截取题目！"); return; }
+    item.isWord = false;
+    item.note = `${grade} · ${moduleTag} 错题`;
+    item.ans = "";
+    item.img = activeCameraCropBase64;
+  }
+
+  await dbAdd(STORE_QUESTIONS, item);
+  document.getElementById("errorEntryModal").classList.remove("active");
+  alert("🎉 错题已成功存入题库！");
+  renderSubjectPortal();
+  renderDashboard();
+}
+
+// ================= 4. 错题总库与卡片渲染 =================
 async function renderVault() {
   renderFilterChips();
 
@@ -726,82 +861,79 @@ async function renderVault() {
     const qSub = q.subject || 'math';
     if (filterSubject && qSub !== filterSubject) return false;
     if (filterModule && q.module !== filterModule) return false;
+    if (filterGrade && q.grade !== filterGrade) return false;
     if (filterStatus && q.status !== filterStatus) return false;
     return true;
   });
 
   const container = document.getElementById("qList");
   if (filtered.length === 0) {
-    container.innerHTML = `<div style="grid-column:1/-1; text-align:center; padding:40px; color:#94a3b8;">没有找到符合条件的错题，太棒了！</div>`;
+    container.innerHTML = `<div style="grid-column:1/-1; text-align:center; padding:40px; color:#94a3b8;">没有找到符合条件的错题！</div>`;
     return;
   }
+  container.innerHTML = filtered.map(q => renderQuestionCardHtml(q)).join('');
+}
 
-  container.innerHTML = filtered.map(q => {
-    const subInfo = SUBJECTS[q.subject || 'math'] || SUBJECTS.math;
-    return `
-      <div class="q-card">
-        <div style="display:flex; justify-content:space-between; align-items:center;">
-          <label style="display:flex; align-items:center; gap:6px; font-weight:700; cursor:pointer;">
-            <input type="checkbox" class="vault-checkbox" value="${q.id}">
-            <span>${q.note || '错题'}</span>
-          </label>
-          <div>
-            <span style="font-size:0.75rem; background:${subInfo.bg}; color:${subInfo.color}; padding:2px 8px; border-radius:10px; font-weight:bold;">${subInfo.name}</span>
-            <button class="btn btn-danger" style="padding:2px 6px; font-size:0.75rem;" onclick="deleteSingleQuestion(${q.id})">删</button>
-          </div>
-        </div>
-        <div class="q-img-wrap"><img src="${q.img}"></div>
-        <div style="display:flex; justify-content:space-between; font-size:0.8rem; color:#64748b; margin-bottom:8px;">
-          <span>模块: <b>${q.module || '基础考点'}</b></span>
-          <span style="cursor:pointer;" onclick="cycleQuestionStatus(${q.id}, '${q.status}')">${q.status || '🔴 待攻克'} ⟳</span>
-        </div>
-        <div style="display:flex; gap:6px; margin-top:auto; padding-top:8px; border-top:1px solid #e2e8f0;">
-          <button class="btn" style="flex:1; justify-content:center; background:#e0f2fe; color:#0369a1; font-size:0.75rem;" onclick="analyzeSingleQuestionById(${q.id})">💡 思路导图</button>
-          <button class="btn btn-success" style="flex:1; justify-content:center; font-size:0.75rem;" onclick="generateSimilarSingleById(${q.id})">🤖 出相似题</button>
+function renderQuestionCardHtml(q) {
+  const subInfo = SUBJECTS[q.subject || 'math'] || SUBJECTS.math;
+  return `
+    <div class="q-card">
+      <div style="display:flex; justify-content:space-between; align-items:center;">
+        <label style="display:flex; align-items:center; gap:6px; font-weight:700; cursor:pointer;">
+          <input type="checkbox" class="vault-checkbox" value="${q.id}">
+          <span>${q.note || '错题'}</span>
+        </label>
+        <div>
+          <span style="font-size:0.75rem; background:${subInfo.bg}; color:${subInfo.color}; padding:2px 8px; border-radius:10px; font-weight:bold;">${subInfo.name}</span>
+          <button class="btn btn-danger" style="padding:2px 6px; font-size:0.75rem;" onclick="deleteSingleQuestion(${q.id})">删</button>
         </div>
       </div>
-    `;
-  }).join('');
+      
+      <!-- 纯错字显示大字块，拍照题显示图片 -->
+      ${q.isWord ? `<div class="word-card-text">${q.note}</div>` : `<div class="q-img-wrap"><img src="${q.img}"></div>`}
+
+      <div style="display:flex; justify-content:space-between; font-size:0.8rem; color:#64748b; margin-bottom:8px;">
+        <span>${q.grade || '四年级'} · <b>${q.module || '基础考点'}</b></span>
+        <span style="cursor:pointer;" onclick="cycleQuestionStatus(${q.id}, '${q.status}')">${q.status || '🔴 待攻克'} ⟳</span>
+      </div>
+      
+      <div style="display:flex; gap:6px; margin-top:auto; padding-top:8px; border-top:1px solid #e2e8f0;">
+        <button class="btn" style="flex:1; justify-content:center; background:#e0f2fe; color:#0369a1; font-size:0.75rem;" onclick="analyzeSingleQuestionById(${q.id})">
+          💡 ${q.savedAnalysis ? '查看思路(已存)' : '思路导图'}
+        </button>
+        <button class="btn btn-success" style="flex:1; justify-content:center; font-size:0.75rem;" onclick="generateSimilarSingleById(${q.id})">
+          🤖 出相似题
+        </button>
+      </div>
+    </div>
+  `;
 }
 
-// 动态渲染三级联动标签
 function renderFilterChips() {
-  // 1级：学科
-  const subChips = document.getElementById("filterSubjectChips");
-  subChips.innerHTML = `
+  document.getElementById("filterSubjectChips").innerHTML = `
     <span class="filter-chip ${filterSubject === '' ? 'active' : ''}" onclick="setFilterSubject('')">全部学科</span>
-    ${Object.values(SUBJECTS).map(s => `
-      <span class="filter-chip ${filterSubject === s.id ? 'active' : ''}" onclick="setFilterSubject('${s.id}')">${s.icon} ${s.name}</span>
-    `).join('')}
+    ${Object.values(SUBJECTS).map(s => `<span class="filter-chip ${filterSubject === s.id ? 'active' : ''}" onclick="setFilterSubject('${s.id}')">${s.icon} ${s.name}</span>`).join('')}
   `;
 
-  // 2级：根据所选学科动态获取模块
-  const modChips = document.getElementById("filterModuleChips");
   let availableModules = [];
-  if (filterSubject && SUBJECTS[filterSubject]) {
-    availableModules = SUBJECTS[filterSubject].modules;
-  } else {
-    // 全部学科的所有模块合集
-    availableModules = Array.from(new Set(Object.values(SUBJECTS).flatMap(s => s.modules)));
-  }
+  if (filterSubject && SUBJECTS[filterSubject]) availableModules = SUBJECTS[filterSubject].modules;
+  else availableModules = Array.from(new Set(Object.values(SUBJECTS).flatMap(s => s.modules)));
 
-  modChips.innerHTML = `
+  document.getElementById("filterModuleChips").innerHTML = `
     <span class="filter-chip ${filterModule === '' ? 'active' : ''}" onclick="setFilterModule('')">全部模块</span>
-    ${availableModules.map(m => `
-      <span class="filter-chip ${filterModule === m ? 'active' : ''}" onclick="setFilterModule('${m}')">${m}</span>
-    `).join('')}
+    ${availableModules.map(m => `<span class="filter-chip ${filterModule === m ? 'active' : ''}" onclick="setFilterModule('${m}')">${m}</span>`).join('')}
+  `;
+
+  const grades = ["四上", "四下", "五上", "五下", "六上", "六下"];
+  document.getElementById("filterGradeChips").innerHTML = `
+    <span class="filter-chip ${filterGrade === '' ? 'active' : ''}" onclick="setFilterGrade('')">全部年级</span>
+    ${grades.map(g => `<span class="filter-chip ${filterGrade === g ? 'active' : ''}" onclick="setFilterGrade('${g}')">${g}</span>`).join('')}
   `;
 }
 
-function setFilterSubject(s) {
-  filterSubject = s;
-  filterModule = ""; // 重置二级模块
-  renderVault();
-}
-function setFilterModule(m) {
-  filterModule = m;
-  renderVault();
-}
+function setFilterSubject(s) { filterSubject = s; filterModule = ""; renderVault(); }
+function setFilterModule(m) { filterModule = m; renderVault(); }
+function setFilterGrade(g) { filterGrade = g; renderVault(); }
 function setFilterStatus(st) {
   filterStatus = st;
   document.querySelectorAll("#filterStatusChips .filter-chip").forEach(c => {
@@ -821,30 +953,192 @@ async function cycleQuestionStatus(id, curStatus) {
   renderVault();
 }
 
-// ================= 4. 自定义新增学科 =================
-function confirmAddCustomSubject() {
-  const name = document.getElementById("customSubjectName").value.trim();
-  const icon = document.getElementById("customSubjectIcon").value.trim() || "🔬";
-  const modulesStr = document.getElementById("customSubjectModules").value.trim();
-  if (!name) { alert("请输入学科名称！"); return; }
+// ================= 5. Gemini 503容灾调用 & 思路持久化 & 语文组词 =================
+let activeAnalysisQuestionId = null;
 
-  const newId = "sub_" + Date.now();
-  SUBJECTS[newId] = {
-    id: newId,
-    name: name,
-    icon: icon,
-    desc: "个性化拓展学科题库与错题管理",
-    color: "#4f46e5",
-    bg: "#eef2ff",
-    modules: modulesStr ? modulesStr.split(/[,，]/).map(s => s.trim()).filter(Boolean) : ["综合基础"]
-  };
+// 点击单题思路分析：如果以前分析过，0秒加载快照！
+async function analyzeSingleQuestionById(id) {
+  const all = await dbGetAll(STORE_QUESTIONS);
+  const q = all.find(x => x.id === id);
+  if (!q) return;
 
-  document.getElementById("newSubjectModal").classList.remove("active");
-  renderDashboard();
-  alert(`🎉 成功添加全新学科：${icon} ${name}！`);
+  activeAnalysisQuestionId = id;
+  document.getElementById("btnReAnalyze").style.display = "inline-flex";
+
+  if (q.savedAnalysis) {
+    // 已经保存过：立刻读取快照
+    const outputModal = document.getElementById("analysisModal");
+    document.getElementById("analysisSourceBadge").textContent = "⚡ 已加载历史保存结果 (不耗Token)";
+    document.getElementById("analysisOutput").textContent = q.savedAnalysis;
+    outputModal.classList.add("active");
+  } else {
+    // 第一次分析：调用 Gemini
+    document.getElementById("analysisSourceBadge").textContent = "🤖 正在请求 AI 实时解析";
+    doAnalyzeThinking([q], id);
+  }
 }
 
-// ================= 5. 模考、PDF缩放与手势框选裁切 =================
+// 强制重新分析
+async function reAnalyzeCurrentWithGemini() {
+  if (!activeAnalysisQuestionId) return;
+  const all = await dbGetAll(STORE_QUESTIONS);
+  const q = all.find(x => x.id === activeAnalysisQuestionId);
+  if (q) {
+    document.getElementById("analysisSourceBadge").textContent = "🔄 正在重新调用 AI 分析";
+    doAnalyzeThinking([q], q.id);
+  }
+}
+
+// 批量思路分析
+async function analyzeThinkingWithGemini() {
+  const checked = document.querySelectorAll(".vault-checkbox:checked");
+  if (checked.length === 0) { alert("请先勾选需要分析思路的题目！"); return; }
+  const ids = Array.from(checked).map(b => Number(b.value));
+  const all = await dbGetAll(STORE_QUESTIONS);
+  activeAnalysisQuestionId = null;
+  document.getElementById("btnReAnalyze").style.display = "none";
+  document.getElementById("analysisSourceBadge").textContent = "🤖 批量实时分析";
+  doAnalyzeThinking(all.filter(q => ids.includes(q.id)), null);
+}
+
+// 执行思路分析（包含 503 备用模型轮换、保存快照、语文自动组词）
+async function doAnalyzeThinking(selectedQuestions, singleSaveId) {
+  const apiKey = localStorage.getItem("GEMINI_API_KEY");
+  if (!apiKey) { alert("请先配置 Gemini API Key！"); openKeyModal(); return; }
+
+  const outputModal = document.getElementById("analysisModal");
+  const outputBox = document.getElementById("analysisOutput");
+  outputBox.textContent = `⏳ 正在请求 Gemini 深度剖析（如遇503自动轮换备用模型），请稍候约 5~8 秒...`;
+  outputModal.classList.add("active");
+
+  const parts = [];
+  parts.push({
+    text: `你是一位全科特级教师（精通小学奥数解题模型、小学语文生字词/阅读理解、英语语法）。
+请为四年级学生提供极通俗、有启发性的【名师深度思路与解题导图】：
+
+【讲解模块规范】：
+1. 🎯【考点模型】：指出所属学科及具体核心考点；
+2. ⚠️【思维陷阱/错因剖析】：孩子最容易在哪一步卡壳、笔误或想偏？
+3. 🔑【破题第一步】：抓哪个题眼或切入点？
+4. 📐【小学化直观图解/推导】：多用画图法、设数法、语境代入法拆解；
+5. 🗣️【家长一句话启发话术】：提问引导孩子自主想通。
+
+【⭐ 特别强化要求（语文科目专属）】：
+如果题目属于语文的“生字、词语、拼音、修改病句”，必须额外增加【📝 组词与词义拓展】模块：
+为该错字/生词提供 2~3 个四年级课标内高频易错的常用词语或成语，并注音、写出简明词义，方便家长直接给孩子做组词听写复习！`
+  });
+
+  selectedQuestions.forEach((q, idx) => {
+    const subInfo = SUBJECTS[q.subject || 'math'] || SUBJECTS.math;
+    parts.push({ text: `\n\n=== 【题目 ${idx + 1}】(学科：${subInfo.name}，考点：${q.module || '未分'}，内容/错字：${q.note || ''}，答案：${q.ans || ''}) ===` });
+    if (q.img && q.img.startsWith("data:image")) {
+      parts.push({ inline_data: { mime_type: q.img.split(";")[0].split(":")[1] || "image/png", data: q.img.split(",")[1] } });
+    }
+  });
+
+  // 轮换调用备用模型，抵抗 503 错误
+  let successText = "";
+  for (const model of GEMINI_MODELS) {
+    try {
+      const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`, {
+        method: "POST", headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ contents: [{ parts }] })
+      });
+      const data = await res.json();
+      if (res.status === 200 && data.candidates && data.candidates[0].content.parts[0].text) {
+        successText = data.candidates[0].content.parts[0].text;
+        break; // 成功则跳出重试
+      }
+    } catch(err) {
+      console.warn(`Model ${model} request failed, trying next...`);
+    }
+  }
+
+  if (successText) {
+    outputBox.textContent = successText;
+
+    // 核心：如果是单题分析，自动将分析结果持久化保存进 IndexedDB！
+    if (singleSaveId) {
+      const all = await dbGetAll(STORE_QUESTIONS);
+      const targetQ = all.find(x => x.id === singleSaveId);
+      if (targetQ) {
+        targetQ.savedAnalysis = successText;
+        await dbAdd(STORE_QUESTIONS, targetQ);
+        renderVault(); // 刷新卡片显示“已存”徽章
+      }
+    }
+  } else {
+    outputBox.textContent = "⚠️ Google 服务器瞬时负载较高（503/繁忙），已自动尝试备用模型仍未接通。请稍等 1~2 分钟后再试！";
+  }
+}
+
+function copyAnalysisText() { navigator.clipboard.writeText(document.getElementById("analysisOutput").textContent).then(() => alert("已复制！")); }
+function printAnalysisContent() {
+  const w = window.open('', '', 'width=800,height=600');
+  w.document.write(`<html><head><title>思路导图</title><style>body{font-family:sans-serif;line-height:1.6;padding:20px;white-space:pre-wrap;}</style></head><body><h2>名师思路导图</h2>${document.getElementById("analysisOutput").innerHTML}</body></html>`);
+  w.document.close(); w.print();
+}
+
+async function generateSimilarSingleById(id) {
+  const all = await dbGetAll(STORE_QUESTIONS);
+  const q = all.find(x => x.id === id);
+  if (q) doGenerateSimilar([q]);
+}
+async function generateSimilarWithGemini() {
+  const checked = document.querySelectorAll(".vault-checkbox:checked");
+  if (checked.length === 0) { alert("请先勾选题目！"); return; }
+  const ids = Array.from(checked).map(b => Number(b.value));
+  const all = await dbGetAll(STORE_QUESTIONS);
+  doGenerateSimilar(all.filter(q => ids.includes(q.id)));
+}
+
+async function doGenerateSimilar(selectedQuestions) {
+  const apiKey = localStorage.getItem("GEMINI_API_KEY");
+  if (!apiKey) { alert("请先配置 API Key！"); openKeyModal(); return; }
+
+  const outputModal = document.getElementById("similarModal");
+  const outputBox = document.getElementById("similarOutput");
+  outputBox.textContent = `⏳ 正在请求 Gemini 智能出相似题（含503自动容灾）...`;
+  outputModal.classList.add("active");
+
+  const parts = [];
+  parts.push({
+    text: `你是一位全科金牌名师。请针对选中的这 ${selectedQuestions.length} 道错题，分别出一道【考点模型相同、解题逻辑一致、情境与数字不同】的高仿练习题。如果是语文错字，则出一道同类形近字/音近字辨析题并附带常用组词。分模块提供：【📝 相似变式题】、【💡 直观解法提示】、【🎯 参考答案】。`
+  });
+
+  selectedQuestions.forEach((q, idx) => {
+    const subInfo = SUBJECTS[q.subject || 'math'] || SUBJECTS.math;
+    parts.push({ text: `\n\n=== 【原题 ${idx + 1}】(学科：${subInfo.name}，考点：${q.module || '基础'}，内容：${q.note || ''}) ===` });
+    if (q.img && q.img.startsWith("data:image")) {
+      parts.push({ inline_data: { mime_type: q.img.split(";")[0].split(":")[1] || "image/png", data: q.img.split(",")[1] } });
+    }
+  });
+
+  let successText = "";
+  for (const model of GEMINI_MODELS) {
+    try {
+      const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`, {
+        method: "POST", headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ contents: [{ parts }] })
+      });
+      const data = await res.json();
+      if (res.status === 200 && data.candidates && data.candidates[0].content.parts[0].text) {
+        successText = data.candidates[0].content.parts[0].text;
+        break;
+      }
+    } catch(err) {}
+  }
+  outputBox.textContent = successText || "生成失败，Google 接口暂时繁忙，请稍后再试。";
+}
+
+function copySimilarText() { navigator.clipboard.writeText(document.getElementById("similarOutput").textContent).then(() => alert("已复制！")); }
+function printSimilarContent() {
+  const w = window.open('', '', 'width=800,height=600');
+  w.document.write(`<html><head><title>举一反三</title><style>body{font-family:sans-serif;line-height:1.6;padding:20px;white-space:pre-wrap;}</style></head><body><h2>举一反三练习</h2>${document.getElementById("similarOutput").innerHTML}</body></html>`);
+  w.document.close(); w.print();
+}
+
+// ================= 6. 模考、PDF缩放与试卷手势框选裁切 =================
 let activeExam = null;
 let examTimer = null;
 let examSecondsRemaining = 0;
@@ -883,7 +1177,6 @@ function initPinchZoom() {
   container.addEventListener("touchend", (e) => { if (e.touches.length < 2) pinchStartDist = 0; }, { passive: true });
 }
 
-// 框选裁切
 let isSnippingMode = false;
 let currentSnipTarget = null;
 let currentSnipRect = null;
@@ -891,15 +1184,12 @@ let isPointerDown = false;
 let startX = 0, startY = 0, snipPageIdx = 0;
 
 function startSnipping(num, userOpt, correctOpt) {
-  if (!activeExam.pages || activeExam.pages.length === 0) {
-    alert("本试卷未上传原卷图片，无法截图！");
-    return;
-  }
+  if (!activeExam.pages || activeExam.pages.length === 0) { alert("未上传原卷图片！"); return; }
   isSnippingMode = true;
   currentSnipTarget = { num, userOpt, correctOpt };
   currentSnipRect = null;
   document.getElementById("snipTopBanner").style.display = "flex";
-  document.getElementById("snipBannerText").textContent = `✂️ 正在框选【第 ${num} 题】：请在试卷上拖拽画框圈出题目`;
+  document.getElementById("snipBannerText").textContent = `✂️ 正在框选【第 ${num} 题】：请在试卷上画框圈出题目`;
   document.getElementById("snipConfirmBar").style.display = "none";
   document.getElementById("zoomFloatingBar").style.display = "none";
 
@@ -977,7 +1267,8 @@ function confirmSaveSnip() {
 
     await dbAdd(STORE_QUESTIONS, {
       subject: activeExam.subject || 'math',
-      module: (activeExam.subject === 'chinese' ? '阅读理解' : (activeExam.subject === 'english' ? '语法时态' : '真题考点')),
+      grade: "四上",
+      module: "真题考点",
       status: "🔴 待攻克",
       note: `${activeExam.title} 第${currentSnipTarget.num}题`,
       ans: currentSnipTarget.correctOpt,
@@ -988,7 +1279,7 @@ function confirmSaveSnip() {
 
     const btn = document.getElementById(`snip-btn-${currentSnipTarget.num}`);
     if (btn) { btn.textContent = "✅ 已保存"; btn.disabled = true; }
-    alert(`🎉 第 ${currentSnipTarget.num} 题已精准截图存入错题管家！`);
+    alert(`🎉 第 ${currentSnipTarget.num} 题已截图存入错题库！`);
     exitSnippingMode();
   };
   img.src = pageImgSrc;
@@ -1016,7 +1307,7 @@ async function startExam(examId) {
     `).join('');
     document.querySelectorAll(".crop-overlay-canvas").forEach(c => initOverlayCanvasListeners(c));
   } else {
-    wrapper.innerHTML = `<div style="background:white; padding:30px; border-radius:8px; text-align:center; max-width:400px; color:#64748b;"><h4>本卷暂未上传原卷 PDF</h4><p style="font-size:0.85rem; margin-top:6px;">请看纸卷答题，右侧直接涂卡！</p></div>`;
+    wrapper.innerHTML = `<div style="background:white; padding:30px; border-radius:8px; text-align:center; max-width:400px; color:#64748b;"><h4>本卷未上传原卷 PDF</h4><p style="font-size:0.85rem; margin-top:6px;">请看纸卷答题，右侧涂卡！</p></div>`;
   }
 
   userExamAnswers = {};
@@ -1113,140 +1404,19 @@ function exitExam() {
   }
 }
 
-// ================= 6. Gemini 智能思维导图与出题 =================
-async function analyzeSingleQuestionById(id) {
-  const all = await dbGetAll(STORE_QUESTIONS);
-  const q = all.find(x => x.id === id);
-  if (q) doAnalyzeThinking([q]);
-}
-
-async function analyzeThinkingWithGemini() {
-  const checked = document.querySelectorAll(".vault-checkbox:checked");
-  if (checked.length === 0) { alert("请先勾选需要分析思路的题目！"); return; }
-  const ids = Array.from(checked).map(b => Number(b.value));
-  const all = await dbGetAll(STORE_QUESTIONS);
-  doAnalyzeThinking(all.filter(q => ids.includes(q.id)));
-}
-
-async function doAnalyzeThinking(selectedQuestions) {
-  const apiKey = localStorage.getItem("GEMINI_API_KEY");
-  if (!apiKey) { alert("请先配置 Gemini API Key！"); openKeyModal(); return; }
-
-  const outputModal = document.getElementById("analysisModal");
-  const outputBox = document.getElementById("analysisOutput");
-  outputBox.textContent = `⏳ 正在请求 Gemini 深度分析 ${selectedQuestions.length} 道题目并生成解题导图...`;
-  outputModal.classList.add("active");
-
-  try {
-    const parts = [];
-    parts.push({
-      text: `你是一位全科特级教师（精通小学奥数思维、语文阅读理解、英语语法）。请针对家长选中的以下 ${selectedQuestions.length} 道错题，为四年级学生提供极通俗、有启发性的【名师深度思路与解题导图】：
-针对每道题按以下模块讲解：
-1. 🎯【考点模型】：指出所属学科及具体核心考点。
-2. ⚠️【思维陷阱】：孩子最容易在哪个细节/步骤想偏或丢分？
-3. 🔑【破题第一步】：抓哪个题眼或切入点？
-4. 📐【小学化直观图解/推导】：多用画图法、设数法、语境代入法拆解。
-5. 🗣️【家长一句话启发话术】：提问引导孩子自主想通。`
-    });
-
-    selectedQuestions.forEach((q, idx) => {
-      const subInfo = SUBJECTS[q.subject || 'math'] || SUBJECTS.math;
-      parts.push({ text: `\n\n=== 【第 ${idx + 1} 道题】(学科：${subInfo.name}，考点：${q.module || '未分'}，答案：${q.ans || '未填'}) ===` });
-      if (q.img && q.img.startsWith("data:image")) {
-        parts.push({ inline_data: { mime_type: q.img.split(";")[0].split(":")[1] || "image/png", data: q.img.split(",")[1] } });
-      }
-    });
-
-    const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent?key=${apiKey}`, {
-      method: "POST", headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ contents: [{ parts }] })
-    });
-    const data = await res.json();
-    outputBox.textContent = data.candidates ? data.candidates[0].content.parts[0].text : "分析失败：" + JSON.stringify(data);
-  } catch(e) {
-    outputBox.textContent = "请求失败，请检查网络：" + e.message;
-  }
-}
-
-function copyAnalysisText() { navigator.clipboard.writeText(document.getElementById("analysisOutput").textContent).then(() => alert("已复制！")); }
-function printAnalysisContent() {
-  const w = window.open('', '', 'width=800,height=600');
-  w.document.write(`<html><head><title>思路导图</title><style>body{font-family:sans-serif;line-height:1.6;padding:20px;white-space:pre-wrap;}</style></head><body><h2>名师思路导图</h2>${document.getElementById("analysisOutput").innerHTML}</body></html>`);
-  w.document.close(); w.print();
-}
-
-async function generateSimilarSingleById(id) {
-  const all = await dbGetAll(STORE_QUESTIONS);
-  const q = all.find(x => x.id === id);
-  if (q) doGenerateSimilar([q]);
-}
-
-async function generateSimilarWithGemini() {
-  const checked = document.querySelectorAll(".vault-checkbox:checked");
-  if (checked.length === 0) { alert("请先勾选需要出相似题的错题！"); return; }
-  const ids = Array.from(checked).map(b => Number(b.value));
-  const all = await dbGetAll(STORE_QUESTIONS);
-  doGenerateSimilar(all.filter(q => ids.includes(q.id)));
-}
-
-async function doGenerateSimilar(selectedQuestions) {
-  const apiKey = localStorage.getItem("GEMINI_API_KEY");
-  if (!apiKey) { alert("请先配置 Gemini API Key！"); openKeyModal(); return; }
-
-  const outputModal = document.getElementById("similarModal");
-  const outputBox = document.getElementById("similarOutput");
-  outputBox.textContent = `⏳ 正在请求 Gemini 针对选中的 ${selectedQuestions.length} 道题目生成同难度相似练习题...`;
-  outputModal.classList.add("active");
-
-  try {
-    const parts = [];
-    parts.push({
-      text: `你是一位全科金牌名师。请针对选中的这 ${selectedQuestions.length} 道错题，分别出一道【考点模型相同、解题逻辑一致、情境与数字不同】的高仿练习题，分模块提供：【📝 相似变式题】、【💡 直观解法提示】、【🎯 参考答案】。语言契合四年级水平。`
-    });
-
-    selectedQuestions.forEach((q, idx) => {
-      const subInfo = SUBJECTS[q.subject || 'math'] || SUBJECTS.math;
-      parts.push({ text: `\n\n=== 【原题 ${idx + 1}】(学科：${subInfo.name}，考点：${q.module || '基础'}) ===` });
-      if (q.img && q.img.startsWith("data:image")) {
-        parts.push({ inline_data: { mime_type: q.img.split(";")[0].split(":")[1] || "image/png", data: q.img.split(",")[1] } });
-      }
-    });
-
-    const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent?key=${apiKey}`, {
-      method: "POST", headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ contents: [{ parts }] })
-    });
-    const data = await res.json();
-    outputBox.textContent = data.candidates ? data.candidates[0].content.parts[0].text : "生成失败：" + JSON.stringify(data);
-  } catch(e) {
-    outputBox.textContent = "请求出错：" + e.message;
-  }
-}
-
-function copySimilarText() { navigator.clipboard.writeText(document.getElementById("similarOutput").textContent).then(() => alert("已复制相似题！")); }
-function printSimilarContent() {
-  const w = window.open('', '', 'width=800,height=600');
-  w.document.write(`<html><head><title>举一反三巩固练习</title><style>body{font-family:sans-serif;line-height:1.6;padding:20px;white-space:pre-wrap;}</style></head><body><h2>举一反三·强化练习题</h2>${document.getElementById("similarOutput").innerHTML}</body></html>`);
-  w.document.close(); w.print();
-}
-
-// ================= 7. 试卷与单题数据保存 =================
+// 7. 试卷上传
 let editingExamId = null;
 let tempNewExamPages = [];
 
 function openUploadExamModal() {
   editingExamId = null;
-  document.getElementById("modalExamTitleText").textContent = "录入新试卷 / 单元测";
+  document.getElementById("modalExamTitleText").textContent = "录入新试卷";
   document.getElementById("newExamTitle").value = "";
   document.getElementById("newExamDuration").value = 90;
   document.getElementById("newExamKeys").value = "";
   document.getElementById("newExamFaqAns").value = "";
   tempNewExamPages = [];
   document.getElementById("newExamPreview").innerHTML = "";
-
-  const sel = document.getElementById("newExamSubject");
-  sel.innerHTML = Object.values(SUBJECTS).map(s => `<option value="${s.id}" ${s.id===currentPortalSubject?'selected':''}>${s.icon} ${s.name}</option>`).join('');
-
   document.getElementById("uploadExamModal").classList.add("active");
 }
 
@@ -1261,10 +1431,6 @@ async function editExam(id) {
   document.getElementById("newExamKeys").value = ex.keys || (ex.keysFull ? ex.keysFull.join('') : '');
   document.getElementById("newExamFaqAns").value = (ex.faqAns || []).join('\n');
   tempNewExamPages = [...(ex.pages || [])];
-
-  const sel = document.getElementById("newExamSubject");
-  sel.innerHTML = Object.values(SUBJECTS).map(s => `<option value="${s.id}" ${s.id===(ex.subject||'math')?'selected':''}>${s.icon} ${s.name}</option>`).join('');
-
   renderExamPreview();
   document.getElementById("uploadExamModal").classList.add("active");
 }
@@ -1304,10 +1470,9 @@ async function saveNewExam() {
   const title = document.getElementById("newExamTitle").value.trim();
   const keysStr = document.getElementById("newExamKeys").value.trim().toUpperCase().replace(/[^A-D]/g, '');
   if (!title) { alert("请输入试卷名称！"); return; }
-
   const item = {
     title: title,
-    subject: document.getElementById("newExamSubject").value,
+    subject: currentPortalSubject,
     duration: Number(document.getElementById("newExamDuration").value) || 90,
     keys: keysStr,
     keysFull: keysStr.split(''),
@@ -1327,70 +1492,12 @@ async function deleteExam(id) {
     renderSubjectPortal();
   }
 }
-
-// 手动录入单题
-let curSingleImg = "";
-function openAddModal() {
-  curSingleImg = "";
-  document.getElementById("singlePreviewImg").style.display = "none";
-  document.getElementById("singlePasteText").style.display = "block";
-  document.getElementById("inpNote").value = "";
-  document.getElementById("inpAns").value = "";
-
-  const sel = document.getElementById("inpAddSubject");
-  sel.innerHTML = Object.values(SUBJECTS).map(s => `<option value="${s.id}">${s.icon} ${s.name}</option>`).join('');
-  updateAddModalModuleOptions();
-  document.getElementById("addModal").classList.add("active");
-}
-
-function updateAddModalModuleOptions() {
-  const subId = document.getElementById("inpAddSubject").value;
-  const sub = SUBJECTS[subId] || SUBJECTS.math;
-  document.getElementById("inpAddModule").innerHTML = sub.modules.map(m => `<option value="${m}">${m}</option>`).join('');
-}
-
-function handleSingleFile(file) {
-  if (!file) return;
-  const reader = new FileReader();
-  reader.onload = (e) => {
-    curSingleImg = e.target.result;
-    document.getElementById("singlePreviewImg").src = curSingleImg;
-    document.getElementById("singlePreviewImg").style.display = "block";
-    document.getElementById("singlePasteText").style.display = "none";
-  };
-  reader.readAsDataURL(file);
-}
-
-window.addEventListener("paste", (e) => {
-  if (!document.getElementById("addModal").classList.contains("active")) return;
-  for (let item of e.clipboardData.items) {
-    if (item.type.includes("image")) { handleSingleFile(item.getAsFile()); break; }
-  }
-});
-
-async function saveSingleQuestion() {
-  if (!curSingleImg) { alert("请先上传或粘贴错题原图！"); return; }
-  await dbAdd(STORE_QUESTIONS, {
-    subject: document.getElementById("inpAddSubject").value,
-    module: document.getElementById("inpAddModule").value,
-    status: "🔴 待攻克",
-    note: document.getElementById("inpNote").value || "错题",
-    ans: document.getElementById("inpAns").value,
-    img: curSingleImg,
-    updatedAt: new Date().toISOString()
-  });
-  document.getElementById("addModal").classList.remove("active");
-  renderVault();
-  alert("错题录入成功！");
-}
-
 async function deleteSingleQuestion(id) {
-  if (confirm("确定要删除这道错题吗？")) {
+  if (confirm("确定要删除此错题吗？")) {
     await dbDelete(STORE_QUESTIONS, id);
     renderVault();
   }
 }
-
 function toggleSelectAllVault() {
   const boxes = document.querySelectorAll(".vault-checkbox");
   const anyUnchecked = Array.from(boxes).some(b => !b.checked);
@@ -1401,17 +1508,16 @@ function toggleSelectAllVault() {
 async function exportData() {
   const questions = await dbGetAll(STORE_QUESTIONS);
   const exams = await dbGetAll(STORE_EXAMS);
-  const blob = new Blob([JSON.stringify({ version: 5, subjects: SUBJECTS, questions, exams }, null, 2)], { type: "application/json" });
+  const blob = new Blob([JSON.stringify({ version: 6, questions, exams }, null, 2)], { type: "application/json" });
   const a = document.createElement("a");
   a.href = URL.createObjectURL(blob);
-  a.download = `全科学学管家备份_${new Date().getMonth()+1}月${new Date().getDate()}日.json`;
+  a.download = `智学多学科备份_${new Date().getMonth()+1}月${new Date().getDate()}日.json`;
   a.click();
 }
 
 function importData() {
   const input = document.createElement("input");
-  input.type = "file";
-  input.accept = ".json";
+  input.type = "file"; input.accept = ".json";
   input.onchange = async (e) => {
     const file = e.target.files[0];
     if (!file) return;
@@ -1419,10 +1525,9 @@ function importData() {
     reader.onload = async (evt) => {
       try {
         const data = JSON.parse(evt.target.result);
-        if (data.subjects) SUBJECTS = Object.assign(SUBJECTS, data.subjects);
-        if (data.questions) { for (let q of data.questions) await dbAdd(STORE_QUESTIONS, q); }
-        if (data.exams) { for (let ex of data.exams) await dbAdd(STORE_EXAMS, ex); }
-        alert("🎉 全部学科数据恢复成功！");
+        if (data.questions) for (let q of data.questions) await dbAdd(STORE_QUESTIONS, q);
+        if (data.exams) for (let ex of data.exams) await dbAdd(STORE_EXAMS, ex);
+        alert("🎉 全部数据恢复成功！");
         renderDashboard();
       } catch(err) { alert("恢复失败：" + err.message); }
     };
