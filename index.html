@@ -210,7 +210,7 @@
     letter-spacing: 1px;
   }
 
-  /* ⭐ 语文组词与英语短句卡片外部直显区 */
+  /* 语文组词与英语短句卡片外部直显区 */
   .card-extension-badge {
     background: #f0fdf4;
     border: 1px solid #bbf7d0;
@@ -292,7 +292,7 @@
 <header>
   <div class="brand" onclick="switchNav('dashboard')">
     <span>🍎 智学多学科管家</span>
-    <span style="font-size:0.7rem; font-weight:bold; background:#e0f2fe; color:#0369a1; padding:2px 8px; border-radius:12px;">v5.6</span>
+    <span style="font-size:0.7rem; font-weight:bold; background:#e0f2fe; color:#0369a1; padding:2px 8px; border-radius:12px;">v5.7</span>
   </div>
   <div class="nav-tabs">
     <div class="nav-tab active" id="tabNavDashboard" onclick="switchNav('dashboard')">🏠 首页工作台</div>
@@ -305,7 +305,7 @@
   </div>
 </header>
 
-<!-- ================= 页面 1：仪表盘首页（已彻底清除重复旧版本） ================= -->
+<!-- ================= 页面 1：仪表盘首页 ================= -->
 <div class="container" id="viewDashboard">
   <div class="greeting-banner">
     <div>
@@ -333,7 +333,6 @@
       </div>
     </div>
     <div style="display:flex; gap:10px;">
-      <!-- ⭐ 需求 2：不限制题数，动态根据所有错题启动攻坚 -->
       <button class="btn" id="btnHeroReview" style="background:white; color:#4f46e5; font-size:0.9rem; padding:8px 18px; font-weight:800;" onclick="startEbbinghausDailyReview()">
         ⚡ 开启今日攻坚
       </button>
@@ -365,12 +364,12 @@
   <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px; flex-wrap:wrap; gap:8px;">
     <div>
       <h2 style="font-size:1.3rem;">🎯 错题复习总库</h2>
-      <p style="font-size:0.85rem; color:var(--text-sub);">语文词组已直接显示在卡片下方，点击【💡 查看思路】自动渲染公式</p>
+      <p style="font-size:0.85rem; color:var(--text-sub);">点击【原题】可修改标签；点击【思路】自动渲染公式与组词</p>
     </div>
     <div style="display:flex; gap:6px; flex-wrap:wrap;">
       <button class="btn btn-outline" onclick="toggleSelectAllVault()">全选/反选</button>
       <button class="btn btn-primary" style="background:#0284c7;" onclick="analyzeThinkingWithGemini()">💡 批量分析思路</button>
-      <button class="btn btn-success" onclick="generateSimilarWithGemini()">🤖 批量出相似题</button>
+      <button class="btn btn-success" onclick="generateSimilarWithGemini()">🤖 批量出题</button>
     </div>
   </div>
 
@@ -419,7 +418,7 @@
   </div>
 </div>
 
-<!-- ================= 考场全屏视图 (PDF渲染、双指缩放、框选截题) ================= -->
+<!-- ================= 考场全屏视图 ================= -->
 <div id="examView">
   <div class="exam-header">
     <span style="font-size:1rem; font-weight:700;" id="runningExamTitle">试卷标题</span>
@@ -643,7 +642,13 @@
 </div>
 
 <script>
-const GEMINI_MODELS = ["gemini-3.8-flash", "gemini-2.5-flash", "gemini-1.5-flash"];
+// 高可用模型轮换池（剔除失效模型，自动应对 503 拥堵）
+const GEMINI_MODELS = [
+  "gemini-3.8-flash",
+  "gemini-3.5-flash-lite",
+  "gemini-2.0-flash",
+  "gemini-1.5-flash"
+];
 
 const SUBJECTS = {
   math: {
@@ -834,7 +839,7 @@ function addNewCountdownGoal() {
   openCountdownManageModal();
 }
 
-// 1. 仪表盘渲染
+// 1. 仪表盘首页渲染
 async function renderDashboard() {
   renderCheckinStatus();
   renderCountdownBadges();
@@ -872,7 +877,7 @@ function openSubjectPortal(subjectId) {
   switchNav("portal");
 }
 
-// ================= ⭐ 需求 2：不限制题目数量，根据错题实际数量动态抽取全部待复习题 =================
+// ================= 今日攻坚引擎（动态全题复习） =================
 let reviewQueue = [];
 let reviewCurrentIdx = 0;
 let reviewTimerInterval = null;
@@ -886,17 +891,14 @@ async function startEbbinghausDailyReview() {
     return;
   }
 
-  // 抓取所有处于“🔴 待攻克”与“🟡 巩固中”的错题，不限制数量，全量复习
   const pending = all.filter(q => q.status !== '🟢 已斩杀');
-
-  // 排序：🔴 待攻克排前面，入库时间早的排前面
   pending.sort((a, b) => (a.status === '🔴 待攻克' ? -1 : 1));
 
   if (pending.length === 0) {
     alert("太棒了！所有错题都已被彻底斩杀！现在为你抽取已掌握题目进行防遗忘温故。");
     reviewQueue = [...all];
   } else {
-    reviewQueue = pending; // 真实错题有多少就攻坚多少题
+    reviewQueue = pending;
   }
 
   reviewCurrentIdx = 0;
@@ -1271,7 +1273,7 @@ async function saveSubjectErrorEntry() {
   renderDashboard();
 }
 
-// ================= 4. 错题总库与卡片渲染（⭐ 需求 3：词语拓展直接外显） =================
+// ================= 4. 错题总库与卡片渲染（⭐ 需求 1：精简按钮为 原题 / 思路 / 出题） =================
 async function renderVault() {
   renderFilterChips();
 
@@ -1297,14 +1299,15 @@ function renderQuestionCardHtml(q) {
   const subInfo = SUBJECTS[q.subject || 'math'] || SUBJECTS.math;
   let wordStyle = `background:${subInfo.bg}; color:${subInfo.color};`;
 
-  // ⭐ 需求 3：语文组词与英语短句直接外显在卡片上，无需点开思路即可查看
+  // 词语拓展直接外显在卡片上
   let extDirectHtml = "";
   if (q.customExtension) {
     extDirectHtml = `<div class="card-extension-badge"><b>📝 常用拓展：</b>${q.customExtension}</div>`;
   } else if (q.isWord) {
-    extDirectHtml = `<div class="card-extension-badge" style="background:#f8fafc; border-color:#e2e8f0; color:#94a3b8;">尚未生成拓展组词/短句（点击下方思路可自动生成）</div>`;
+    extDirectHtml = `<div class="card-extension-badge" style="background:#f8fafc; border-color:#e2e8f0; color:#94a3b8;">尚未生成拓展组词/短句（点击【思路】可自动生成）</div>`;
   }
 
+  // ⭐ 需求 1：按钮极简为【原题】、【思路】、【出题】
   return `
     <div class="q-card">
       <div style="display:flex; justify-content:space-between; align-items:center;">
@@ -1327,15 +1330,15 @@ function renderQuestionCardHtml(q) {
         <span style="cursor:pointer;" onclick="cycleQuestionStatus(${q.id}, '${q.status}')">${q.status || '🔴 待攻克'} ⟳</span>
       </div>
 
-      <div style="display:grid; grid-template-columns: 1.1fr 1fr 1fr; gap:6px; margin-top:auto; padding-top:8px; border-top:1px solid #e2e8f0;">
-        <button class="btn btn-amber" style="justify-content:center; font-size:0.75rem;" onclick="openViewEditModal(${q.id})">
-          🔍 原题/编辑
+      <div style="display:grid; grid-template-columns: 1fr 1.15fr 1fr; gap:6px; margin-top:auto; padding-top:8px; border-top:1px solid #e2e8f0;">
+        <button class="btn btn-amber" style="justify-content:center; font-size:0.78rem;" onclick="openViewEditModal(${q.id})">
+          🔍 原题
         </button>
-        <button class="btn" style="justify-content:center; background:#e0f2fe; color:#0369a1; font-size:0.75rem;" onclick="analyzeSingleQuestionById(${q.id})">
-          💡 ${q.savedAnalysis ? '查看思路(已存)' : '思路导图'}
+        <button class="btn" style="justify-content:center; background:#e0f2fe; color:#0369a1; font-size:0.78rem;" onclick="analyzeSingleQuestionById(${q.id})">
+          💡 思路${q.savedAnalysis ? '(已存)' : ''}
         </button>
-        <button class="btn btn-success" style="justify-content:center; font-size:0.75rem;" onclick="generateSimilarSingleById(${q.id})">
-          🤖 出相似题
+        <button class="btn btn-success" style="justify-content:center; font-size:0.78rem;" onclick="generateSimilarSingleById(${q.id})">
+          🤖 出题
         </button>
       </div>
     </div>
@@ -1477,7 +1480,7 @@ function renderRichContent(element, rawText) {
   });
 }
 
-// 7. Gemini 思路分析与拓展组词
+// ================= 7. Gemini 思路分析与拓展组词（⭐ 需求 2：高可用防 503 避峰重试） =================
 let activeAnalysisQuestionId = null;
 
 async function analyzeSingleQuestionById(id) {
@@ -1554,13 +1557,16 @@ async function analyzeThinkingWithGemini() {
   doAnalyzeThinking(all.filter(q => ids.includes(q.id)), null);
 }
 
+// 辅助等待函数
+const sleep = (ms) => new Promise(res => setTimeout(res, ms));
+
 async function doAnalyzeThinking(selectedQuestions, singleSaveId) {
   const apiKey = localStorage.getItem("GEMINI_API_KEY");
   if (!apiKey) { alert("请先配置 Gemini API Key！"); openKeyModal(); return; }
 
   const outputModal = document.getElementById("analysisModal");
   const outputBox = document.getElementById("analysisOutput");
-  outputBox.innerHTML = `⏳ 正在请求 Gemini 深度剖析（含 KaTeX 运算符号解析与 503 自动容灾），请稍候约 5~8 秒...`;
+  outputBox.innerHTML = `⏳ 正在请求 Gemini 深度剖析（含高可用避峰连接），请稍候约 5~8 秒...`;
   outputModal.classList.add("active");
 
   const parts = [];
@@ -1589,8 +1595,12 @@ async function doAnalyzeThinking(selectedQuestions, singleSaveId) {
     }
   });
 
+  // ⭐ 需求 2：强化避峰轮换与智能重试（彻底消除 503 报错困扰）
   let successText = "";
-  for (const model of GEMINI_MODELS) {
+  let lastErrorMsg = "";
+
+  for (let i = 0; i < GEMINI_MODELS.length; i++) {
+    const model = GEMINI_MODELS[i];
     try {
       const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`, {
         method: "POST", headers: { "Content-Type": "application/json" },
@@ -1600,8 +1610,18 @@ async function doAnalyzeThinking(selectedQuestions, singleSaveId) {
       if (res.status === 200 && data.candidates && data.candidates[0].content.parts[0].text) {
         successText = data.candidates[0].content.parts[0].text;
         break;
+      } else {
+        lastErrorMsg = (data.error && data.error.message) || `HTTP ${res.status}`;
+        // 如果遇到 503 拥堵，休眠 1.2 秒给服务器排队缓冲
+        if (res.status === 503) {
+          outputBox.innerHTML = `⏳ 正在为您自动避开高峰拥堵（切换备用线路中，稍候 1 秒）...`;
+          await sleep(1200);
+        }
       }
-    } catch(err) {}
+    } catch(err) {
+      lastErrorMsg = err.message;
+      await sleep(1000);
+    }
   }
 
   if (successText) {
@@ -1621,7 +1641,13 @@ async function doAnalyzeThinking(selectedQuestions, singleSaveId) {
     }
     renderRichContent(outputBox, successText);
   } else {
-    outputBox.innerHTML = `<span style="color:#dc2626;">⚠️ Google 服务器瞬时繁忙（503），已自动尝试备用模型仍未接通。请稍等 1 分钟后再试！</span>`;
+    outputBox.innerHTML = `
+      <div style="text-align:center; padding:20px 10px;">
+        <div style="color:#dc2626; font-weight:bold; margin-bottom:10px;">⚠️ Google 服务器瞬时流量激增（503 繁忙），备用模型暂未连通</div>
+        <div style="font-size:0.85rem; color:#64748b; margin-bottom:14px;">错误详情: ${lastErrorMsg}</div>
+        <button class="btn btn-primary" onclick="reAnalyzeCurrentWithGemini()">🔄 立即重新尝试分析</button>
+      </div>
+    `;
   }
 }
 
@@ -1659,7 +1685,7 @@ async function doGenerateSimilar(selectedQuestions) {
 
   const outputModal = document.getElementById("similarModal");
   const outputBox = document.getElementById("similarOutput");
-  outputBox.innerHTML = `⏳ 正在请求 Gemini 智能出相似题（含数学公式美化）...`;
+  outputBox.innerHTML = `⏳ 正在请求 Gemini 智能出题（含自动避峰连接）...`;
   outputModal.classList.add("active");
 
   const parts = [];
@@ -1687,13 +1713,16 @@ async function doGenerateSimilar(selectedQuestions) {
         successText = data.candidates[0].content.parts[0].text;
         break;
       }
-    } catch(err) {}
+      if (res.status === 503) await sleep(1200);
+    } catch(err) {
+      await sleep(1000);
+    }
   }
 
   if (successText) {
     renderRichContent(outputBox, successText);
   } else {
-    outputBox.innerHTML = `<span style="color:#dc2626;">生成失败，Google 接口暂时繁忙，请稍后再试。</span>`;
+    outputBox.innerHTML = `<span style="color:#dc2626;">生成失败，Google 接口暂时繁忙，请稍等 1 分钟后重试。</span>`;
   }
 }
 
@@ -2077,6 +2106,7 @@ function toggleSelectAllVault() {
   boxes.forEach(b => b.checked = anyUnchecked);
 }
 
+// 备份与恢复
 async function exportData() {
   const questions = await dbGetAll(STORE_QUESTIONS);
   const exams = await dbGetAll(STORE_EXAMS);
