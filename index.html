@@ -2,18 +2,27 @@
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
-<!-- 允许双指缩放，最大支持 5 倍缩放 -->
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <title>多学科学习工作台 & 智能错题管家</title>
-<!-- Mozilla 官方开源 PDF.js 引擎 -->
+
+<!-- 1. Mozilla 官方开源 PDF.js 引擎 -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
 <script>
   if (window.pdfjsLib) {
     pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
   }
 </script>
+
+<!-- 2. Markdown 渲染库 (Marked) -->
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+
+<!-- 3. KaTeX 数学公式渲染库 (排版乘号、等式、分数) -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js"></script>
+
 <style>
   :root {
     --primary: #2563eb;
@@ -83,6 +92,7 @@
   .btn-success { background: var(--success); color: white; }
   .btn-danger { background: #fee2e2; color: var(--danger); }
   .btn-outline { background: white; border: 1px solid var(--border); color: var(--text); }
+  .btn-amber { background: #fef3c7; color: #b45309; }
   .container { max-width: 1200px; margin: 18px auto; padding: 0 16px; }
 
   /* 仪表盘首页 */
@@ -164,7 +174,7 @@
   }
   .filter-chip.active { background: #0f172a; color: white; }
 
-  .q-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 16px; }
+  .q-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(330px, 1fr)); gap: 16px; }
   .q-card {
     background: white;
     border: 1px solid var(--border);
@@ -178,7 +188,6 @@
   .q-img-wrap { width: 100%; max-height: 200px; overflow: hidden; background: #f8fafc; border-radius: 8px; margin: 8px 0; border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; }
   .q-img-wrap img { max-width: 100%; max-height: 200px; object-fit: contain; }
   
-  /* 纯文字字词/单词卡片样式 */
   .word-card-text {
     font-size: 1.5rem;
     font-weight: 800;
@@ -220,9 +229,51 @@
   input[type="text"], input[type="number"], select, textarea { padding: 8px 12px; border: 1px solid var(--border); border-radius: 8px; font-family: inherit; font-size: 0.9rem; }
   .ans-reveal { margin-top: 10px; padding: 10px; background: #f1f5f9; border-left: 4px solid var(--primary); border-radius: 4px; display: none; font-size: 0.85rem; }
   .ans-reveal.show { display: block; }
-  .analysis-output-box { background: #f8fafc; border: 1px solid var(--border); border-radius: 10px; padding: 16px; font-size: 0.95rem; line-height: 1.65; white-space: pre-wrap; max-height: 60vh; overflow-y: auto; margin: 12px 0; }
+
+  /* Markdown 与 数学公式渲染专属样式 */
+  .analysis-output-box {
+    background: #f8fafc;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 16px 20px;
+    font-size: 0.95rem;
+    line-height: 1.7;
+    max-height: 55vh;
+    overflow-y: auto;
+    margin: 12px 0;
+    color: #1e293b;
+  }
+  .analysis-output-box h1, .analysis-output-box h2, .analysis-output-box h3, .analysis-output-box h4 {
+    margin: 12px 0 6px 0;
+    color: #0f172a;
+    font-weight: 700;
+  }
+  .analysis-output-box h3 { font-size: 1.05rem; }
+  .analysis-output-box h4 { font-size: 0.95rem; color: #0284c7; }
+  .analysis-output-box p { margin-bottom: 8px; }
+  .analysis-output-box ul, .analysis-output-box ol { padding-left: 20px; margin-bottom: 10px; }
+  .analysis-output-box li { margin-bottom: 4px; }
+  .analysis-output-box .katex-display { margin: 10px 0; overflow-x: auto; overflow-y: hidden; padding: 4px 0; }
+  .analysis-output-box code { background: #e2e8f0; padding: 2px 4px; border-radius: 4px; font-size: 0.88rem; }
+
+  /* 语文组词与英语造句拓展专属置顶卡片 */
+  .ext-words-box {
+    background: #f0fdf4;
+    border: 1.5px solid #86efac;
+    border-radius: 10px;
+    padding: 12px 14px;
+    margin-bottom: 12px;
+  }
+  .ext-words-title {
+    font-size: 0.85rem;
+    font-weight: 800;
+    color: #15803d;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 6px;
+  }
   
-  /* 错题弹窗分段选项卡 */
   .modal-subtabs { display: flex; background: #e2e8f0; padding: 3px; border-radius: 8px; margin-bottom: 14px; }
   .modal-subtab { flex: 1; text-align: center; padding: 6px; font-size: 0.85rem; font-weight: 700; cursor: pointer; border-radius: 6px; color: #64748b; }
   .modal-subtab.active { background: white; color: var(--primary); }
@@ -233,7 +284,7 @@
 <header>
   <div class="brand" onclick="switchNav('dashboard')">
     <span>🍎 智学多学科管家</span>
-    <span style="font-size:0.7rem; font-weight:bold; background:#e0f2fe; color:#0369a1; padding:2px 8px; border-radius:12px;">v5.3</span>
+    <span style="font-size:0.7rem; font-weight:bold; background:#e0f2fe; color:#0369a1; padding:2px 8px; border-radius:12px;">v5.4 (KaTeX公式美化版)</span>
   </div>
   <div class="nav-tabs">
     <div class="nav-tab active" id="tabNavDashboard" onclick="switchNav('dashboard')">🏠 首页工作台</div>
@@ -251,7 +302,7 @@
   <div class="greeting-banner">
     <div>
       <h2 style="font-size:1.3rem; margin-bottom:4px;">👋 欢迎回来，Jason！</h2>
-      <p style="font-size:0.85rem; color:var(--text-sub);">数学重在思维突破，语文英语抓好生字词与错题沉淀！</p>
+      <p style="font-size:0.85rem; color:var(--text-sub);">数学重在思维突破，语文英语抓好生字词、例句与错题沉淀！</p>
     </div>
     <div class="countdown-badge" id="wmoCountdownText">🏆 距 11-29 WMO 地方省测还有计算中...</div>
   </div>
@@ -286,7 +337,6 @@
       <button class="btn btn-outline" style="margin-bottom:8px;" onclick="switchNav('dashboard')">← 返回首页工作台</button>
       <h2 style="font-size:1.35rem;" id="portalSubjectTitle">学科空间</h2>
     </div>
-    <!-- 动态按键：数学是【录入真题/错题】，其它学科是【录入错题】 -->
     <div id="portalActionBtnContainer"></div>
   </div>
   <div class="exam-grid" id="portalExamList"></div>
@@ -297,7 +347,7 @@
   <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px; flex-wrap:wrap; gap:8px;">
     <div>
       <h2 style="font-size:1.3rem;">🎯 错题复习总库</h2>
-      <p style="font-size:0.85rem; color:var(--text-sub);">点击卡片【💡 思路导图】可秒开上次保存结果（语文自动组词拓展）</p>
+      <p style="font-size:0.85rem; color:var(--text-sub);">点击【🔍 查看原题/编辑】可修改标签；点击【💡 查看思路】自动渲染精美数学公式与拓展组词</p>
     </div>
     <div style="display:flex; gap:6px; flex-wrap:wrap;">
       <button class="btn btn-outline" onclick="toggleSelectAllVault()">全选/反选</button>
@@ -381,18 +431,82 @@
 
 <!-- ================= 弹窗集合 ================= -->
 
-<!-- 专属错题录入弹窗（数学仅拍照裁切，语文英语按学科定制提示与举例） -->
+<!-- 1. 查看原题与编辑弹窗 (需求新增) -->
+<div class="modal-overlay" id="viewEditQuestionModal">
+  <div class="modal" style="max-width:700px;">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+      <h3 style="font-size:1.15rem; color:#0f172a;" id="viewModalTitle">🔍 查看原题与编辑</h3>
+      <span id="viewModalSubjectBadge" style="font-size:0.75rem; padding:2px 8px; border-radius:10px; font-weight:bold;"></span>
+    </div>
+
+    <!-- 原题展示区 -->
+    <div id="viewModalPreviewContainer" style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px; padding:12px; text-align:center; margin-bottom:14px; max-height:280px; overflow:auto;">
+    </div>
+
+    <!-- 字段编辑区 -->
+    <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin-bottom:12px;">
+      <div class="form-group">
+        <label>所属学科</label>
+        <select id="editQSubject" onchange="updateEditModalModules()"></select>
+      </div>
+      <div class="form-group">
+        <label>所属年级</label>
+        <select id="editQGrade">
+          <option value="四上">四年级上册 (四上)</option>
+          <option value="四下">四年级下册 (四下)</option>
+          <option value="五上">五年级上册 (五上)</option>
+          <option value="五下">五年级下册 (五下)</option>
+          <option value="六上">六年级上册 (六上)</option>
+          <option value="六下">六年级下册 (六下)</option>
+        </select>
+      </div>
+    </div>
+
+    <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin-bottom:12px;">
+      <div class="form-group">
+        <label>分类模块</label>
+        <select id="editQModule"></select>
+      </div>
+      <div class="form-group">
+        <label>掌握状态</label>
+        <select id="editQStatus">
+          <option value="🔴 待攻克">🔴 待攻克</option>
+          <option value="🟡 巩固中">🟡 巩固中</option>
+          <option value="🟢 已斩杀">🟢 已斩杀</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label>题目备注 / 错字 / 标题</label>
+      <input type="text" id="editQNote">
+    </div>
+
+    <div class="form-group">
+      <label>参考答案 / 纠错释义</label>
+      <input type="text" id="editQAns">
+    </div>
+
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-top:16px;">
+      <button class="btn btn-danger" onclick="deleteCurrentEditingQuestion()">🗑️ 删除此题</button>
+      <div style="display:flex; gap:8px;">
+        <button class="btn btn-outline" onclick="document.getElementById('viewEditQuestionModal').classList.remove('active')">关闭</button>
+        <button class="btn btn-primary" onclick="saveCurrentEditingQuestion()">💾 保存修改</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 2. 录入错题弹窗 -->
 <div class="modal-overlay" id="errorEntryModal">
   <div class="modal">
     <h3 style="margin-bottom:12px;" id="errorEntryModalTitle">录入错题</h3>
     
-    <!-- 分段子选项卡（数学模式下会自动隐藏，仅保留拍照） -->
     <div class="modal-subtabs" id="errorEntryModalSubtabs">
       <div class="modal-subtab active" id="tabEntryWord" onclick="switchErrorEntryTab('word')">✍️ 1. 错字/词语录入</div>
       <div class="modal-subtab" id="tabEntryPhoto" onclick="switchErrorEntryTab('photo')">📸 2. 试卷拍照裁剪</div>
     </div>
 
-    <!-- 公共标签栏：年级（记住上次选择）与模块 -->
     <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin-bottom:12px;">
       <div class="form-group">
         <label>所属年级（已记住上次选择）</label>
@@ -411,7 +525,6 @@
       </div>
     </div>
 
-    <!-- 通道 1：字词/单词录入（根据学科动态切换中/英专属占位提示） -->
     <div id="panelEntryWord">
       <div class="form-group">
         <label id="lblWordTitle">输入错字 / 听写词语 / 拼音</label>
@@ -423,7 +536,6 @@
       </div>
     </div>
 
-    <!-- 通道 2：拍照裁切 -->
     <div id="panelEntryPhoto" style="display:none;">
       <div style="border:2px dashed #93c5fd; padding:15px; text-align:center; border-radius:8px; margin-bottom:10px; cursor:pointer;" onclick="document.getElementById('cameraPhotoFile').click()">
         <div id="cameraPhotoText">📸 点击调起 iPad 相机拍照 / 从相册选择试卷</div>
@@ -445,7 +557,7 @@
   </div>
 </div>
 
-<!-- 录入完整真题卷弹窗（仅数学使用） -->
+<!-- 3. 录入完整真题卷弹窗 (数学专用) -->
 <div class="modal-overlay" id="uploadExamModal">
   <div class="modal">
     <h3 style="margin-bottom:12px;" id="modalExamTitleText">编辑试卷</h3>
@@ -465,9 +577,9 @@
   </div>
 </div>
 
-<!-- Gemini 深度分析展示弹窗 -->
+<!-- 4. Gemini 深度分析展示弹窗 (含 KaTeX 公式美化 + 语文组词/英语短句文本框) -->
 <div class="modal-overlay" id="analysisModal">
-  <div class="modal" style="max-width:760px;">
+  <div class="modal" style="max-width:780px;">
     <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;">
       <div style="display:flex; align-items:center; gap:8px;">
         <h3 style="color:#0369a1;">💡 深度思路与名师导图</h3>
@@ -479,12 +591,23 @@
         <button class="btn btn-primary" onclick="printAnalysisContent()">🖨️ 打印</button>
       </div>
     </div>
-    <div class="analysis-output-box" id="analysisOutput">分析中...</div>
+
+    <!-- ⭐ 需求新增：语文组词（3-5个常见词）与 英语造句（1-3个短句）专属置顶文本框 -->
+    <div class="ext-words-box" id="extWordsPanel" style="display:none;">
+      <div class="ext-words-title">
+        <span id="extWordsHeaderLabel">📝 常用词语拓展（3~5个常见词）</span>
+        <button class="btn btn-outline" style="padding:2px 8px; font-size:0.75rem; background:white;" onclick="saveCustomExtensionWords()">💾 保存拓展内容</button>
+      </div>
+      <input type="text" id="inpCustomExtensionWords" placeholder="在此输入词语或例句拓展..." style="width:100%; border:1px solid #86efac; background:white; font-size:0.95rem; font-weight:600; color:#166534;">
+    </div>
+
+    <!-- 富文本与数学公式渲染容器 -->
+    <div class="analysis-output-box" id="analysisOutput">正在加载分析结果...</div>
     <div style="display:flex; justify-content:flex-end;"><button class="btn btn-outline" onclick="document.getElementById('analysisModal').classList.remove('active')">关闭</button></div>
   </div>
 </div>
 
-<!-- Gemini 相似题弹窗 -->
+<!-- 5. Gemini 相似题弹窗 -->
 <div class="modal-overlay" id="similarModal">
   <div class="modal" style="max-width:750px;">
     <div style="display:flex; justify-content:space-between; align-items:center;">
@@ -499,7 +622,7 @@
   </div>
 </div>
 
-<!-- Key 弹窗 -->
+<!-- 6. Key 弹窗 -->
 <div class="modal-overlay" id="keyModal">
   <div class="modal" style="max-width:400px;">
     <h3>配置 Gemini API Key</h3>
@@ -700,7 +823,7 @@ async function renderSubjectPortal() {
   }
 }
 
-// ================= 3. 错题录入业务（核心修改：数学隐藏错字栏，英语去除中文“璧”提示） =================
+// ================= 3. 错题录入业务 =================
 let activeEntryTab = "word";
 let activeCameraCropBase64 = "";
 
@@ -708,16 +831,13 @@ function openSubjectErrorEntryModal(subjectKey) {
   const sub = SUBJECTS[subjectKey] || SUBJECTS.chinese;
   document.getElementById("errorEntryModalTitle").textContent = `${sub.icon} ${sub.name} · 录入错题`;
 
-  // 1. 恢复上一次选择的年级标签
   const lastGrade = localStorage.getItem("LAST_GRADE_TAG") || "四上";
   document.getElementById("inpEntryGrade").value = lastGrade;
 
-  // 2. 动态填充当前学科的模块分类
   const lastModule = localStorage.getItem("LAST_MODULE_" + subjectKey) || sub.modules[0];
   const modSelect = document.getElementById("inpEntryModule");
   modSelect.innerHTML = sub.modules.map(m => `<option value="${m}" ${m===lastModule?'selected':''}>${m}</option>`).join('');
 
-  // 3. 重置字段
   document.getElementById("inpWordText").value = "";
   document.getElementById("inpWordNote").value = "";
   activeCameraCropBase64 = "";
@@ -726,24 +846,19 @@ function openSubjectErrorEntryModal(subjectKey) {
 
   const subTabs = document.getElementById("errorEntryModalSubtabs");
 
-  // ⭐ 修改点 1：如果是数学，隐藏“错字/词语”选项卡，只保留拍照裁剪
   if (subjectKey === "math") {
     subTabs.style.display = "none";
     switchErrorEntryTab("photo");
-  } 
-  // ⭐ 修改点 2：如果是英语，定制英文专用标签与举例，去掉中文“璧”等例子
-  else if (subjectKey === "english") {
+  } else if (subjectKey === "english") {
     subTabs.style.display = "flex";
     document.getElementById("tabEntryWord").innerHTML = "🔤 1. 单词/短语录入";
     document.getElementById("tabEntryPhoto").innerHTML = "📸 2. 试卷拍照裁剪";
     document.getElementById("lblWordTitle").textContent = "输入易错单词 / 词组短语 / 听写词汇";
     document.getElementById("inpWordText").placeholder = "如：embarrass, accommodation, through/thorough 等";
     document.getElementById("lblWordNote").textContent = "词义 / 易错点 / 辨析搭配（选填）";
-    document.getElementById("inpWordNote").placeholder = "如：注意双写r和双写s；词义：使尴尬/难堪；搭配：be embarrassed about";
+    document.getElementById("inpWordNote").placeholder = "如：注意双写r和双写s；词义：使尴尬/难堪";
     switchErrorEntryTab("word");
-  } 
-  // 语文模式：保留错字词语与中文“璧”举例
-  else {
+  } else {
     subTabs.style.display = "flex";
     document.getElementById("tabEntryWord").innerHTML = "✍️ 1. 错字/词语录入";
     document.getElementById("tabEntryPhoto").innerHTML = "📸 2. 试卷拍照裁剪";
@@ -765,7 +880,6 @@ function switchErrorEntryTab(tab) {
   document.getElementById("panelEntryPhoto").style.display = tab === "photo" ? "block" : "none";
 }
 
-// 拍照与裁切
 function handleCameraCropFile(file) {
   if (!file) return;
   const reader = new FileReader();
@@ -805,9 +919,7 @@ function initCropModalCanvas(imgEl) {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     ctx.fillStyle = "rgba(37, 99, 235, 0.25)";
     ctx.fillRect(rX, rY, rW, rH);
-    ctx.strokeStyle = "#2563eb";
-    ctx.lineWidth = 2;
-    ctx.setLineDash([4, 4]);
+    ctx.strokeStyle = "#2563eb"; ctx.lineWidth = 2; ctx.setLineDash([4, 4]);
     ctx.strokeRect(rX, rY, rW, rH);
   };
   canvas.onpointerup = (e) => {
@@ -871,7 +983,7 @@ async function saveSubjectErrorEntry() {
   renderDashboard();
 }
 
-// ================= 4. 错题总库与卡片渲染 =================
+// ================= 4. 错题总库与卡片渲染 (新增【查看原题/编辑】按钮) =================
 async function renderVault() {
   renderFilterChips();
 
@@ -902,7 +1014,7 @@ function renderQuestionCardHtml(q) {
       <div style="display:flex; justify-content:space-between; align-items:center;">
         <label style="display:flex; align-items:center; gap:6px; font-weight:700; cursor:pointer;">
           <input type="checkbox" class="vault-checkbox" value="${q.id}">
-          <span>${q.note || '错题'}</span>
+          <span style="font-size:0.95rem;">${q.note || '错题'}</span>
         </label>
         <div>
           <span style="font-size:0.75rem; background:${subInfo.bg}; color:${subInfo.color}; padding:2px 8px; border-radius:10px; font-weight:bold;">${subInfo.name}</span>
@@ -910,19 +1022,23 @@ function renderQuestionCardHtml(q) {
         </div>
       </div>
       
-      <!-- 纯词汇显示专属色块，拍照题显示裁切原图 -->
+      <!-- 展示缩略图或词汇 -->
       ${q.isWord ? `<div class="word-card-text" style="${wordStyle}">${q.note}</div>` : `<div class="q-img-wrap"><img src="${q.img}"></div>`}
 
       <div style="display:flex; justify-content:space-between; font-size:0.8rem; color:#64748b; margin-bottom:8px;">
-        <span>${q.grade || '四年级'} · <b>${q.module || '基础考点'}</b></span>
+        <span>${q.grade || '四上'} · <b>${q.module || '基础考点'}</b></span>
         <span style="cursor:pointer;" onclick="cycleQuestionStatus(${q.id}, '${q.status}')">${q.status || '🔴 待攻克'} ⟳</span>
       </div>
-      
-      <div style="display:flex; gap:6px; margin-top:auto; padding-top:8px; border-top:1px solid #e2e8f0;">
-        <button class="btn" style="flex:1; justify-content:center; background:#e0f2fe; color:#0369a1; font-size:0.75rem;" onclick="analyzeSingleQuestionById(${q.id})">
+
+      <!-- ⭐ 需求新增：【🔍 查看原题/编辑】前置按钮 -->
+      <div style="display:grid; grid-template-columns: 1.1fr 1fr 1fr; gap:6px; margin-top:auto; padding-top:8px; border-top:1px solid #e2e8f0;">
+        <button class="btn btn-amber" style="justify-content:center; font-size:0.75rem;" onclick="openViewEditModal(${q.id})">
+          🔍 原题/编辑
+        </button>
+        <button class="btn" style="justify-content:center; background:#e0f2fe; color:#0369a1; font-size:0.75rem;" onclick="analyzeSingleQuestionById(${q.id})">
           💡 ${q.savedAnalysis ? '查看思路(已存)' : '思路导图'}
         </button>
-        <button class="btn btn-success" style="flex:1; justify-content:center; font-size:0.75rem;" onclick="generateSimilarSingleById(${q.id})">
+        <button class="btn btn-success" style="justify-content:center; font-size:0.75rem;" onclick="generateSimilarSingleById(${q.id})">
           🤖 出相似题
         </button>
       </div>
@@ -974,7 +1090,101 @@ async function cycleQuestionStatus(id, curStatus) {
   renderVault();
 }
 
-// ================= 5. Gemini 503容灾调用 & 思路持久化 & 语文组词 =================
+// ================= 5. 【查看原题与编辑】弹窗业务 =================
+let viewingQuestionId = null;
+
+async function openViewEditModal(id) {
+  const all = await dbGetAll(STORE_QUESTIONS);
+  const q = all.find(x => x.id === id);
+  if (!q) return;
+  viewingQuestionId = id;
+
+  const subInfo = SUBJECTS[q.subject || 'math'] || SUBJECTS.math;
+  document.getElementById("viewModalSubjectBadge").textContent = subInfo.name;
+  document.getElementById("viewModalSubjectBadge").style.background = subInfo.bg;
+  document.getElementById("viewModalSubjectBadge").style.color = subInfo.color;
+
+  // 渲染大图/大字
+  const previewBox = document.getElementById("viewModalPreviewContainer");
+  if (q.isWord) {
+    previewBox.innerHTML = `<div style="font-size:2.2rem; font-weight:800; color:${subInfo.color}; padding:20px 0;">${q.note}</div>`;
+  } else if (q.img) {
+    previewBox.innerHTML = `<img src="${q.img}" style="max-width:100%; max-height:260px; border-radius:6px; box-shadow:0 2px 10px rgba(0,0,0,0.1);">`;
+  } else {
+    previewBox.innerHTML = `<div style="color:#94a3b8; padding:30px;">无原题图片</div>`;
+  }
+
+  // 填充编辑表单
+  const subSel = document.getElementById("editQSubject");
+  subSel.innerHTML = Object.values(SUBJECTS).map(s => `<option value="${s.id}" ${s.id===(q.subject||'math')?'selected':''}>${s.icon} ${s.name}</option>`).join('');
+
+  document.getElementById("editQGrade").value = q.grade || "四上";
+  updateEditModalModules(q.module);
+  document.getElementById("editQStatus").value = q.status || "🔴 待攻克";
+  document.getElementById("editQNote").value = q.note || "";
+  document.getElementById("editQAns").value = q.ans || "";
+
+  document.getElementById("viewEditQuestionModal").classList.add("active");
+}
+
+function updateEditModalModules(selectedModule) {
+  const subId = document.getElementById("editQSubject").value;
+  const sub = SUBJECTS[subId] || SUBJECTS.math;
+  const modSel = document.getElementById("editQModule");
+  modSel.innerHTML = sub.modules.map(m => `<option value="${m}" ${m===selectedModule?'selected':''}>${m}</option>`).join('');
+}
+
+async function saveCurrentEditingQuestion() {
+  if (!viewingQuestionId) return;
+  const all = await dbGetAll(STORE_QUESTIONS);
+  const q = all.find(x => x.id === viewingQuestionId);
+  if (!q) return;
+
+  q.subject = document.getElementById("editQSubject").value;
+  q.grade = document.getElementById("editQGrade").value;
+  q.module = document.getElementById("editQModule").value;
+  q.status = document.getElementById("editQStatus").value;
+  q.note = document.getElementById("editQNote").value.trim();
+  q.ans = document.getElementById("editQAns").value.trim();
+  q.updatedAt = new Date().toISOString();
+
+  await dbAdd(STORE_QUESTIONS, q);
+  document.getElementById("viewEditQuestionModal").classList.remove("active");
+  alert("修改已保存！");
+  renderVault();
+  renderDashboard();
+}
+
+async function deleteCurrentEditingQuestion() {
+  if (!viewingQuestionId) return;
+  if (confirm("确定要删除此错题吗？")) {
+    await dbDelete(STORE_QUESTIONS, viewingQuestionId);
+    document.getElementById("viewEditQuestionModal").classList.remove("active");
+    renderVault();
+    renderDashboard();
+  }
+}
+
+// ================= 6. KaTeX公式渲染与Markdown排版引擎 =================
+// 渲染 LaTeX 数学公式和 Markdown
+function renderRichContent(element, rawText) {
+  // 1. 先用 marked.js 将 Markdown 标记转成规范 HTML
+  let parsedHtml = marked.parse(rawText || "");
+  element.innerHTML = parsedHtml;
+
+  // 2. 调用 KaTeX 自动识别并渲染 $...$ 及 $$...$$ 公式
+  renderMathInElement(element, {
+    delimiters: [
+      { left: "$$", right: "$$", display: true },
+      { left: "$", right: "$", display: false },
+      { left: "\\(", right: "\\)", display: false },
+      { left: "\\[", right: "\\]", display: true }
+    ],
+    throwOnError: false
+  });
+}
+
+// ================= 7. Gemini 思路分析、组词/造句拓展与快照持久化 =================
 let activeAnalysisQuestionId = null;
 
 async function analyzeSingleQuestionById(id) {
@@ -985,15 +1195,47 @@ async function analyzeSingleQuestionById(id) {
   activeAnalysisQuestionId = id;
   document.getElementById("btnReAnalyze").style.display = "inline-flex";
 
+  // 设置语文/英语拓展词语文本框
+  const extBox = document.getElementById("extWordsPanel");
+  const extLabel = document.getElementById("extWordsHeaderLabel");
+  const extInput = document.getElementById("inpCustomExtensionWords");
+
+  if (q.subject === "chinese" || q.subject === "english") {
+    extBox.style.display = "block";
+    if (q.subject === "chinese") {
+      extLabel.textContent = "📝 常用词语拓展（3~5个常见词）：";
+      extInput.placeholder = "如：名门望族、举世闻名、莫名其妙、不名一钱";
+    } else {
+      extLabel.textContent = "🗣️ 常用短句拓展（1~3个常用例句）：";
+      extInput.placeholder = "如：See you tomorrow. / I will finish my homework by tomorrow morning.";
+    }
+    extInput.value = q.customExtension || "";
+  } else {
+    extBox.style.display = "none";
+  }
+
+  const outputModal = document.getElementById("analysisModal");
+  const outputBox = document.getElementById("analysisOutput");
+
   if (q.savedAnalysis) {
-    // 0秒读取已保存快照
-    const outputModal = document.getElementById("analysisModal");
     document.getElementById("analysisSourceBadge").textContent = "⚡ 已加载历史保存结果 (不耗Token)";
-    document.getElementById("analysisOutput").textContent = q.savedAnalysis;
+    renderRichContent(outputBox, q.savedAnalysis);
     outputModal.classList.add("active");
   } else {
     document.getElementById("analysisSourceBadge").textContent = "🤖 正在请求 AI 实时解析";
     doAnalyzeThinking([q], id);
+  }
+}
+
+async function saveCustomExtensionWords() {
+  if (!activeAnalysisQuestionId) return;
+  const text = document.getElementById("inpCustomExtensionWords").value.trim();
+  const all = await dbGetAll(STORE_QUESTIONS);
+  const q = all.find(x => x.id === activeAnalysisQuestionId);
+  if (q) {
+    q.customExtension = text;
+    await dbAdd(STORE_QUESTIONS, q);
+    alert("🎉 拓展内容已保存到此错题记录！");
   }
 }
 
@@ -1014,35 +1256,37 @@ async function analyzeThinkingWithGemini() {
   const all = await dbGetAll(STORE_QUESTIONS);
   activeAnalysisQuestionId = null;
   document.getElementById("btnReAnalyze").style.display = "none";
+  document.getElementById("extWordsPanel").style.display = "none";
   document.getElementById("analysisSourceBadge").textContent = "🤖 批量实时分析";
   doAnalyzeThinking(all.filter(q => ids.includes(q.id)), null);
 }
 
-// 执行思路分析（包含 503 轮换、保存快照、语文自动组词拓展）
+// 核心分析调度
 async function doAnalyzeThinking(selectedQuestions, singleSaveId) {
   const apiKey = localStorage.getItem("GEMINI_API_KEY");
   if (!apiKey) { alert("请先配置 Gemini API Key！"); openKeyModal(); return; }
 
   const outputModal = document.getElementById("analysisModal");
   const outputBox = document.getElementById("analysisOutput");
-  outputBox.textContent = `⏳ 正在请求 Gemini 深度剖析（如遇503自动轮换备用模型），请稍候约 5~8 秒...`;
+  outputBox.innerHTML = `⏳ 正在请求 Gemini 深度剖析（含 KaTeX 运算符号解析与 503 自动容灾），请稍候约 5~8 秒...`;
   outputModal.classList.add("active");
 
   const parts = [];
   parts.push({
-    text: `你是一位全科特级教师（精通小学奥数解题模型、小学语文生字词/阅读理解、英语语法短语辨析）。
+    text: `你是一位全科特级教师（精通小学奥数解题模型、小学语文生字词与阅读理解、英语语法与造句）。
 请为四年级学生提供极通俗、有启发性的【名师深度思路与解题导图】：
 
-【讲解模块规范】：
-1. 🎯【考点模型】：指出所属学科及具体核心考点；
-2. ⚠️【思维陷阱/错因剖析】：孩子最容易在哪一步卡壳、笔误或想偏？
-3. 🔑【破题第一步】：抓哪个题眼或切入点？
-4. 📐【小学化直观图解/推导】：多用画图法、设数法、语境代入法拆解；
-5. 🗣️【家长一句话启发话术】：提问引导孩子自主想通。
+【讲解规范】：
+1. 涉及数学算式、乘号、分数时，请使用标准 LaTeX 格式（行内用 $...$，独立行用 $$...$$，乘号必须用 \\times，分数用 \\frac{}{}），以便系统完美渲染！
+2. 🎯【考点模型】：指出所属学科及具体核心考点；
+3. ⚠️【思维陷阱/错因剖析】：孩子最容易在哪一步卡壳、笔误或想偏？
+4. 🔑【破题第一步】：抓哪个题眼或切入点？
+5. 📐【小学化直观图解/推导】：多用画图法、设数法、语境代入法拆解；
+6. 🗣️【家长一句话启发话术】：提问引导孩子自主想通。
 
-【⭐ 语文科目专属强化要求】：
-如果题目属于语文的“生字、词语、拼音、修改病句”，必须额外增加【📝 组词与词义拓展】模块：
-为该错字/生词提供 2~3 个四年级课标内高频易错的常用词语或成语，并注音、写出简明词义，方便家长直接给孩子做组词听写复习！`
+【⭐ 语文与英语拓展专属强制要求】：
+- 若是语文生字/词语，在第一行必须单列输出【组词拓展】：提供 3~5 个该生字在该年级课标内最常见的常用词语或成语！
+- 若是英语单词/短语，在第一行必须单列输出【短句拓展】：提供 1~3 个契合该年级难度的常用生活/考试例句！`
   });
 
   selectedQuestions.forEach((q, idx) => {
@@ -1071,30 +1315,45 @@ async function doAnalyzeThinking(selectedQuestions, singleSaveId) {
   }
 
   if (successText) {
-    outputBox.textContent = successText;
-
-    // 单题自动保存快照进 IndexedDB
+    // 自动提取语文 3-5 词 或 英语 1-3 句，回填到置顶文本框
     if (singleSaveId) {
       const all = await dbGetAll(STORE_QUESTIONS);
       const targetQ = all.find(x => x.id === singleSaveId);
       if (targetQ) {
         targetQ.savedAnalysis = successText;
+
+        // 正则提取拓展短语并更新
+        const extMatch = successText.match(/【(?:组词拓展|短句拓展)】[：:]\s*([^\n\r]+)/);
+        if (extMatch && extMatch[1] && !targetQ.customExtension) {
+          targetQ.customExtension = extMatch[1].trim();
+          document.getElementById("inpCustomExtensionWords").value = targetQ.customExtension;
+        }
+
         await dbAdd(STORE_QUESTIONS, targetQ);
         renderVault();
       }
     }
+    renderRichContent(outputBox, successText);
   } else {
-    outputBox.textContent = "⚠️ Google 服务器瞬时负载较高（503/繁忙），已自动尝试备用模型仍未接通。请稍等 1~2 分钟后再试！";
+    outputBox.innerHTML = `<span style="color:#dc2626;">⚠️ Google 服务器瞬时繁忙（503），已自动尝试备用模型仍未接通。请稍等 1 分钟后再试！</span>`;
   }
 }
 
-function copyAnalysisText() { navigator.clipboard.writeText(document.getElementById("analysisOutput").textContent).then(() => alert("已复制！")); }
+function copyAnalysisText() {
+  const text = document.getElementById("analysisOutput").innerText;
+  navigator.clipboard.writeText(text).then(() => alert("已复制！"));
+}
 function printAnalysisContent() {
   const w = window.open('', '', 'width=800,height=600');
-  w.document.write(`<html><head><title>思路导图</title><style>body{font-family:sans-serif;line-height:1.6;padding:20px;white-space:pre-wrap;}</style></head><body><h2>名师思路导图</h2>${document.getElementById("analysisOutput").innerHTML}</body></html>`);
-  w.document.close(); w.print();
+  w.document.write(`<html><head><title>思路导图</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
+  <style>body{font-family:sans-serif;line-height:1.65;padding:20px;}</style></head>
+  <body><h2>名师思路导图</h2>${document.getElementById("analysisOutput").innerHTML}</body></html>`);
+  w.document.close();
+  setTimeout(() => w.print(), 500);
 }
 
+// ================= 8. 相似题出题业务 =================
 async function generateSimilarSingleById(id) {
   const all = await dbGetAll(STORE_QUESTIONS);
   const q = all.find(x => x.id === id);
@@ -1114,12 +1373,12 @@ async function doGenerateSimilar(selectedQuestions) {
 
   const outputModal = document.getElementById("similarModal");
   const outputBox = document.getElementById("similarOutput");
-  outputBox.textContent = `⏳ 正在请求 Gemini 智能出相似题（含503自动容灾）...`;
+  outputBox.innerHTML = `⏳ 正在请求 Gemini 智能出相似题（含数学公式美化）...`;
   outputModal.classList.add("active");
 
   const parts = [];
   parts.push({
-    text: `你是一位全科金牌名师。请针对选中的这 ${selectedQuestions.length} 道错题，分别出一道【考点模型相同、解题逻辑一致、情境与数字不同】的高仿练习题。如果是语文错字，则出一道同类形近字/音近字辨析题并附带常用组词；如果是英语词汇，则出语法语境单选题。分模块提供：【📝 相似变式题】、【💡 直观解法提示】、【🎯 参考答案】。`
+    text: `你是一位全科金牌名师。请针对选中的这 ${selectedQuestions.length} 道错题，分别出一道【考点模型相同、解题逻辑一致、情境与数字不同】的高仿练习题。如果是数学题，乘号必须用 \\times，公式使用 LaTeX 规范；如果是语文错字，则出一道同类形近字/音近字辨析题并附带常用组词；如果是英语词汇，则出语法语境单选题。分模块提供：【📝 相似变式题】、【💡 直观解法提示】、【🎯 参考答案】。`
   });
 
   selectedQuestions.forEach((q, idx) => {
@@ -1144,17 +1403,29 @@ async function doGenerateSimilar(selectedQuestions) {
       }
     } catch(err) {}
   }
-  outputBox.textContent = successText || "生成失败，Google 接口暂时繁忙，请稍后再试。";
+
+  if (successText) {
+    renderRichContent(outputBox, successText);
+  } else {
+    outputBox.innerHTML = `<span style="color:#dc2626;">生成失败，Google 接口暂时繁忙，请稍后再试。</span>`;
+  }
 }
 
-function copySimilarText() { navigator.clipboard.writeText(document.getElementById("similarOutput").textContent).then(() => alert("已复制！")); }
+function copySimilarText() {
+  const text = document.getElementById("similarOutput").innerText;
+  navigator.clipboard.writeText(text).then(() => alert("已复制！"));
+}
 function printSimilarContent() {
   const w = window.open('', '', 'width=800,height=600');
-  w.document.write(`<html><head><title>举一反三</title><style>body{font-family:sans-serif;line-height:1.6;padding:20px;white-space:pre-wrap;}</style></head><body><h2>举一反三练习</h2>${document.getElementById("similarOutput").innerHTML}</body></html>`);
-  w.document.close(); w.print();
+  w.document.write(`<html><head><title>举一反三</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
+  <style>body{font-family:sans-serif;line-height:1.6;padding:20px;}</style></head>
+  <body><h2>举一反三练习</h2>${document.getElementById("similarOutput").innerHTML}</body></html>`);
+  w.document.close();
+  setTimeout(() => w.print(), 500);
 }
 
-// ================= 6. 模考、PDF缩放与试卷手势框选裁切 =================
+// ================= 9. 考场原卷PDF缩放与手势框选裁切 =================
 let activeExam = null;
 let examTimer = null;
 let examSecondsRemaining = 0;
@@ -1420,7 +1691,7 @@ function exitExam() {
   }
 }
 
-// 7. 试卷上传
+// 试卷上传
 let editingExamId = null;
 let tempNewExamPages = [];
 
