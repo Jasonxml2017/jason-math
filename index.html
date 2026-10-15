@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
-<title>多学科学习工作台 & 智能错题管家</title>
+<title>多学科智学工作台 & 错题管家</title>
 
 <!-- 1. Mozilla 官方开源 PDF.js 引擎 -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
@@ -37,7 +37,6 @@
     --vault-bg: #f5f3ff;
     --success: #16a34a;
     --danger: #dc2626;
-    --warning: #d97706;
     --bg: #f8fafc;
     --card: #ffffff;
     --border: #e2e8f0;
@@ -52,7 +51,7 @@
     padding-bottom: 60px;
   }
   header {
-    background: rgba(255, 255, 255, 0.9);
+    background: rgba(255, 255, 255, 0.95);
     backdrop-filter: blur(12px);
     border-bottom: 1px solid var(--border);
     padding: 10px 18px;
@@ -96,7 +95,7 @@
   .btn-amber { background: #fef3c7; color: #b45309; }
   .container { max-width: 1200px; margin: 18px auto; padding: 0 16px; }
 
-  /* 首页问候、打卡提醒与倒计时 */
+  /* 首页问候与打卡横幅 */
   .greeting-banner {
     display: flex;
     justify-content: space-between;
@@ -110,18 +109,10 @@
     flex-wrap: wrap;
     gap: 12px;
   }
-  .checkin-status-bar {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    margin-top: 6px;
-    font-size: 0.85rem;
-    flex-wrap: wrap;
-  }
+  .checkin-status-bar { display: flex; align-items: center; gap: 12px; margin-top: 6px; font-size: 0.85rem; flex-wrap: wrap; }
   .checkin-badge-todo { background: #fef2f2; color: #dc2626; border: 1px solid #fecaca; padding: 2px 10px; border-radius: 12px; font-weight: 700; }
   .checkin-badge-done { background: #f0fdf4; color: #16a34a; border: 1px solid #bbf7d0; padding: 2px 10px; border-radius: 12px; font-weight: 700; }
   
-  /* 倒计时标签流 */
   .countdown-container { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
   .countdown-badge {
     background: #fff7ed;
@@ -136,7 +127,7 @@
     gap: 6px;
   }
 
-  /* 错题攻坚中枢大卡片 */
+  /* 错题攻坚中枢卡片 */
   .hero-vault-card {
     background: linear-gradient(135deg, #7c3aed 0%, #4f46e5 100%);
     color: white;
@@ -153,7 +144,6 @@
   .hero-vault-stats { display: flex; gap: 12px; align-items: center; margin-top: 10px; flex-wrap: wrap; }
   .stat-pill { background: rgba(255, 255, 255, 0.2); padding: 4px 12px; border-radius: 12px; font-size: 0.85rem; }
 
-  /* 学科卡片网格 */
   .section-heading { font-size: 1.15rem; font-weight: 800; margin-bottom: 14px; display: flex; justify-content: space-between; align-items: center; }
   .subject-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 18px; margin-bottom: 30px; }
   .subject-card {
@@ -216,8 +206,20 @@
     text-align: center;
     padding: 18px 10px;
     border-radius: 8px;
-    margin: 8px 0;
+    margin: 8px 0 4px;
     letter-spacing: 1px;
+  }
+
+  /* ⭐ 语文组词与英语短句卡片外部直显区 */
+  .card-extension-badge {
+    background: #f0fdf4;
+    border: 1px solid #bbf7d0;
+    border-radius: 8px;
+    padding: 8px 12px;
+    font-size: 0.88rem;
+    color: #166534;
+    margin: 6px 0 10px;
+    line-height: 1.45;
   }
 
   /* 考场双屏与缩放 */
@@ -252,7 +254,7 @@
   .ans-reveal { margin-top: 10px; padding: 10px; background: #f1f5f9; border-left: 4px solid var(--primary); border-radius: 4px; display: none; font-size: 0.85rem; }
   .ans-reveal.show { display: block; }
 
-  /* Markdown 与 数学公式渲染样式 */
+  /* Markdown 与 数学公式渲染容器 */
   .analysis-output-box {
     background: #f8fafc;
     border: 1px solid var(--border);
@@ -265,87 +267,24 @@
     margin: 12px 0;
     color: #1e293b;
   }
-  .analysis-output-box h1, .analysis-output-box h2, .analysis-output-box h3, .analysis-output-box h4 {
-    margin: 12px 0 6px 0;
-    color: #0f172a;
-    font-weight: 700;
-  }
-  .analysis-output-box h3 { font-size: 1.05rem; }
+  .analysis-output-box h1, .analysis-output-box h2, .analysis-output-box h3, .analysis-output-box h4 { margin: 12px 0 6px 0; color: #0f172a; font-weight: 700; }
   .analysis-output-box h4 { font-size: 0.95rem; color: #0284c7; }
   .analysis-output-box p { margin-bottom: 8px; }
   .analysis-output-box ul, .analysis-output-box ol { padding-left: 20px; margin-bottom: 10px; }
-  .analysis-output-box li { margin-bottom: 4px; }
   .analysis-output-box .katex-display { margin: 10px 0; overflow-x: auto; overflow-y: hidden; padding: 4px 0; }
-  .analysis-output-box code { background: #e2e8f0; padding: 2px 4px; border-radius: 4px; font-size: 0.88rem; }
 
-  .ext-words-box {
-    background: #f0fdf4;
-    border: 1.5px solid #86efac;
-    border-radius: 10px;
-    padding: 12px 14px;
-    margin-bottom: 12px;
-  }
-  .ext-words-title {
-    font-size: 0.85rem;
-    font-weight: 800;
-    color: #15803d;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 6px;
-  }
-  
+  .ext-words-box { background: #f0fdf4; border: 1.5px solid #86efac; border-radius: 10px; padding: 12px 14px; margin-bottom: 12px; }
+  .ext-words-title { font-size: 0.85rem; font-weight: 800; color: #15803d; display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
   .modal-subtabs { display: flex; background: #e2e8f0; padding: 3px; border-radius: 8px; margin-bottom: 14px; }
   .modal-subtab { flex: 1; text-align: center; padding: 6px; font-size: 0.85rem; font-weight: 700; cursor: pointer; border-radius: 6px; color: #64748b; }
   .modal-subtab.active { background: white; color: var(--primary); }
 
-  /* ================= 沉浸式今日攻坚全屏卡片 ================= */
-  #smartReviewView {
-    display: none;
-    position: fixed;
-    top: 0; left: 0; right: 0; bottom: 0;
-    background: #0f172a;
-    z-index: 600;
-    flex-direction: column;
-    color: white;
-  }
-  .review-top-bar {
-    background: #1e293b;
-    padding: 12px 20px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    border-bottom: 1px solid #334155;
-  }
-  .review-content-area {
-    flex: 1;
-    overflow-y: auto;
-    padding: 20px;
-    display: flex;
-    justify-content: center;
-  }
-  .review-card-stage {
-    background: white;
-    color: var(--text);
-    width: 100%;
-    max-width: 760px;
-    border-radius: 20px;
-    padding: 24px;
-    box-shadow: 0 10px 35px rgba(0,0,0,0.3);
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-  }
-  .subject-guide-tip {
-    border-radius: 12px;
-    padding: 12px 16px;
-    font-size: 0.88rem;
-    margin-bottom: 14px;
-    display: flex;
-    align-items: flex-start;
-    gap: 8px;
-    line-height: 1.5;
-  }
+  /* 沉浸式今日攻坚界面 */
+  #smartReviewView { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: #0f172a; z-index: 600; flex-direction: column; color: white; }
+  .review-top-bar { background: #1e293b; padding: 12px 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #334155; }
+  .review-content-area { flex: 1; overflow-y: auto; padding: 20px; display: flex; justify-content: center; }
+  .review-card-stage { background: white; color: var(--text); width: 100%; max-width: 760px; border-radius: 20px; padding: 24px; box-shadow: 0 10px 35px rgba(0,0,0,0.3); display: flex; flex-direction: column; justify-content: space-between; }
+  .subject-guide-tip { border-radius: 12px; padding: 12px 16px; font-size: 0.88rem; margin-bottom: 14px; display: flex; align-items: flex-start; gap: 8px; line-height: 1.5; }
 </style>
 </head>
 <body>
@@ -353,7 +292,7 @@
 <header>
   <div class="brand" onclick="switchNav('dashboard')">
     <span>🍎 智学多学科管家</span>
-    <span style="font-size:0.7rem; font-weight:bold; background:#e0f2fe; color:#0369a1; padding:2px 8px; border-radius:12px;">v5.5 艾宾浩斯攻坚版</span>
+    <span style="font-size:0.7rem; font-weight:bold; background:#e0f2fe; color:#0369a1; padding:2px 8px; border-radius:12px;">v5.6</span>
   </div>
   <div class="nav-tabs">
     <div class="nav-tab active" id="tabNavDashboard" onclick="switchNav('dashboard')">🏠 首页工作台</div>
@@ -366,27 +305,23 @@
   </div>
 </header>
 
-<!-- ================= 页面 1：仪表盘首页 ================= -->
+<!-- ================= 页面 1：仪表盘首页（已彻底清除重复旧版本） ================= -->
 <div class="container" id="viewDashboard">
-  <!-- 问候、打卡提醒、专注时长与倒计时 -->
   <div class="greeting-banner">
     <div>
       <h2 style="font-size:1.3rem; margin-bottom:4px;">👋 欢迎回来，Jason！</h2>
-      <!-- ⭐ 需求 1：未打卡提醒与今日打卡时长 -->
       <div class="checkin-status-bar">
         <span id="checkinBadge">⚠️ 今日尚未完成攻坚打卡</span>
         <span>🔥 连续打卡: <b id="streakDaysText" style="color:#c2410c;">0</b> 天</span>
         <span>⏱️ 今日专注时长: <b id="todayStudyMinutesText" style="color:#2563eb;">0</b> 分钟</span>
       </div>
     </div>
-    <!-- ⭐ 需求 2：可编辑、添加、修改、删除的倒计时目标 -->
     <div class="countdown-container">
       <div id="countdownBadgesList" style="display:flex; gap:6px; flex-wrap:wrap;"></div>
       <button class="btn btn-outline" style="padding:4px 8px; font-size:0.75rem;" onclick="openCountdownManageModal()">✏️ 目标管理</button>
     </div>
   </div>
 
-  <!-- 核心通栏卡片：错题攻坚中枢 -->
   <div class="hero-vault-card">
     <div>
       <span style="font-size:0.85rem; text-transform:uppercase; letter-spacing:1px; opacity:0.9;">Ebbinghaus Daily Review</span>
@@ -398,8 +333,10 @@
       </div>
     </div>
     <div style="display:flex; gap:10px;">
-      <!-- ⭐ 需求 3：点击启动科学的今日攻坚复习流 -->
-      <button class="btn" style="background:white; color:#4f46e5; font-size:0.9rem; padding:8px 18px; font-weight:800;" onclick="startEbbinghausDailyReview()">⚡ 开启今日攻坚 (15分钟严选5题)</button>
+      <!-- ⭐ 需求 2：不限制题数，动态根据所有错题启动攻坚 -->
+      <button class="btn" id="btnHeroReview" style="background:white; color:#4f46e5; font-size:0.9rem; padding:8px 18px; font-weight:800;" onclick="startEbbinghausDailyReview()">
+        ⚡ 开启今日攻坚
+      </button>
       <button class="btn" style="background:rgba(255,255,255,0.2); color:white; border:1px solid rgba(255,255,255,0.4);" onclick="switchNav('vault')">错题总库</button>
     </div>
   </div>
@@ -428,7 +365,7 @@
   <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px; flex-wrap:wrap; gap:8px;">
     <div>
       <h2 style="font-size:1.3rem;">🎯 错题复习总库</h2>
-      <p style="font-size:0.85rem; color:var(--text-sub);">点击【🔍 查看原题/编辑】可修改标签；点击【💡 查看思路】自动渲染精美数学公式与拓展组词</p>
+      <p style="font-size:0.85rem; color:var(--text-sub);">语文词组已直接显示在卡片下方，点击【💡 查看思路】自动渲染公式</p>
     </div>
     <div style="display:flex; gap:6px; flex-wrap:wrap;">
       <button class="btn btn-outline" onclick="toggleSelectAllVault()">全选/反选</button>
@@ -464,12 +401,12 @@
   <div class="q-grid" id="qList"></div>
 </div>
 
-<!-- ================= ⭐ 需求 3：沉浸式今日 15 分钟攻坚复习全屏界面 ================= -->
+<!-- ================= 沉浸式今日攻坚全屏卡片 ================= -->
 <div id="smartReviewView">
   <div class="review-top-bar">
     <div style="display:flex; align-items:center; gap:12px;">
-      <span style="font-size:1.05rem; font-weight:800; color:#38bdf8;">⚡ 今日 15 分钟专注攻坚</span>
-      <span style="font-size:0.85rem; background:#334155; padding:2px 10px; border-radius:12px;" id="reviewProgressIndex">进度: 1 / 5</span>
+      <span style="font-size:1.05rem; font-weight:800; color:#38bdf8;">⚡ 错题攻坚打卡模式</span>
+      <span style="font-size:0.85rem; background:#334155; padding:2px 10px; border-radius:12px;" id="reviewProgressIndex">进度: 1 / 1</span>
     </div>
     <div style="display:flex; align-items:center; gap:12px;">
       <span style="font-size:1.15rem; font-weight:800; color:#facc15; font-family:monospace;" id="reviewTimerText">⏱️ 00:00</span>
@@ -478,9 +415,7 @@
   </div>
 
   <div class="review-content-area">
-    <div class="review-card-stage" id="reviewStageCard">
-      <!-- 动态渲染题目与学科指引 -->
-    </div>
+    <div class="review-card-stage" id="reviewStageCard"></div>
   </div>
 </div>
 
@@ -532,23 +467,21 @@
 
 <!-- ================= 弹窗集合 ================= -->
 
-<!-- ⭐ 需求 2：倒计时目标管理弹窗 (增、删、改) -->
+<!-- 倒计时目标管理弹窗 -->
 <div class="modal-overlay" id="countdownManageModal">
   <div class="modal" style="max-width:520px;">
     <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
       <h3 style="font-size:1.15rem;">🏆 备考倒计时目标管理</h3>
     </div>
     <div id="countdownGoalsEditorList" style="margin-bottom:14px; max-height:240px; overflow-y:auto;"></div>
-
     <div style="border-top:1px dashed #cbd5e1; padding-top:12px;">
       <h4 style="font-size:0.9rem; color:#475569; margin-bottom:8px;">＋ 添加新目标</h4>
       <div style="display:grid; grid-template-columns: 1fr 1fr; gap:8px;">
-        <input type="text" id="newGoalTitle" placeholder="目标名称，如：期末冲刺">
+        <input type="text" id="newGoalTitle" placeholder="如：期末冲刺">
         <input type="date" id="newGoalDate">
       </div>
       <button class="btn btn-outline" style="width:100%; margin-top:8px; justify-content:center;" onclick="addNewCountdownGoal()">＋ 确认添加该目标</button>
     </div>
-
     <div style="display:flex; justify-content:flex-end; gap:8px; margin-top:16px;">
       <button class="btn btn-primary" onclick="closeCountdownManageModal()">完成并关闭</button>
     </div>
@@ -563,6 +496,7 @@
       <span id="viewModalSubjectBadge" style="font-size:0.75rem; padding:2px 8px; border-radius:10px; font-weight:bold;"></span>
     </div>
     <div id="viewModalPreviewContainer" style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px; padding:12px; text-align:center; margin-bottom:14px; max-height:280px; overflow:auto;"></div>
+    
     <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin-bottom:12px;">
       <div class="form-group"><label>所属学科</label><select id="editQSubject" onchange="updateEditModalModules()"></select></div>
       <div class="form-group">
@@ -580,6 +514,8 @@
     </div>
     <div class="form-group"><label>题目备注 / 错字 / 标题</label><input type="text" id="editQNote"></div>
     <div class="form-group"><label>参考答案 / 纠错释义</label><input type="text" id="editQAns"></div>
+    <div class="form-group"><label>常用拓展（组词或例句）</label><input type="text" id="editQExt" placeholder="如：名门望族、举世闻名、莫名其妙"></div>
+
     <div style="display:flex; justify-content:space-between; align-items:center; margin-top:16px;">
       <button class="btn btn-danger" onclick="deleteCurrentEditingQuestion()">🗑️ 删除此题</button>
       <div style="display:flex; gap:8px;">
@@ -707,10 +643,8 @@
 </div>
 
 <script>
-// 多模型备用容灾列表
 const GEMINI_MODELS = ["gemini-3.8-flash", "gemini-2.5-flash", "gemini-1.5-flash"];
 
-// 学科与模块定义
 const SUBJECTS = {
   math: {
     id: "math", name: "数学思维", icon: "📐",
@@ -806,13 +740,11 @@ function switchNav(viewName) {
   if (viewName === "portal") renderSubjectPortal();
 }
 
-// ================= ⭐ 需求 1 & 2：打卡状态与可编辑倒计时 =================
 function getTodayDateStr() {
   const d = new Date();
   return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
 }
 
-// 渲染打卡状态与专注时长
 function renderCheckinStatus() {
   const today = getTodayDateStr();
   const lastCheckin = localStorage.getItem("LAST_CHECKIN_DATE");
@@ -832,11 +764,8 @@ function renderCheckinStatus() {
   document.getElementById("todayStudyMinutesText").textContent = minutes;
 }
 
-// 倒计时管理（增、删、改）
 function getDefaultCountdownGoals() {
-  return [
-    { id: 1, title: "WMO 地方省测", date: "2026-11-29" }
-  ];
+  return [{ id: 1, title: "WMO 地方省测", date: "2026-11-29" }];
 }
 
 function getCountdownGoals() {
@@ -860,7 +789,6 @@ function renderCountdownBadges() {
     container.innerHTML = `<span class="countdown-badge" style="background:#f1f5f9; color:#64748b; border-color:#e2e8f0;">暂无倒计时目标</span>`;
     return;
   }
-
   const now = new Date();
   container.innerHTML = goals.map(g => {
     const target = new Date(g.date + "T09:00:00");
@@ -878,31 +806,24 @@ function openCountdownManageModal() {
   const listEl = document.getElementById("countdownGoalsEditorList");
   listEl.innerHTML = goals.map((g, idx) => `
     <div style="display:flex; justify-content:space-between; align-items:center; background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px; padding:8px 12px; margin-bottom:8px;">
-      <div>
-        <b style="font-size:0.95rem;">${g.title}</b>
-        <div style="font-size:0.8rem; color:#64748b;">目标日期: ${g.date}</div>
-      </div>
+      <div><b style="font-size:0.95rem;">${g.title}</b><div style="font-size:0.8rem; color:#64748b;">目标日期: ${g.date}</div></div>
       <button class="btn btn-danger" style="padding:4px 8px; font-size:0.75rem;" onclick="removeCountdownGoal(${idx})">删除</button>
     </div>
   `).join('');
-
   document.getElementById("newGoalTitle").value = "";
   document.getElementById("newGoalDate").value = "";
   document.getElementById("countdownManageModal").classList.add("active");
 }
-
 function closeCountdownManageModal() {
   document.getElementById("countdownManageModal").classList.remove("active");
   renderCountdownBadges();
 }
-
 function removeCountdownGoal(idx) {
   const goals = getCountdownGoals();
   goals.splice(idx, 1);
   saveCountdownGoals(goals);
   openCountdownManageModal();
 }
-
 function addNewCountdownGoal() {
   const title = document.getElementById("newGoalTitle").value.trim();
   const date = document.getElementById("newGoalDate").value;
@@ -913,7 +834,7 @@ function addNewCountdownGoal() {
   openCountdownManageModal();
 }
 
-// 1. 仪表盘首页渲染
+// 1. 仪表盘渲染
 async function renderDashboard() {
   renderCheckinStatus();
   renderCountdownBadges();
@@ -928,6 +849,9 @@ async function renderDashboard() {
     <span class="stat-pill">📖 语文: ${chineseCount} 题</span>
     <span class="stat-pill">🔤 英语: ${englishCount} 题</span>
   `;
+
+  const totalPending = mathCount + chineseCount + englishCount;
+  document.getElementById("btnHeroReview").textContent = `⚡ 开启今日攻坚 (${totalPending > 0 ? '共 ' + totalPending + ' 题' : '满分复查'})`;
 
   document.getElementById("subjectGridContainer").innerHTML = Object.values(SUBJECTS).map(sub => `
     <div class="subject-card" onclick="openSubjectPortal('${sub.id}')">
@@ -948,14 +872,13 @@ function openSubjectPortal(subjectId) {
   switchNav("portal");
 }
 
-// ================= ⭐ 需求 3：艾宾浩斯“黄金四步复习轴”15分钟今日攻坚引擎 =================
+// ================= ⭐ 需求 2：不限制题目数量，根据错题实际数量动态抽取全部待复习题 =================
 let reviewQueue = [];
 let reviewCurrentIdx = 0;
 let reviewTimerInterval = null;
 let reviewSeconds = 0;
 let reviewKilledCount = 0;
 
-// 科学抽取算法：严控 5 题，按 数学 2 题 + 英语 2 题 + 语文 1 题 智能配比
 async function startEbbinghausDailyReview() {
   const all = await dbGetAll(STORE_QUESTIONS);
   if (all.length === 0) {
@@ -963,44 +886,23 @@ async function startEbbinghausDailyReview() {
     return;
   }
 
-  // 过滤未斩杀的题（🔴待攻克优先，🟡巩固中周度抽查）
-  const mathPool = all.filter(q => (q.subject || 'math') === 'math' && q.status !== '🟢 已斩杀');
-  const engPool = all.filter(q => q.subject === 'english' && q.status !== '🟢 已斩杀');
-  const chiPool = all.filter(q => q.subject === 'chinese' && q.status !== '🟢 已斩杀');
+  // 抓取所有处于“🔴 待攻克”与“🟡 巩固中”的错题，不限制数量，全量复习
+  const pending = all.filter(q => q.status !== '🟢 已斩杀');
 
-  const picked = [];
+  // 排序：🔴 待攻克排前面，入库时间早的排前面
+  pending.sort((a, b) => (a.status === '🔴 待攻克' ? -1 : 1));
 
-  // 排序权重：🔴待攻克排前面，入库时间早的排前面
-  const sortFn = (a, b) => (a.status === '🔴 待攻克' ? -1 : 1);
-  mathPool.sort(sortFn); engPool.sort(sortFn); chiPool.sort(sortFn);
-
-  // 目标配比：数学 2 题，英语 2 题，语文 1 题（合计 5 题）
-  picked.push(...mathPool.slice(0, 2));
-  picked.push(...engPool.slice(0, 2));
-  picked.push(...chiPool.slice(0, 1));
-
-  // 如果总数不足 5 题，用剩余未斩杀题目补齐
-  if (picked.length < 5) {
-    const pickedIds = new Set(picked.map(x => x.id));
-    const remainAll = all.filter(q => !pickedIds.has(q.id) && q.status !== '🟢 已斩杀');
-    for (const item of remainAll) {
-      if (picked.length >= 5) break;
-      picked.push(item);
-    }
+  if (pending.length === 0) {
+    alert("太棒了！所有错题都已被彻底斩杀！现在为你抽取已掌握题目进行防遗忘温故。");
+    reviewQueue = [...all];
+  } else {
+    reviewQueue = pending; // 真实错题有多少就攻坚多少题
   }
 
-  // 若依然不足（全库未斩杀不足5题），允许抽检已斩杀题防遗忘
-  if (picked.length === 0) {
-    alert("太棒了！所有错题都已被彻底斩杀！现在为你抽取 1~2 道题进行防遗忘温故。");
-    picked.push(...all.slice(0, 3));
-  }
-
-  reviewQueue = picked;
   reviewCurrentIdx = 0;
   reviewSeconds = 0;
   reviewKilledCount = 0;
 
-  // 启动沉浸式全屏
   document.getElementById("smartReviewView").style.display = "flex";
   startReviewTimer();
   renderCurrentReviewCard();
@@ -1028,45 +930,42 @@ function renderCurrentReviewCard() {
 
   document.getElementById("reviewProgressIndex").textContent = `进度: ${reviewCurrentIdx + 1} / ${total}`;
 
-  // 三科专属教学复习法提示语
   let guideTipHtml = "";
   if (q.subject === "english") {
     guideTipHtml = `
       <div class="subject-guide-tip" style="background:#ecfdf5; color:#065f46; border:1px solid #a7f3d0;">
         <span style="font-size:1.2rem;">🗣️</span>
-        <div><b>【出声朗读法】</b> 语言依赖听觉刺激！把此单词或句子<b>出声朗读 3 遍</b>，并用新主语或动词现场造一个新句子！</div>
+        <div><b>【出声朗读法】</b> 把此单词或例句<b>大声出声朗读 3 遍</b>，并尝试现场用新主语造一个短句！</div>
       </div>
     `;
   } else if (q.subject === "chinese") {
     guideTipHtml = `
       <div class="subject-guide-tip" style="background:#fff1f2; color:#9f1239; border:1px solid #fecdd3;">
         <span style="font-size:1.2rem;">⚡</span>
-        <div><b>【闪卡消灭法】</b> 快速口答字音与偏旁！在心里默写一遍，点击下方可查看组词拓展。</div>
+        <div><b>【闪卡消灭法】</b> 快速口答字音与偏旁！在心里默写一遍，查看下方已关联的组词。</div>
       </div>
     `;
   } else {
     guideTipHtml = `
       <div class="subject-guide-tip" style="background:#eff6ff; color:#1e40af; border:1px solid #bfdbfe;">
         <span style="font-size:1.2rem;">📐</span>
-        <div><b>【遮挡演算 + 小老师讲题法】</b> 严禁看答案！在草稿纸上重算完整步骤，并给爸爸妈妈讲一遍解题机关！</div>
+        <div><b>【遮挡演算 + 小老师讲题法】</b> 严禁看答案！在草稿纸上重算完整步骤，并给家长讲清题眼与机关！</div>
       </div>
     `;
   }
 
-  // 内容渲染
   let questionVisual = "";
   if (q.isWord) {
-    questionVisual = `<div class="word-card-text" style="background:${subInfo.bg}; color:${subInfo.color}; font-size:2rem; padding:30px 10px;">${q.note}</div>`;
+    questionVisual = `<div class="word-card-text" style="background:${subInfo.bg}; color:${subInfo.color}; font-size:2rem; padding:24px 10px;">${q.note}</div>`;
   } else if (q.img) {
-    questionVisual = `<div style="text-align:center; margin:15px 0;"><img src="${q.img}" style="max-width:100%; max-height:280px; border-radius:10px; box-shadow:0 2px 10px rgba(0,0,0,0.06);"></div>`;
+    questionVisual = `<div style="text-align:center; margin:15px 0;"><img src="${q.img}" style="max-width:100%; max-height:260px; border-radius:10px; box-shadow:0 2px 10px rgba(0,0,0,0.06);"></div>`;
   } else {
-    questionVisual = `<div style="padding:20px; font-size:1.1rem; font-weight:bold;">${q.note}</div>`;
+    questionVisual = `<div style="padding:15px; font-size:1.1rem; font-weight:bold;">${q.note}</div>`;
   }
 
-  // 拓展词语/例句
   let extHtml = "";
   if (q.customExtension) {
-    extHtml = `<div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px; padding:10px; font-size:0.9rem; margin-top:10px; color:#15803d;"><b>📝 拓展复习：</b>${q.customExtension}</div>`;
+    extHtml = `<div class="card-extension-badge" style="margin:10px 0; font-size:0.95rem;"><b>📝 拓展复习：</b>${q.customExtension}</div>`;
   }
 
   const stage = document.getElementById("reviewStageCard");
@@ -1077,28 +976,26 @@ function renderCurrentReviewCard() {
           <span style="font-size:0.85rem; background:${subInfo.bg}; color:${subInfo.color}; padding:3px 10px; border-radius:12px; font-weight:800;">${subInfo.name}</span>
           <span style="font-size:0.85rem; color:#64748b;">${q.grade || '四上'} · ${q.module || '核心考点'}</span>
         </div>
-        <span style="font-size:0.82rem; font-weight:bold; color:#d97706;">当前状态: ${q.status || '🔴 待攻克'}</span>
+        <span style="font-size:0.82rem; font-weight:bold; color:#d97706;">状态: ${q.status || '🔴 待攻克'}</span>
       </div>
 
       ${guideTipHtml}
       ${questionVisual}
       ${extHtml}
 
-      <!-- 遮挡答案切换 -->
       <div style="margin-top:14px;">
         <button class="btn btn-outline" style="width:100%; justify-content:center; padding:8px;" onclick="toggleReviewAnswerVisibility()">
           👁️ 遮挡模式：点击核对答案与解题思路
         </button>
         <div id="reviewAnswerDrawer" style="display:none; margin-top:10px; padding:12px; background:#f1f5f9; border-left:4px solid var(--primary); border-radius:6px; font-size:0.92rem;">
           <div style="font-weight:bold; color:#16a34a; margin-bottom:4px;">参考答案：${q.ans || '见思路'}</div>
-          <div>${q.savedAnalysis ? marked.parse(q.savedAnalysis) : (q.ai || '暂无详细分析，可在此题卡片中调用Gemini生成。')}</div>
+          <div id="reviewAnalysisBox"></div>
         </div>
       </div>
     </div>
 
-    <!-- 艾宾浩斯黄金升阶按钮 -->
     <div style="margin-top:20px; border-top:1px solid #e2e8f0; padding-top:16px;">
-      <div style="font-size:0.82rem; color:#64748b; margin-bottom:8px; text-align:center;">根据刚才的重算/背诵表现，为本题评定状态：</div>
+      <div style="font-size:0.82rem; color:#64748b; margin-bottom:8px; text-align:center;">根据刚才的重算/默写表现，评定本题新状态：</div>
       <div style="display:grid; grid-template-columns: 1fr 1fr 1fr; gap:8px;">
         <button class="btn" style="background:#fee2e2; color:#b91c1c; justify-content:center; padding:10px;" onclick="stepReviewQuestion('🔴 待攻克')">
           🔴 没做对(保留待攻克)
@@ -1112,6 +1009,12 @@ function renderCurrentReviewCard() {
       </div>
     </div>
   `;
+
+  if (q.savedAnalysis) {
+    renderRichContent(document.getElementById("reviewAnalysisBox"), q.savedAnalysis);
+  } else {
+    document.getElementById("reviewAnalysisBox").textContent = q.ai || '暂无详细分析，可在错题卡片中调用Gemini生成。';
+  }
 }
 
 function toggleReviewAnswerVisibility() {
@@ -1119,7 +1022,6 @@ function toggleReviewAnswerVisibility() {
   drawer.style.display = drawer.style.display === "none" ? "block" : "none";
 }
 
-// 评定状态并切到下一题
 async function stepReviewQuestion(newStatus) {
   const q = reviewQueue[reviewCurrentIdx];
   if (q) {
@@ -1131,17 +1033,14 @@ async function stepReviewQuestion(newStatus) {
   renderCurrentReviewCard();
 }
 
-// 攻坚完成结算
 function finishSmartReview() {
   clearInterval(reviewTimerInterval);
   const minutesSpent = Math.max(1, Math.round(reviewSeconds / 60));
 
-  // 更新今日打卡时长与打卡状态
   const today = getTodayDateStr();
   const prevMinutes = Number(localStorage.getItem("TODAY_MINUTES_" + today) || 0);
   localStorage.setItem("TODAY_MINUTES_" + today, prevMinutes + minutesSpent);
 
-  // 连续打卡计算
   const lastCheckin = localStorage.getItem("LAST_CHECKIN_DATE");
   let streak = Number(localStorage.getItem("CHECKIN_STREAK") || 0);
   if (lastCheckin !== today) {
@@ -1150,7 +1049,7 @@ function finishSmartReview() {
     localStorage.setItem("LAST_CHECKIN_DATE", today);
   }
 
-  alert(`🎉 恭喜 Jason 完成今日攻坚打卡！\n\n⏱️ 本次专注用时：${minutesSpent} 分钟\n🏆 成功斩杀顽固题：${reviewKilledCount} 道\n🔥 已连续打卡：${streak} 天！\n\n错题库又变瘦了，继续保持！`);
+  alert(`🎉 太棒了 Jason！今日攻坚已全部完成！\n\n⏱️ 本次专注时长：${minutesSpent} 分钟\n🏆 成功斩杀题目：${reviewKilledCount} 道\n🔥 连续打卡：${streak} 天！\n\n继续加油！`);
 
   exitSmartReview();
 }
@@ -1162,7 +1061,7 @@ function exitSmartReview() {
   renderVault();
 }
 
-// ================= 2. 学科空间渲染 =================
+// 2. 学科空间渲染
 async function renderSubjectPortal() {
   const currentSub = SUBJECTS[currentPortalSubject] || SUBJECTS.math;
   document.getElementById("portalSubjectTitle").textContent = `${currentSub.icon} ${currentSub.name} · ${currentPortalSubject==='math'?'奥数真题与错题空间':'日常错题复习空间'}`;
@@ -1210,7 +1109,7 @@ async function renderSubjectPortal() {
   }
 }
 
-// ================= 3. 错题录入业务 =================
+// 3. 错题录入业务
 let activeEntryTab = "word";
 let activeCameraCropBase64 = "";
 
@@ -1306,7 +1205,9 @@ function initCropModalCanvas(imgEl) {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     ctx.fillStyle = "rgba(37, 99, 235, 0.25)";
     ctx.fillRect(rX, rY, rW, rH);
-    ctx.strokeStyle = "#2563eb"; ctx.lineWidth = 2; ctx.setLineDash([4, 4]);
+    ctx.strokeStyle = "#2563eb";
+    ctx.lineWidth = 2;
+    ctx.setLineDash([4, 4]);
     ctx.strokeRect(rX, rY, rW, rH);
   };
   canvas.onpointerup = (e) => {
@@ -1370,7 +1271,7 @@ async function saveSubjectErrorEntry() {
   renderDashboard();
 }
 
-// ================= 4. 错题总库与卡片渲染 =================
+// ================= 4. 错题总库与卡片渲染（⭐ 需求 3：词语拓展直接外显） =================
 async function renderVault() {
   renderFilterChips();
 
@@ -1396,6 +1297,14 @@ function renderQuestionCardHtml(q) {
   const subInfo = SUBJECTS[q.subject || 'math'] || SUBJECTS.math;
   let wordStyle = `background:${subInfo.bg}; color:${subInfo.color};`;
 
+  // ⭐ 需求 3：语文组词与英语短句直接外显在卡片上，无需点开思路即可查看
+  let extDirectHtml = "";
+  if (q.customExtension) {
+    extDirectHtml = `<div class="card-extension-badge"><b>📝 常用拓展：</b>${q.customExtension}</div>`;
+  } else if (q.isWord) {
+    extDirectHtml = `<div class="card-extension-badge" style="background:#f8fafc; border-color:#e2e8f0; color:#94a3b8;">尚未生成拓展组词/短句（点击下方思路可自动生成）</div>`;
+  }
+
   return `
     <div class="q-card">
       <div style="display:flex; justify-content:space-between; align-items:center;">
@@ -1410,6 +1319,8 @@ function renderQuestionCardHtml(q) {
       </div>
       
       ${q.isWord ? `<div class="word-card-text" style="${wordStyle}">${q.note}</div>` : `<div class="q-img-wrap"><img src="${q.img}"></div>`}
+
+      ${extDirectHtml}
 
       <div style="display:flex; justify-content:space-between; font-size:0.8rem; color:#64748b; margin-bottom:8px;">
         <span>${q.grade || '四上'} · <b>${q.module || '基础考点'}</b></span>
@@ -1506,6 +1417,7 @@ async function openViewEditModal(id) {
   document.getElementById("editQStatus").value = q.status || "🔴 待攻克";
   document.getElementById("editQNote").value = q.note || "";
   document.getElementById("editQAns").value = q.ans || "";
+  document.getElementById("editQExt").value = q.customExtension || "";
 
   document.getElementById("viewEditQuestionModal").classList.add("active");
 }
@@ -1529,6 +1441,7 @@ async function saveCurrentEditingQuestion() {
   q.status = document.getElementById("editQStatus").value;
   q.note = document.getElementById("editQNote").value.trim();
   q.ans = document.getElementById("editQAns").value.trim();
+  q.customExtension = document.getElementById("editQExt").value.trim();
   q.updatedAt = new Date().toISOString();
 
   await dbAdd(STORE_QUESTIONS, q);
@@ -1583,10 +1496,10 @@ async function analyzeSingleQuestionById(id) {
     extBox.style.display = "block";
     if (q.subject === "chinese") {
       extLabel.textContent = "📝 常用词语拓展（3~5个常见词）：";
-      extInput.placeholder = "如：名门望族、举世闻名、莫名其妙、不名一钱";
+      extInput.placeholder = "如：名门望族、举世闻名、莫名其妙";
     } else {
       extLabel.textContent = "🗣️ 常用短句拓展（1~3个常用例句）：";
-      extInput.placeholder = "如：See you tomorrow. / I will finish my homework by tomorrow morning.";
+      extInput.placeholder = "如：See you tomorrow. / I will finish my homework by tomorrow.";
     }
     extInput.value = q.customExtension || "";
   } else {
@@ -1614,7 +1527,8 @@ async function saveCustomExtensionWords() {
   if (q) {
     q.customExtension = text;
     await dbAdd(STORE_QUESTIONS, q);
-    alert("🎉 拓展内容已保存到此错题记录！");
+    alert("🎉 拓展内容已保存并已外显在卡片上！");
+    renderVault();
   }
 }
 
@@ -2163,1849 +2077,6 @@ function toggleSelectAllVault() {
   boxes.forEach(b => b.checked = anyUnchecked);
 }
 
-// 备份与恢复
-async function exportData() {
-  const questions = await dbGetAll(STORE_QUESTIONS);
-  const exams = await dbGetAll(STORE_EXAMS);
-  const blob = new Blob([JSON.stringify({ version: 6, questions, exams }, null, 2)], { type: "application/json" });
-  const a = document.createElement("a");
-  a.href = URL.createObjectURL(blob);
-  a.download = `智学多学科备份_${new Date().getMonth()+1}月${new Date().getDate()}日.json`;
-  a.click();
-}
-
-function importData() {
-  const input = document.createElement("input");
-  input.type = "file"; input.accept = ".json";
-  input.onchange = async (e) => {
-    const file = e.target.files[0];
-    if (!file) return;
-    const reader = new FileReader();
-    reader.onload = async (evt) => {
-      try {
-        const data = JSON.parse(evt.target.result);
-        if (data.questions) for (let q of data.questions) await dbAdd(STORE_QUESTIONS, q);
-        if (data.exams) for (let ex of data.exams) await dbAdd(STORE_EXAMS, ex);
-        alert("🎉 全部数据恢复成功！");
-        renderDashboard();
-      } catch(err) { alert("恢复失败：" + err.message); }
-    };
-    reader.readAsText(file);
-  };
-  input.click();
-}
-
-function openKeyModal() {
-  document.getElementById("inpApiKey").value = localStorage.getItem("GEMINI_API_KEY") || "";
-  document.getElementById("keyModal").classList.add("active");
-}
-function saveApiKey() {
-  localStorage.setItem("GEMINI_API_KEY", document.getElementById("inpApiKey").value.trim());
-  document.getElementById("keyModal").classList.remove("active");
-  alert("Key 已保存！");
-}
-
-window.onload = async () => {
-  await initDB();
-  renderDashboard();
-  initPinchZoom();
-};
-</script>
-</body>
-</html><!DOCTYPE html>
-<html lang="zh-CN">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="default">
-<title>多学科学习工作台 & 智能错题管家</title>
-
-<!-- 1. Mozilla 官方开源 PDF.js 引擎 -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
-<script>
-  if (window.pdfjsLib) {
-    pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
-  }
-</script>
-
-<!-- 2. Markdown 渲染库 (Marked) -->
-<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
-
-<!-- 3. KaTeX 数学公式渲染库 (排版乘号、等式、分数) -->
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
-<script src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js"></script>
-
-<style>
-  :root {
-    --primary: #2563eb;
-    --primary-hover: #1d4ed8;
-    --math-color: #2563eb;
-    --math-bg: #eff6ff;
-    --chinese-color: #be123c;
-    --chinese-bg: #fff1f2;
-    --english-color: #059669;
-    --english-bg: #ecfdf5;
-    --vault-color: #7c3aed;
-    --vault-bg: #f5f3ff;
-    --success: #16a34a;
-    --danger: #dc2626;
-    --bg: #f8fafc;
-    --card: #ffffff;
-    --border: #e2e8f0;
-    --text: #0f172a;
-    --text-sub: #64748b;
-  }
-  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
-  body {
-    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, "PingFang SC", sans-serif;
-    background: var(--bg);
-    color: var(--text);
-    padding-bottom: 60px;
-  }
-  header {
-    background: rgba(255, 255, 255, 0.9);
-    backdrop-filter: blur(12px);
-    border-bottom: 1px solid var(--border);
-    padding: 10px 18px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    position: sticky;
-    top: 0;
-    z-index: 100;
-  }
-  .brand { display: flex; align-items: center; gap: 8px; font-size: 1.15rem; font-weight: 800; color: var(--text); cursor: pointer; }
-  .nav-tabs { display: flex; gap: 6px; }
-  .nav-tab {
-    padding: 6px 14px;
-    border-radius: 20px;
-    font-size: 0.88rem;
-    font-weight: 700;
-    cursor: pointer;
-    color: var(--text-sub);
-    transition: all 0.2s;
-  }
-  .nav-tab.active { background: #0f172a; color: white; }
-  .header-actions { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; }
-  .btn {
-    border: none;
-    padding: 6px 12px;
-    border-radius: 8px;
-    font-size: 0.82rem;
-    font-weight: 600;
-    cursor: pointer;
-    display: inline-flex;
-    align-items: center;
-    gap: 4px;
-    transition: all 0.2s;
-  }
-  .btn:active { transform: scale(0.97); }
-  .btn-primary { background: var(--primary); color: white; }
-  .btn-success { background: var(--success); color: white; }
-  .btn-danger { background: #fee2e2; color: var(--danger); }
-  .btn-outline { background: white; border: 1px solid var(--border); color: var(--text); }
-  .btn-amber { background: #fef3c7; color: #b45309; }
-  .container { max-width: 1200px; margin: 18px auto; padding: 0 16px; }
-
-  /* 仪表盘首页 */
-  .greeting-banner {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    background: white;
-    border: 1px solid var(--border);
-    border-radius: 16px;
-    padding: 18px 24px;
-    margin-bottom: 20px;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.02);
-  }
-  .countdown-badge {
-    background: #fef2f2;
-    color: #b91c1c;
-    border: 1px solid #fecaca;
-    padding: 6px 14px;
-    border-radius: 20px;
-    font-size: 0.88rem;
-    font-weight: 700;
-  }
-  .hero-vault-card {
-    background: linear-gradient(135deg, #7c3aed 0%, #4f46e5 100%);
-    color: white;
-    border-radius: 18px;
-    padding: 24px;
-    margin-bottom: 24px;
-    box-shadow: 0 10px 25px rgba(124, 58, 237, 0.2);
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: 16px;
-  }
-  .hero-vault-stats { display: flex; gap: 15px; align-items: center; margin-top: 10px; flex-wrap: wrap; }
-  .stat-pill { background: rgba(255, 255, 255, 0.2); padding: 4px 12px; border-radius: 12px; font-size: 0.85rem; }
-
-  .section-heading { font-size: 1.15rem; font-weight: 800; margin-bottom: 14px; display: flex; justify-content: space-between; align-items: center; }
-  .subject-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 18px; margin-bottom: 30px; }
-  .subject-card {
-    background: white;
-    border: 1px solid var(--border);
-    border-radius: 16px;
-    padding: 20px;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.02);
-    transition: transform 0.2s, box-shadow 0.2s;
-    cursor: pointer;
-  }
-  .subject-card:hover { transform: translateY(-3px); box-shadow: 0 8px 24px rgba(0,0,0,0.06); }
-  .subject-icon { width: 44px; height: 44px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; margin-bottom: 12px; }
-
-  /* 错题总库与联动过滤 */
-  .vault-filter-panel {
-    background: white;
-    border: 1px solid var(--border);
-    border-radius: 16px;
-    padding: 16px;
-    margin-bottom: 18px;
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-  }
-  .filter-row { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
-  .filter-chip {
-    padding: 5px 12px;
-    border-radius: 16px;
-    font-size: 0.82rem;
-    font-weight: 600;
-    background: #f1f5f9;
-    color: var(--text-sub);
-    cursor: pointer;
-    border: 1px solid transparent;
-    transition: all 0.2s;
-  }
-  .filter-chip.active { background: #0f172a; color: white; }
-
-  .q-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(330px, 1fr)); gap: 16px; }
-  .q-card {
-    background: white;
-    border: 1px solid var(--border);
-    border-radius: 14px;
-    padding: 16px;
-    display: flex;
-    flex-direction: column;
-    position: relative;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.02);
-  }
-  .q-img-wrap { width: 100%; max-height: 200px; overflow: hidden; background: #f8fafc; border-radius: 8px; margin: 8px 0; border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; }
-  .q-img-wrap img { max-width: 100%; max-height: 200px; object-fit: contain; }
-  
-  .word-card-text {
-    font-size: 1.5rem;
-    font-weight: 800;
-    text-align: center;
-    padding: 18px 10px;
-    border-radius: 8px;
-    margin: 8px 0;
-    letter-spacing: 1px;
-  }
-
-  /* 考场双屏与缩放 */
-  #examView { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: #0f172a; z-index: 500; flex-direction: column; }
-  .exam-header { background: #1e293b; color: white; padding: 10px 18px; display: flex; justify-content: space-between; align-items: center; }
-  .exam-body { flex: 1; display: flex; overflow: hidden; }
-  .exam-left-paper { flex: 60; background: #334155; overflow: auto; padding: 15px; position: relative; touch-action: pan-x pan-y pinch-zoom; }
-  .paper-page-img { max-width: 100%; box-shadow: 0 4px 14px rgba(0,0,0,0.3); border-radius: 6px; background: white; display: block; user-select: none; }
-  .exam-right-sheet { flex: 40; background: white; overflow-y: auto; padding: 16px; border-left: 1px solid var(--border); }
-  @media (max-width: 768px) {
-    .exam-body { flex-direction: column; }
-    .exam-left-paper { flex: 50; max-height: 50vh; }
-    .exam-right-sheet { flex: 50; max-height: 50vh; }
-  }
-  .zoom-floating-bar { position: sticky; bottom: 12px; margin: 0 auto; width: fit-content; background: rgba(15, 23, 42, 0.85); backdrop-filter: blur(8px); padding: 6px 12px; border-radius: 24px; display: flex; align-items: center; gap: 8px; z-index: 30; }
-  #snipTopBanner { display: none; background: #fef08a; color: #854d0e; padding: 8px 16px; font-size: 0.88rem; font-weight: bold; border-bottom: 2px solid #eab308; justify-content: space-between; align-items: center; }
-  #snipConfirmBar { display: none; position: sticky; bottom: 60px; margin: 0 auto; width: fit-content; background: #0f172a; color: white; padding: 8px 18px; border-radius: 30px; box-shadow: 0 4px 18px rgba(0,0,0,0.6); z-index: 120; gap: 12px; align-items: center; }
-  .bubble-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 20px; }
-  .bubble-item { background: #f8fafc; border: 1px solid var(--border); border-radius: 8px; padding: 6px; text-align: center; }
-  .bubble-opts { display: flex; justify-content: center; gap: 4px; margin-top: 4px; }
-  .bubble-btn { width: 24px; height: 24px; border-radius: 50%; border: 1.5px solid #cbd5e1; font-size: 0.75rem; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; background: white; }
-  .bubble-btn.selected { background: var(--primary); color: white; border-color: var(--primary); }
-  .bubble-btn.correct { background: var(--success); color: white; border-color: var(--success); }
-  .bubble-btn.wrong { background: var(--danger); color: white; border-color: var(--danger); }
-  
-  .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); display: none; align-items: center; justify-content: center; z-index: 1000; padding: 16px; }
-  .modal-overlay.active { display: flex; }
-  .modal { background: white; width: 100%; max-width: 650px; max-height: 90vh; border-radius: 16px; padding: 22px; overflow-y: auto; }
-  .form-group { display: flex; flex-direction: column; gap: 4px; margin-bottom: 12px; }
-  .form-group label { font-size: 0.85rem; font-weight: 600; color: #475569; }
-  input[type="text"], input[type="number"], select, textarea { padding: 8px 12px; border: 1px solid var(--border); border-radius: 8px; font-family: inherit; font-size: 0.9rem; }
-  .ans-reveal { margin-top: 10px; padding: 10px; background: #f1f5f9; border-left: 4px solid var(--primary); border-radius: 4px; display: none; font-size: 0.85rem; }
-  .ans-reveal.show { display: block; }
-
-  /* Markdown 与 数学公式渲染专属样式 */
-  .analysis-output-box {
-    background: #f8fafc;
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    padding: 16px 20px;
-    font-size: 0.95rem;
-    line-height: 1.7;
-    max-height: 55vh;
-    overflow-y: auto;
-    margin: 12px 0;
-    color: #1e293b;
-  }
-  .analysis-output-box h1, .analysis-output-box h2, .analysis-output-box h3, .analysis-output-box h4 {
-    margin: 12px 0 6px 0;
-    color: #0f172a;
-    font-weight: 700;
-  }
-  .analysis-output-box h3 { font-size: 1.05rem; }
-  .analysis-output-box h4 { font-size: 0.95rem; color: #0284c7; }
-  .analysis-output-box p { margin-bottom: 8px; }
-  .analysis-output-box ul, .analysis-output-box ol { padding-left: 20px; margin-bottom: 10px; }
-  .analysis-output-box li { margin-bottom: 4px; }
-  .analysis-output-box .katex-display { margin: 10px 0; overflow-x: auto; overflow-y: hidden; padding: 4px 0; }
-  .analysis-output-box code { background: #e2e8f0; padding: 2px 4px; border-radius: 4px; font-size: 0.88rem; }
-
-  /* 语文组词与英语造句拓展专属置顶卡片 */
-  .ext-words-box {
-    background: #f0fdf4;
-    border: 1.5px solid #86efac;
-    border-radius: 10px;
-    padding: 12px 14px;
-    margin-bottom: 12px;
-  }
-  .ext-words-title {
-    font-size: 0.85rem;
-    font-weight: 800;
-    color: #15803d;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 6px;
-  }
-  
-  .modal-subtabs { display: flex; background: #e2e8f0; padding: 3px; border-radius: 8px; margin-bottom: 14px; }
-  .modal-subtab { flex: 1; text-align: center; padding: 6px; font-size: 0.85rem; font-weight: 700; cursor: pointer; border-radius: 6px; color: #64748b; }
-  .modal-subtab.active { background: white; color: var(--primary); }
-</style>
-</head>
-<body>
-
-<header>
-  <div class="brand" onclick="switchNav('dashboard')">
-    <span>🍎 智学多学科管家</span>
-    <span style="font-size:0.7rem; font-weight:bold; background:#e0f2fe; color:#0369a1; padding:2px 8px; border-radius:12px;">v5.4 (KaTeX公式美化版)</span>
-  </div>
-  <div class="nav-tabs">
-    <div class="nav-tab active" id="tabNavDashboard" onclick="switchNav('dashboard')">🏠 首页工作台</div>
-    <div class="nav-tab" id="tabNavVault" onclick="switchNav('vault')">🎯 错题复习总库</div>
-  </div>
-  <div class="header-actions">
-    <button class="btn btn-outline" onclick="exportData()" title="备份全科数据">💾 备份</button>
-    <button class="btn btn-outline" onclick="importData()" title="恢复数据">📂 恢复</button>
-    <button class="btn btn-outline" onclick="openKeyModal()">🔑 Key</button>
-  </div>
-</header>
-
-<!-- ================= 页面 1：仪表盘首页 ================= -->
-<div class="container" id="viewDashboard">
-  <div class="greeting-banner">
-    <div>
-      <h2 style="font-size:1.3rem; margin-bottom:4px;">👋 欢迎回来，Jason！</h2>
-      <p style="font-size:0.85rem; color:var(--text-sub);">数学重在思维突破，语文英语抓好生字词、例句与错题沉淀！</p>
-    </div>
-    <div class="countdown-badge" id="wmoCountdownText">🏆 距 11-29 WMO 地方省测还有计算中...</div>
-  </div>
-
-  <div class="hero-vault-card">
-    <div>
-      <span style="font-size:0.85rem; text-transform:uppercase; letter-spacing:1px; opacity:0.9;">Unified Error Review</span>
-      <h3 style="font-size:1.5rem; margin:4px 0 8px;">🎯 全科错题复习中枢</h3>
-      <div class="hero-vault-stats" id="dashboardVaultStats">
-        <span class="stat-pill">📐 数学: 0 题待攻克</span>
-        <span class="stat-pill">📖 语文: 0 题</span>
-        <span class="stat-pill">🔤 英语: 0 题</span>
-      </div>
-    </div>
-    <div style="display:flex; gap:10px;">
-      <button class="btn" style="background:white; color:#4f46e5; font-size:0.9rem; padding:8px 16px; font-weight:700;" onclick="startSmartReview()">⚡ 开启今日攻坚</button>
-      <button class="btn" style="background:rgba(255,255,255,0.2); color:white; border:1px solid rgba(255,255,255,0.4);" onclick="switchNav('vault')">错题总库</button>
-    </div>
-  </div>
-
-  <div class="section-heading">
-    <span>📚 学科专属空间</span>
-    <span style="font-size:0.82rem; color:var(--text-sub); font-weight:normal;">点击卡片进入学科错题或真题</span>
-  </div>
-  <div class="subject-grid" id="subjectGridContainer"></div>
-</div>
-
-<!-- ================= 页面 2：专属学科主页 ================= -->
-<div class="container" id="viewSubjectPortal" style="display:none;">
-  <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:18px; flex-wrap:wrap; gap:8px;">
-    <div>
-      <button class="btn btn-outline" style="margin-bottom:8px;" onclick="switchNav('dashboard')">← 返回首页工作台</button>
-      <h2 style="font-size:1.35rem;" id="portalSubjectTitle">学科空间</h2>
-    </div>
-    <div id="portalActionBtnContainer"></div>
-  </div>
-  <div class="exam-grid" id="portalExamList"></div>
-</div>
-
-<!-- ================= 页面 3：全科错题复习总库 ================= -->
-<div class="container" id="viewVault" style="display:none;">
-  <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px; flex-wrap:wrap; gap:8px;">
-    <div>
-      <h2 style="font-size:1.3rem;">🎯 错题复习总库</h2>
-      <p style="font-size:0.85rem; color:var(--text-sub);">点击【🔍 查看原题/编辑】可修改标签；点击【💡 查看思路】自动渲染精美数学公式与拓展组词</p>
-    </div>
-    <div style="display:flex; gap:6px; flex-wrap:wrap;">
-      <button class="btn btn-outline" onclick="toggleSelectAllVault()">全选/反选</button>
-      <button class="btn btn-primary" style="background:#0284c7;" onclick="analyzeThinkingWithGemini()">💡 批量分析思路</button>
-      <button class="btn btn-success" onclick="generateSimilarWithGemini()">🤖 批量出相似题</button>
-    </div>
-  </div>
-
-  <div class="vault-filter-panel">
-    <div class="filter-row">
-      <span style="font-size:0.82rem; font-weight:700; color:#475569; min-width:48px;">学科：</span>
-      <div id="filterSubjectChips" style="display:flex; gap:6px; flex-wrap:wrap;"></div>
-    </div>
-    <div class="filter-row">
-      <span style="font-size:0.82rem; font-weight:700; color:#475569; min-width:48px;">模块：</span>
-      <div id="filterModuleChips" style="display:flex; gap:6px; flex-wrap:wrap;"></div>
-    </div>
-    <div class="filter-row">
-      <span style="font-size:0.82rem; font-weight:700; color:#475569; min-width:48px;">年级：</span>
-      <div id="filterGradeChips" style="display:flex; gap:6px; flex-wrap:wrap;"></div>
-    </div>
-    <div class="filter-row">
-      <span style="font-size:0.82rem; font-weight:700; color:#475569; min-width:48px;">状态：</span>
-      <div id="filterStatusChips" style="display:flex; gap:6px; flex-wrap:wrap;">
-        <span class="filter-chip active" onclick="setFilterStatus('')">全部状态</span>
-        <span class="filter-chip" onclick="setFilterStatus('🔴 待攻克')">🔴 待攻克</span>
-        <span class="filter-chip" onclick="setFilterStatus('🟡 巩固中')">🟡 巩固中</span>
-        <span class="filter-chip" onclick="setFilterStatus('🟢 已斩杀')">🟢 已斩杀</span>
-      </div>
-    </div>
-  </div>
-
-  <div class="q-grid" id="qList"></div>
-</div>
-
-<!-- ================= 考场全屏视图 ================= -->
-<div id="examView">
-  <div class="exam-header">
-    <span style="font-size:1rem; font-weight:700;" id="runningExamTitle">试卷标题</span>
-    <span style="font-size:1.15rem; font-weight:800; color:#38bdf8;" id="runningTimer">90:00</span>
-    <div>
-      <button class="btn btn-outline" style="color:white; border-color:#64748b; background:transparent;" onclick="exitExam()">退出</button>
-      <button class="btn btn-success" id="runningSubmitBtn" onclick="submitRunningExam()">交卷评分</button>
-    </div>
-  </div>
-
-  <div id="snipTopBanner">
-    <span id="snipBannerText">请在试卷上画框圈出题目...</span>
-    <button class="btn btn-outline" style="padding:2px 8px; font-size:0.75rem; background:white;" onclick="exitSnippingMode()">取消截图</button>
-  </div>
-
-  <div class="exam-body">
-    <div class="exam-left-paper" id="paperGalleryContainer">
-      <div id="paperContentWrapper" style="width:100%; margin:0 auto; display:flex; flex-direction:column; align-items:center; gap:16px;"></div>
-      <div id="snipConfirmBar">
-        <span style="font-size:0.85rem;">已框选题目区域</span>
-        <button class="btn btn-success" style="padding:5px 12px;" onclick="confirmSaveSnip()">💾 保存该题</button>
-        <button class="btn btn-outline" style="padding:5px 12px; color:white; background:transparent; border-color:#64748b;" onclick="exitSnippingMode()">取消</button>
-      </div>
-      <div class="zoom-floating-bar" id="zoomFloatingBar">
-        <button class="btn btn-outline" style="padding:3px 8px;" onclick="zoomPaper(-0.25)">🔍−</button>
-        <span id="zoomLevelText" style="font-size:0.75rem; font-weight:bold; color:white; min-width:40px; text-align:center;">100%</span>
-        <button class="btn btn-outline" style="padding:3px 8px;" onclick="zoomPaper(0.25)">🔍＋</button>
-        <button class="btn btn-outline" style="padding:3px 8px;" onclick="resetZoomPaper()">↺ 还原</button>
-      </div>
-    </div>
-    <div class="exam-right-sheet">
-      <h4 style="font-size:0.9rem; margin-bottom:10px;">一、单选题答题卡</h4>
-      <div class="bubble-grid" id="bubbleSheet"></div>
-      <h4 style="font-size:0.9rem; margin:15px 0 10px;">二、解答题答题草稿</h4>
-      <div id="faqSheet"></div>
-      <div id="examResultPanel" style="display:none; margin-top:15px;">
-        <div style="background:#f0fdf4; border:1px solid #bbf7d0; padding:12px; border-radius:8px; text-align:center;">
-          <h3 style="color:#15803d; font-size:1.2rem;" id="finalScoreText">选择题得分：0 / 80</h3>
-        </div>
-        <div id="wrongItemsContainer" style="margin-top:12px;"></div>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- ================= 弹窗集合 ================= -->
-
-<!-- 1. 查看原题与编辑弹窗 (需求新增) -->
-<div class="modal-overlay" id="viewEditQuestionModal">
-  <div class="modal" style="max-width:700px;">
-    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
-      <h3 style="font-size:1.15rem; color:#0f172a;" id="viewModalTitle">🔍 查看原题与编辑</h3>
-      <span id="viewModalSubjectBadge" style="font-size:0.75rem; padding:2px 8px; border-radius:10px; font-weight:bold;"></span>
-    </div>
-
-    <!-- 原题展示区 -->
-    <div id="viewModalPreviewContainer" style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px; padding:12px; text-align:center; margin-bottom:14px; max-height:280px; overflow:auto;">
-    </div>
-
-    <!-- 字段编辑区 -->
-    <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin-bottom:12px;">
-      <div class="form-group">
-        <label>所属学科</label>
-        <select id="editQSubject" onchange="updateEditModalModules()"></select>
-      </div>
-      <div class="form-group">
-        <label>所属年级</label>
-        <select id="editQGrade">
-          <option value="四上">四年级上册 (四上)</option>
-          <option value="四下">四年级下册 (四下)</option>
-          <option value="五上">五年级上册 (五上)</option>
-          <option value="五下">五年级下册 (五下)</option>
-          <option value="六上">六年级上册 (六上)</option>
-          <option value="六下">六年级下册 (六下)</option>
-        </select>
-      </div>
-    </div>
-
-    <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin-bottom:12px;">
-      <div class="form-group">
-        <label>分类模块</label>
-        <select id="editQModule"></select>
-      </div>
-      <div class="form-group">
-        <label>掌握状态</label>
-        <select id="editQStatus">
-          <option value="🔴 待攻克">🔴 待攻克</option>
-          <option value="🟡 巩固中">🟡 巩固中</option>
-          <option value="🟢 已斩杀">🟢 已斩杀</option>
-        </select>
-      </div>
-    </div>
-
-    <div class="form-group">
-      <label>题目备注 / 错字 / 标题</label>
-      <input type="text" id="editQNote">
-    </div>
-
-    <div class="form-group">
-      <label>参考答案 / 纠错释义</label>
-      <input type="text" id="editQAns">
-    </div>
-
-    <div style="display:flex; justify-content:space-between; align-items:center; margin-top:16px;">
-      <button class="btn btn-danger" onclick="deleteCurrentEditingQuestion()">🗑️ 删除此题</button>
-      <div style="display:flex; gap:8px;">
-        <button class="btn btn-outline" onclick="document.getElementById('viewEditQuestionModal').classList.remove('active')">关闭</button>
-        <button class="btn btn-primary" onclick="saveCurrentEditingQuestion()">💾 保存修改</button>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- 2. 录入错题弹窗 -->
-<div class="modal-overlay" id="errorEntryModal">
-  <div class="modal">
-    <h3 style="margin-bottom:12px;" id="errorEntryModalTitle">录入错题</h3>
-    
-    <div class="modal-subtabs" id="errorEntryModalSubtabs">
-      <div class="modal-subtab active" id="tabEntryWord" onclick="switchErrorEntryTab('word')">✍️ 1. 错字/词语录入</div>
-      <div class="modal-subtab" id="tabEntryPhoto" onclick="switchErrorEntryTab('photo')">📸 2. 试卷拍照裁剪</div>
-    </div>
-
-    <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin-bottom:12px;">
-      <div class="form-group">
-        <label>所属年级（已记住上次选择）</label>
-        <select id="inpEntryGrade">
-          <option value="四上">四年级上册 (四上)</option>
-          <option value="四下">四年级下册 (四下)</option>
-          <option value="五上">五年级上册 (五上)</option>
-          <option value="五下">五年级下册 (五下)</option>
-          <option value="六上">六年级上册 (六上)</option>
-          <option value="六下">六年级下册 (六下)</option>
-        </select>
-      </div>
-      <div class="form-group">
-        <label>分类标签</label>
-        <select id="inpEntryModule"></select>
-      </div>
-    </div>
-
-    <div id="panelEntryWord">
-      <div class="form-group">
-        <label id="lblWordTitle">输入错字 / 听写词语 / 拼音</label>
-        <input type="text" id="inpWordText" placeholder="如：璧（和氏璧 / 璧玉）" style="font-size:1.1rem; font-weight:bold;">
-      </div>
-      <div class="form-group">
-        <label id="lblWordNote">纠正 / 释义 / 正音 / 搭配（选填）</label>
-        <input type="text" id="inpWordNote" placeholder="如：注意下半部分是‘玉’不是‘土’">
-      </div>
-    </div>
-
-    <div id="panelEntryPhoto" style="display:none;">
-      <div style="border:2px dashed #93c5fd; padding:15px; text-align:center; border-radius:8px; margin-bottom:10px; cursor:pointer;" onclick="document.getElementById('cameraPhotoFile').click()">
-        <div id="cameraPhotoText">📸 点击调起 iPad 相机拍照 / 从相册选择试卷</div>
-        <input type="file" id="cameraPhotoFile" accept="image/*" capture="environment" style="display:none;" onchange="handleCameraCropFile(this.files[0])">
-      </div>
-      <div id="cropWorkspace" style="display:none; position:relative; max-height:280px; overflow:auto; background:#334155; border-radius:8px; padding:10px; text-align:center;">
-        <div style="position:relative; display:inline-block;">
-          <img id="cropTargetImg" style="max-width:100%; display:block; user-select:none;">
-          <canvas id="cropModalCanvas" style="position:absolute; top:0; left:0; width:100%; height:100%; touch-action:none; cursor:crosshair;"></canvas>
-        </div>
-      </div>
-      <p style="font-size:0.75rem; color:#64748b; margin-top:4px;">拍照后，在图上用手指拖拽画框，自动裁切题目区域！</p>
-    </div>
-
-    <div style="display:flex; justify-content:flex-end; gap:8px; margin-top:16px;">
-      <button class="btn btn-outline" onclick="document.getElementById('errorEntryModal').classList.remove('active')">取消</button>
-      <button class="btn btn-primary" onclick="saveSubjectErrorEntry()">💾 保存到错题库</button>
-    </div>
-  </div>
-</div>
-
-<!-- 3. 录入完整真题卷弹窗 (数学专用) -->
-<div class="modal-overlay" id="uploadExamModal">
-  <div class="modal">
-    <h3 style="margin-bottom:12px;" id="modalExamTitleText">编辑试卷</h3>
-    <div class="form-group"><label>试卷名称</label><input type="text" id="newExamTitle" placeholder="如：第32届 WMO 地方省测"></div>
-    <div class="form-group"><label>考试限时（分钟）</label><input type="number" id="newExamDuration" value="90"></div>
-    <div class="form-group">
-      <label>上传原卷（🔥支持 PDF 文件或多选照片）</label>
-      <input type="file" id="newExamFiles" accept="image/*,.pdf,application/pdf" multiple onchange="handleExamFiles(this.files)">
-      <div id="newExamPreview" style="display:flex; gap:8px; margin-top:8px; flex-wrap:wrap;"></div>
-    </div>
-    <div class="form-group"><label>16道单选答案（连续填16位大写字母）</label><input type="text" id="newExamKeys" placeholder="BBADDCACBACA..." maxlength="16"></div>
-    <div class="form-group"><label>解答题参考答案（分行填写）</label><textarea id="newExamFaqAns" style="height:80px;" placeholder="17. 6条; 710元..."></textarea></div>
-    <div style="display:flex; justify-content:flex-end; gap:8px;">
-      <button class="btn btn-outline" onclick="document.getElementById('uploadExamModal').classList.remove('active')">取消</button>
-      <button class="btn btn-primary" onclick="saveNewExam()">保存</button>
-    </div>
-  </div>
-</div>
-
-<!-- 4. Gemini 深度分析展示弹窗 (含 KaTeX 公式美化 + 语文组词/英语短句文本框) -->
-<div class="modal-overlay" id="analysisModal">
-  <div class="modal" style="max-width:780px;">
-    <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;">
-      <div style="display:flex; align-items:center; gap:8px;">
-        <h3 style="color:#0369a1;">💡 深度思路与名师导图</h3>
-        <span id="analysisSourceBadge" style="font-size:0.75rem; background:#e0f2fe; color:#0369a1; padding:2px 8px; border-radius:10px; font-weight:bold;"></span>
-      </div>
-      <div style="display:flex; gap:6px;">
-        <button class="btn btn-outline" id="btnReAnalyze" onclick="reAnalyzeCurrentWithGemini()">🔄 重新由 AI 分析</button>
-        <button class="btn btn-outline" onclick="copyAnalysisText()">📋 复制</button>
-        <button class="btn btn-primary" onclick="printAnalysisContent()">🖨️ 打印</button>
-      </div>
-    </div>
-
-    <!-- ⭐ 需求新增：语文组词（3-5个常见词）与 英语造句（1-3个短句）专属置顶文本框 -->
-    <div class="ext-words-box" id="extWordsPanel" style="display:none;">
-      <div class="ext-words-title">
-        <span id="extWordsHeaderLabel">📝 常用词语拓展（3~5个常见词）</span>
-        <button class="btn btn-outline" style="padding:2px 8px; font-size:0.75rem; background:white;" onclick="saveCustomExtensionWords()">💾 保存拓展内容</button>
-      </div>
-      <input type="text" id="inpCustomExtensionWords" placeholder="在此输入词语或例句拓展..." style="width:100%; border:1px solid #86efac; background:white; font-size:0.95rem; font-weight:600; color:#166534;">
-    </div>
-
-    <!-- 富文本与数学公式渲染容器 -->
-    <div class="analysis-output-box" id="analysisOutput">正在加载分析结果...</div>
-    <div style="display:flex; justify-content:flex-end;"><button class="btn btn-outline" onclick="document.getElementById('analysisModal').classList.remove('active')">关闭</button></div>
-  </div>
-</div>
-
-<!-- 5. Gemini 相似题弹窗 -->
-<div class="modal-overlay" id="similarModal">
-  <div class="modal" style="max-width:750px;">
-    <div style="display:flex; justify-content:space-between; align-items:center;">
-      <h3 style="color:#15803d;">🎯 举一反三 · 相似变式题</h3>
-      <div style="display:flex; gap:6px;">
-        <button class="btn btn-outline" onclick="copySimilarText()">📋 复制</button>
-        <button class="btn btn-primary" onclick="printSimilarContent()">🖨️ 打印</button>
-      </div>
-    </div>
-    <div class="analysis-output-box" id="similarOutput">生成中...</div>
-    <div style="display:flex; justify-content:flex-end;"><button class="btn btn-outline" onclick="document.getElementById('similarModal').classList.remove('active')">关闭</button></div>
-  </div>
-</div>
-
-<!-- 6. Key 弹窗 -->
-<div class="modal-overlay" id="keyModal">
-  <div class="modal" style="max-width:400px;">
-    <h3>配置 Gemini API Key</h3>
-    <input type="text" id="inpApiKey" placeholder="AIzaSy..." style="width:100%; margin:10px 0;">
-    <div style="display:flex; justify-content:flex-end; gap:8px;">
-      <button class="btn btn-outline" onclick="document.getElementById('keyModal').classList.remove('active')">取消</button>
-      <button class="btn btn-primary" onclick="saveApiKey()">保存</button>
-    </div>
-  </div>
-</div>
-
-<script>
-// 多模型备用容灾列表
-const GEMINI_MODELS = ["gemini-3.8-flash", "gemini-2.5-flash", "gemini-1.5-flash"];
-
-// 学科与模块定义
-const SUBJECTS = {
-  math: {
-    id: "math", name: "数学思维", icon: "📐",
-    desc: "WMO竞赛真题、高频几何模型、行程工程与错题攻坚",
-    color: "#2563eb", bg: "#eff6ff",
-    modules: ["几何模型", "行程问题", "数论整除", "计数组合", "计算与数列", "典型应用题"]
-  },
-  chinese: {
-    id: "chinese", name: "语文素养", icon: "📖",
-    desc: "易错生字词打卡、阅读理解、古诗文默写与作文",
-    color: "#be123c", bg: "#fff1f2",
-    modules: ["字词拼音", "修改病句", "文言诗词", "阅读理解", "表达应用", "其它错题"]
-  },
-  english: {
-    id: "english", name: "英语进阶", icon: "🔤",
-    desc: "易错单词听写、语法时态、完形填空与阅读理解",
-    color: "#059669", bg: "#ecfdf5",
-    modules: ["词汇短语", "语法时态", "完形填空", "阅读理解", "句型转换", "其它错题"]
-  }
-};
-
-let currentPortalSubject = "math";
-let filterSubject = "";
-let filterModule = "";
-let filterGrade = "";
-let filterStatus = "";
-
-// 数据库 IndexedDB
-let db = null;
-const DB_NAME = "MathVaultDB";
-const STORE_QUESTIONS = "questions";
-const STORE_EXAMS = "exams";
-
-function initDB() {
-  return new Promise((resolve) => {
-    const req = indexedDB.open(DB_NAME, 6);
-    req.onupgradeneeded = (e) => {
-      const database = e.target.result;
-      if (!database.objectStoreNames.contains(STORE_QUESTIONS)) database.createObjectStore(STORE_QUESTIONS, { keyPath: "id", autoIncrement: true });
-      if (!database.objectStoreNames.contains(STORE_EXAMS)) database.createObjectStore(STORE_EXAMS, { keyPath: "id", autoIncrement: true });
-    };
-    req.onsuccess = async (e) => {
-      db = e.target.result;
-      await preseedAllExams();
-      resolve(db);
-    };
-  });
-}
-
-async function preseedAllExams() {
-  const defaultExams = [
-    { title: "第31届 WMO 地方省测 (四年级)", subject: "math", duration: 90, keys: "BBADDCACBACA" + "BABC", keysFull: ["B","B","A","D","D","C","A","C","B","A","C","A","B","A","B","C"], faqAns: ["17. (1) 6条; (2) 最少710元", "18. 1元10枚、5角40枚、1角50枚", "19. (1) 2800米; (2) 8点50分", "20. (1) 891; (2) 10个"], pages: [] },
-    { title: "第32届 WMO 地方省测 (四年级)", subject: "math", duration: 90, keys: "ACCACB CDBBA BBACB", keysFull: ["A","C","C","A","C","B","C","D","B","B","A","B","B","A","C","B"], faqAns: ["17. (1) 6人; (2) 7人; (3) 6人", "18. (1) C; (2) 185", "19. (1) 1班; (2) 汉堡; (3) 欧欧", "20. (1) E; (2) O"], pages: [] },
-    { title: "第33届 WMO 地方省测 (四年级)", subject: "math", duration: 90, keys: "DBCCCD CCBAD BBDCB", keysFull: ["D","B","C","C","C","D","C","C","B","A","D","B","B","D","C","B"], faqAns: ["17. (1) 20只; (2) 32只", "18. (1) 540°; (2) 4次; (3) 三角形", "19. (1) 40厘米; (2) 30厘米", "20. (3)→(1)→(2)→(4)→(5)"], pages: [] },
-    { title: "第34届 WMO 地方省测 (四年级)", subject: "math", duration: 90, keys: "CDD BDDD CCBB CBB CB", keysFull: ["C","D","D","B","D","D","D","C","C","B","B","C","B","B","C","B"], faqAns: ["17. (1) 5400元; (2) 5640元; (3) 5616元", "18. (1) 400米; (2) 40秒", "19. (1) 小正方形6cm，大正方形21cm; (2) 300cm²", "20. (1) C; (2) 先, 右, 2格"], pages: [] },
-    { title: "第35届 WMO 地方省测 (四年级)", subject: "math", duration: 90, keys: "ACBBAC ABBADC ACBC", keysFull: ["A","C","B","B","A","C","A","B","B","A","D","C","A","C","B","C"], faqAns: ["17. (1) 6分钟; (2) 54分钟", "18. (1) B; (2) 640cm², 52cm", "19. (1) 星期三; (2) 风之店; (3) 土之店", "20. (1) 6; (2) 5; (3) 3"], pages: [] }
-  ];
-  const currentExams = await dbGetAll(STORE_EXAMS);
-  for (const def of defaultExams) {
-    if (!currentExams.find(x => x.title.includes(def.title.slice(0, 5)))) await dbAdd(STORE_EXAMS, def);
-  }
-}
-
-function dbAdd(storeName, item) {
-  return new Promise((resolve) => {
-    const tx = db.transaction(storeName, "readwrite");
-    tx.objectStore(storeName).put(item).onsuccess = (e) => resolve(e.target.result);
-  });
-}
-function dbGetAll(storeName) {
-  return new Promise((resolve) => {
-    const tx = db.transaction(storeName, "readonly");
-    tx.objectStore(storeName).getAll().onsuccess = (e) => resolve(e.target.result || []);
-  });
-}
-function dbDelete(storeName, id) {
-  return new Promise((resolve) => {
-    const tx = db.transaction(storeName, "readwrite");
-    tx.objectStore(storeName).delete(id).onsuccess = () => resolve();
-  });
-}
-
-// 导航分发
-function switchNav(viewName) {
-  document.getElementById("viewDashboard").style.display = viewName === "dashboard" ? "block" : "none";
-  document.getElementById("viewSubjectPortal").style.display = viewName === "portal" ? "block" : "none";
-  document.getElementById("viewVault").style.display = viewName === "vault" ? "block" : "none";
-
-  document.getElementById("tabNavDashboard").classList.toggle("active", viewName === "dashboard");
-  document.getElementById("tabNavVault").classList.toggle("active", viewName === "vault");
-
-  if (viewName === "dashboard") renderDashboard();
-  if (viewName === "vault") renderVault();
-  if (viewName === "portal") renderSubjectPortal();
-}
-
-// 1. 仪表盘渲染
-async function renderDashboard() {
-  const targetDate = new Date("2026-11-29T09:00:00");
-  const diffDays = Math.ceil((targetDate - new Date()) / (1000 * 60 * 60 * 24));
-  document.getElementById("wmoCountdownText").textContent = diffDays > 0 ? `🏆 距 11-29 WMO 地方省测还有 ${diffDays} 天` : `🏆 WMO 冲刺进行时！`;
-
-  const questions = await dbGetAll(STORE_QUESTIONS);
-  const mathCount = questions.filter(q => (q.subject || 'math') === 'math' && q.status !== '🟢 已斩杀').length;
-  const chineseCount = questions.filter(q => q.subject === 'chinese' && q.status !== '🟢 已斩杀').length;
-  const englishCount = questions.filter(q => q.subject === 'english' && q.status !== '🟢 已斩杀').length;
-
-  document.getElementById("dashboardVaultStats").innerHTML = `
-    <span class="stat-pill">📐 数学: ${mathCount} 题待攻克</span>
-    <span class="stat-pill">📖 语文: ${chineseCount} 题</span>
-    <span class="stat-pill">🔤 英语: ${englishCount} 题</span>
-  `;
-
-  document.getElementById("subjectGridContainer").innerHTML = Object.values(SUBJECTS).map(sub => `
-    <div class="subject-card" onclick="openSubjectPortal('${sub.id}')">
-      <div>
-        <div class="subject-icon" style="background:${sub.bg}; color:${sub.color};">${sub.icon}</div>
-        <h4 style="font-size:1.15rem; margin-bottom:4px;">${sub.name}</h4>
-        <p style="font-size:0.82rem; color:var(--text-sub); line-height:1.4;">${sub.desc}</p>
-      </div>
-      <div style="margin-top:16px; border-top:1px solid #f1f5f9; padding-top:10px;">
-        <span style="font-size:0.82rem; font-weight:700; color:${sub.color};">${sub.id==='math'?'进入奥数真题/错题 →':'进入专属错题复习 →'}</span>
-      </div>
-    </div>
-  `).join('');
-}
-
-function openSubjectPortal(subjectId) {
-  currentPortalSubject = subjectId;
-  switchNav("portal");
-}
-function startSmartReview() {
-  filterSubject = ""; filterModule = ""; filterGrade = ""; filterStatus = "🔴 待攻克";
-  switchNav("vault");
-}
-
-// 2. 学科空间渲染
-async function renderSubjectPortal() {
-  const currentSub = SUBJECTS[currentPortalSubject] || SUBJECTS.math;
-  document.getElementById("portalSubjectTitle").textContent = `${currentSub.icon} ${currentSub.name} · ${currentPortalSubject==='math'?'奥数真题与错题空间':'日常错题复习空间'}`;
-
-  const btnContainer = document.getElementById("portalActionBtnContainer");
-  if (currentPortalSubject === "math") {
-    btnContainer.innerHTML = `
-      <div style="display:flex; gap:6px;">
-        <button class="btn btn-primary" onclick="openUploadExamModal()">＋ 录入真题试卷</button>
-        <button class="btn btn-outline" onclick="openSubjectErrorEntryModal('math')">＋ 录入错题(拍照裁剪)</button>
-      </div>
-    `;
-  } else {
-    btnContainer.innerHTML = `
-      <button class="btn btn-primary" style="background:${currentSub.color};" onclick="openSubjectErrorEntryModal('${currentPortalSubject}')">＋ 录入错题</button>
-    `;
-  }
-
-  const exams = await dbGetAll(STORE_EXAMS);
-  const filteredExams = exams.filter(e => (e.subject || 'math') === currentPortalSubject);
-  const container = document.getElementById("portalExamList");
-
-  if (currentPortalSubject === "math") {
-    container.innerHTML = filteredExams.map(ex => `
-      <div class="exam-card">
-        <div>
-          <h4 style="font-size:1.05rem;">${ex.title}</h4>
-          <div class="exam-meta"><span>⏱ ${ex.duration}分钟</span><span>📄 原卷照片: ${ex.pages ? ex.pages.length : 0}张</span></div>
-        </div>
-        <div style="display:flex; gap:8px; margin-top:10px;">
-          <button class="btn btn-primary" style="flex:1; justify-content:center;" onclick="startExam(${ex.id})">🚀 开始模考</button>
-          <button class="btn btn-outline" style="padding:6px 10px;" onclick="editExam(${ex.id})">✏️ 编辑</button>
-          <button class="btn btn-danger" style="padding:6px 10px;" onclick="deleteExam(${ex.id})">🗑️</button>
-        </div>
-      </div>
-    `).join('');
-  } else {
-    const allQuestions = await dbGetAll(STORE_QUESTIONS);
-    const subQuestions = allQuestions.filter(q => q.subject === currentPortalSubject);
-    if (subQuestions.length === 0) {
-      container.innerHTML = `<div style="grid-column:1/-1; text-align:center; padding:40px; color:#94a3b8;">暂无本学科错题。点击右上角【＋ 录入错题】输入错词或拍照！</div>`;
-      return;
-    }
-    container.innerHTML = subQuestions.map(q => renderQuestionCardHtml(q)).join('');
-  }
-}
-
-// ================= 3. 错题录入业务 =================
-let activeEntryTab = "word";
-let activeCameraCropBase64 = "";
-
-function openSubjectErrorEntryModal(subjectKey) {
-  const sub = SUBJECTS[subjectKey] || SUBJECTS.chinese;
-  document.getElementById("errorEntryModalTitle").textContent = `${sub.icon} ${sub.name} · 录入错题`;
-
-  const lastGrade = localStorage.getItem("LAST_GRADE_TAG") || "四上";
-  document.getElementById("inpEntryGrade").value = lastGrade;
-
-  const lastModule = localStorage.getItem("LAST_MODULE_" + subjectKey) || sub.modules[0];
-  const modSelect = document.getElementById("inpEntryModule");
-  modSelect.innerHTML = sub.modules.map(m => `<option value="${m}" ${m===lastModule?'selected':''}>${m}</option>`).join('');
-
-  document.getElementById("inpWordText").value = "";
-  document.getElementById("inpWordNote").value = "";
-  activeCameraCropBase64 = "";
-  document.getElementById("cropWorkspace").style.display = "none";
-  document.getElementById("cameraPhotoText").style.display = "block";
-
-  const subTabs = document.getElementById("errorEntryModalSubtabs");
-
-  if (subjectKey === "math") {
-    subTabs.style.display = "none";
-    switchErrorEntryTab("photo");
-  } else if (subjectKey === "english") {
-    subTabs.style.display = "flex";
-    document.getElementById("tabEntryWord").innerHTML = "🔤 1. 单词/短语录入";
-    document.getElementById("tabEntryPhoto").innerHTML = "📸 2. 试卷拍照裁剪";
-    document.getElementById("lblWordTitle").textContent = "输入易错单词 / 词组短语 / 听写词汇";
-    document.getElementById("inpWordText").placeholder = "如：embarrass, accommodation, through/thorough 等";
-    document.getElementById("lblWordNote").textContent = "词义 / 易错点 / 辨析搭配（选填）";
-    document.getElementById("inpWordNote").placeholder = "如：注意双写r和双写s；词义：使尴尬/难堪";
-    switchErrorEntryTab("word");
-  } else {
-    subTabs.style.display = "flex";
-    document.getElementById("tabEntryWord").innerHTML = "✍️ 1. 错字/词语录入";
-    document.getElementById("tabEntryPhoto").innerHTML = "📸 2. 试卷拍照裁剪";
-    document.getElementById("lblWordTitle").textContent = "输入错字 / 听写词语 / 拼音";
-    document.getElementById("inpWordText").placeholder = "如：璧（和氏璧 / 璧玉）或 易错生字";
-    document.getElementById("lblWordNote").textContent = "纠正 / 释义 / 正音（选填）";
-    document.getElementById("inpWordNote").placeholder = "如：注意下半部分是‘玉’不是‘土’";
-    switchErrorEntryTab("word");
-  }
-
-  document.getElementById("errorEntryModal").classList.add("active");
-}
-
-function switchErrorEntryTab(tab) {
-  activeEntryTab = tab;
-  document.getElementById("tabEntryWord").classList.toggle("active", tab === "word");
-  document.getElementById("tabEntryPhoto").classList.toggle("active", tab === "photo");
-  document.getElementById("panelEntryWord").style.display = tab === "word" ? "block" : "none";
-  document.getElementById("panelEntryPhoto").style.display = tab === "photo" ? "block" : "none";
-}
-
-function handleCameraCropFile(file) {
-  if (!file) return;
-  const reader = new FileReader();
-  reader.onload = (e) => {
-    const dataUrl = e.target.result;
-    const imgEl = document.getElementById("cropTargetImg");
-    imgEl.src = dataUrl;
-    imgEl.onload = () => {
-      document.getElementById("cropWorkspace").style.display = "block";
-      document.getElementById("cameraPhotoText").style.display = "none";
-      initCropModalCanvas(imgEl);
-    };
-  };
-  reader.readAsDataURL(file);
-}
-
-function initCropModalCanvas(imgEl) {
-  const canvas = document.getElementById("cropModalCanvas");
-  canvas.width = imgEl.clientWidth || 320;
-  canvas.height = imgEl.clientHeight || 240;
-  const ctx = canvas.getContext("2d");
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-  let isDrawing = false;
-  let sX = 0, sY = 0;
-
-  canvas.onpointerdown = (e) => {
-    isDrawing = true;
-    sX = e.offsetX; sY = e.offsetY;
-    canvas.setPointerCapture(e.pointerId);
-  };
-  canvas.onpointermove = (e) => {
-    if (!isDrawing) return;
-    const curX = e.offsetX, curY = e.offsetY;
-    const rX = Math.min(sX, curX), rY = Math.min(sY, curY);
-    const rW = Math.abs(curX - sX), rH = Math.abs(curY - sY);
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    ctx.fillStyle = "rgba(37, 99, 235, 0.25)";
-    ctx.fillRect(rX, rY, rW, rH);
-    ctx.strokeStyle = "#2563eb"; ctx.lineWidth = 2; ctx.setLineDash([4, 4]);
-    ctx.strokeRect(rX, rY, rW, rH);
-  };
-  canvas.onpointerup = (e) => {
-    if (!isDrawing) return;
-    isDrawing = false;
-    canvas.releasePointerCapture(e.pointerId);
-    const curX = e.offsetX, curY = e.offsetY;
-    const rX = Math.min(sX, curX), rY = Math.min(sY, curY);
-    const rW = Math.abs(curX - sX), rH = Math.abs(curY - sY);
-
-    if (rW > 20 && rH > 20) {
-      const scaleX = imgEl.naturalWidth / canvas.width;
-      const scaleY = imgEl.naturalHeight / canvas.height;
-      const offCanvas = document.createElement("canvas");
-      offCanvas.width = rW * scaleX;
-      offCanvas.height = rH * scaleY;
-      offCanvas.getContext("2d").drawImage(
-        imgEl,
-        rX * scaleX, rY * scaleY, rW * scaleX, rH * scaleY,
-        0, 0, offCanvas.width, offCanvas.height
-      );
-      activeCameraCropBase64 = offCanvas.toDataURL("image/jpeg", 0.9);
-    }
-  };
-}
-
-async function saveSubjectErrorEntry() {
-  const grade = document.getElementById("inpEntryGrade").value;
-  const moduleTag = document.getElementById("inpEntryModule").value;
-  
-  localStorage.setItem("LAST_GRADE_TAG", grade);
-  localStorage.setItem("LAST_MODULE_" + currentPortalSubject, moduleTag);
-
-  let item = {
-    subject: currentPortalSubject,
-    grade: grade,
-    module: moduleTag,
-    status: "🔴 待攻克",
-    updatedAt: new Date().toISOString()
-  };
-
-  if (activeEntryTab === "word" && currentPortalSubject !== "math") {
-    const wordText = document.getElementById("inpWordText").value.trim();
-    if (!wordText) { alert("请输入词汇或生字！"); return; }
-    item.isWord = true;
-    item.note = wordText;
-    item.ans = document.getElementById("inpWordNote").value.trim();
-    item.img = "";
-  } else {
-    if (!activeCameraCropBase64) { alert("请先拍照并在图片上拖拽画框截取题目！"); return; }
-    item.isWord = false;
-    item.note = `${grade} · ${moduleTag} 错题`;
-    item.ans = "";
-    item.img = activeCameraCropBase64;
-  }
-
-  await dbAdd(STORE_QUESTIONS, item);
-  document.getElementById("errorEntryModal").classList.remove("active");
-  alert("🎉 错题已成功存入题库！");
-  renderSubjectPortal();
-  renderDashboard();
-}
-
-// ================= 4. 错题总库与卡片渲染 (新增【查看原题/编辑】按钮) =================
-async function renderVault() {
-  renderFilterChips();
-
-  const allQuestions = await dbGetAll(STORE_QUESTIONS);
-  const filtered = allQuestions.filter(q => {
-    const qSub = q.subject || 'math';
-    if (filterSubject && qSub !== filterSubject) return false;
-    if (filterModule && q.module !== filterModule) return false;
-    if (filterGrade && q.grade !== filterGrade) return false;
-    if (filterStatus && q.status !== filterStatus) return false;
-    return true;
-  });
-
-  const container = document.getElementById("qList");
-  if (filtered.length === 0) {
-    container.innerHTML = `<div style="grid-column:1/-1; text-align:center; padding:40px; color:#94a3b8;">没有找到符合条件的错题！</div>`;
-    return;
-  }
-  container.innerHTML = filtered.map(q => renderQuestionCardHtml(q)).join('');
-}
-
-function renderQuestionCardHtml(q) {
-  const subInfo = SUBJECTS[q.subject || 'math'] || SUBJECTS.math;
-  let wordStyle = `background:${subInfo.bg}; color:${subInfo.color};`;
-
-  return `
-    <div class="q-card">
-      <div style="display:flex; justify-content:space-between; align-items:center;">
-        <label style="display:flex; align-items:center; gap:6px; font-weight:700; cursor:pointer;">
-          <input type="checkbox" class="vault-checkbox" value="${q.id}">
-          <span style="font-size:0.95rem;">${q.note || '错题'}</span>
-        </label>
-        <div>
-          <span style="font-size:0.75rem; background:${subInfo.bg}; color:${subInfo.color}; padding:2px 8px; border-radius:10px; font-weight:bold;">${subInfo.name}</span>
-          <button class="btn btn-danger" style="padding:2px 6px; font-size:0.75rem;" onclick="deleteSingleQuestion(${q.id})">删</button>
-        </div>
-      </div>
-      
-      <!-- 展示缩略图或词汇 -->
-      ${q.isWord ? `<div class="word-card-text" style="${wordStyle}">${q.note}</div>` : `<div class="q-img-wrap"><img src="${q.img}"></div>`}
-
-      <div style="display:flex; justify-content:space-between; font-size:0.8rem; color:#64748b; margin-bottom:8px;">
-        <span>${q.grade || '四上'} · <b>${q.module || '基础考点'}</b></span>
-        <span style="cursor:pointer;" onclick="cycleQuestionStatus(${q.id}, '${q.status}')">${q.status || '🔴 待攻克'} ⟳</span>
-      </div>
-
-      <!-- ⭐ 需求新增：【🔍 查看原题/编辑】前置按钮 -->
-      <div style="display:grid; grid-template-columns: 1.1fr 1fr 1fr; gap:6px; margin-top:auto; padding-top:8px; border-top:1px solid #e2e8f0;">
-        <button class="btn btn-amber" style="justify-content:center; font-size:0.75rem;" onclick="openViewEditModal(${q.id})">
-          🔍 原题/编辑
-        </button>
-        <button class="btn" style="justify-content:center; background:#e0f2fe; color:#0369a1; font-size:0.75rem;" onclick="analyzeSingleQuestionById(${q.id})">
-          💡 ${q.savedAnalysis ? '查看思路(已存)' : '思路导图'}
-        </button>
-        <button class="btn btn-success" style="justify-content:center; font-size:0.75rem;" onclick="generateSimilarSingleById(${q.id})">
-          🤖 出相似题
-        </button>
-      </div>
-    </div>
-  `;
-}
-
-function renderFilterChips() {
-  document.getElementById("filterSubjectChips").innerHTML = `
-    <span class="filter-chip ${filterSubject === '' ? 'active' : ''}" onclick="setFilterSubject('')">全部学科</span>
-    ${Object.values(SUBJECTS).map(s => `<span class="filter-chip ${filterSubject === s.id ? 'active' : ''}" onclick="setFilterSubject('${s.id}')">${s.icon} ${s.name}</span>`).join('')}
-  `;
-
-  let availableModules = [];
-  if (filterSubject && SUBJECTS[filterSubject]) availableModules = SUBJECTS[filterSubject].modules;
-  else availableModules = Array.from(new Set(Object.values(SUBJECTS).flatMap(s => s.modules)));
-
-  document.getElementById("filterModuleChips").innerHTML = `
-    <span class="filter-chip ${filterModule === '' ? 'active' : ''}" onclick="setFilterModule('')">全部模块</span>
-    ${availableModules.map(m => `<span class="filter-chip ${filterModule === m ? 'active' : ''}" onclick="setFilterModule('${m}')">${m}</span>`).join('')}
-  `;
-
-  const grades = ["四上", "四下", "五上", "五下", "六上", "六下"];
-  document.getElementById("filterGradeChips").innerHTML = `
-    <span class="filter-chip ${filterGrade === '' ? 'active' : ''}" onclick="setFilterGrade('')">全部年级</span>
-    ${grades.map(g => `<span class="filter-chip ${filterGrade === g ? 'active' : ''}" onclick="setFilterGrade('${g}')">${g}</span>`).join('')}
-  `;
-}
-
-function setFilterSubject(s) { filterSubject = s; filterModule = ""; renderVault(); }
-function setFilterModule(m) { filterModule = m; renderVault(); }
-function setFilterGrade(g) { filterGrade = g; renderVault(); }
-function setFilterStatus(st) {
-  filterStatus = st;
-  document.querySelectorAll("#filterStatusChips .filter-chip").forEach(c => {
-    c.classList.toggle("active", c.textContent.includes(st) || (st==='' && c.textContent==='全部状态'));
-  });
-  renderVault();
-}
-
-async function cycleQuestionStatus(id, curStatus) {
-  const all = await dbGetAll(STORE_QUESTIONS);
-  const q = all.find(x => x.id === id);
-  if (!q) return;
-  if (!curStatus || curStatus.includes("待攻克")) q.status = "🟡 巩固中";
-  else if (curStatus.includes("巩固")) q.status = "🟢 已斩杀";
-  else q.status = "🔴 待攻克";
-  await dbAdd(STORE_QUESTIONS, q);
-  renderVault();
-}
-
-// ================= 5. 【查看原题与编辑】弹窗业务 =================
-let viewingQuestionId = null;
-
-async function openViewEditModal(id) {
-  const all = await dbGetAll(STORE_QUESTIONS);
-  const q = all.find(x => x.id === id);
-  if (!q) return;
-  viewingQuestionId = id;
-
-  const subInfo = SUBJECTS[q.subject || 'math'] || SUBJECTS.math;
-  document.getElementById("viewModalSubjectBadge").textContent = subInfo.name;
-  document.getElementById("viewModalSubjectBadge").style.background = subInfo.bg;
-  document.getElementById("viewModalSubjectBadge").style.color = subInfo.color;
-
-  // 渲染大图/大字
-  const previewBox = document.getElementById("viewModalPreviewContainer");
-  if (q.isWord) {
-    previewBox.innerHTML = `<div style="font-size:2.2rem; font-weight:800; color:${subInfo.color}; padding:20px 0;">${q.note}</div>`;
-  } else if (q.img) {
-    previewBox.innerHTML = `<img src="${q.img}" style="max-width:100%; max-height:260px; border-radius:6px; box-shadow:0 2px 10px rgba(0,0,0,0.1);">`;
-  } else {
-    previewBox.innerHTML = `<div style="color:#94a3b8; padding:30px;">无原题图片</div>`;
-  }
-
-  // 填充编辑表单
-  const subSel = document.getElementById("editQSubject");
-  subSel.innerHTML = Object.values(SUBJECTS).map(s => `<option value="${s.id}" ${s.id===(q.subject||'math')?'selected':''}>${s.icon} ${s.name}</option>`).join('');
-
-  document.getElementById("editQGrade").value = q.grade || "四上";
-  updateEditModalModules(q.module);
-  document.getElementById("editQStatus").value = q.status || "🔴 待攻克";
-  document.getElementById("editQNote").value = q.note || "";
-  document.getElementById("editQAns").value = q.ans || "";
-
-  document.getElementById("viewEditQuestionModal").classList.add("active");
-}
-
-function updateEditModalModules(selectedModule) {
-  const subId = document.getElementById("editQSubject").value;
-  const sub = SUBJECTS[subId] || SUBJECTS.math;
-  const modSel = document.getElementById("editQModule");
-  modSel.innerHTML = sub.modules.map(m => `<option value="${m}" ${m===selectedModule?'selected':''}>${m}</option>`).join('');
-}
-
-async function saveCurrentEditingQuestion() {
-  if (!viewingQuestionId) return;
-  const all = await dbGetAll(STORE_QUESTIONS);
-  const q = all.find(x => x.id === viewingQuestionId);
-  if (!q) return;
-
-  q.subject = document.getElementById("editQSubject").value;
-  q.grade = document.getElementById("editQGrade").value;
-  q.module = document.getElementById("editQModule").value;
-  q.status = document.getElementById("editQStatus").value;
-  q.note = document.getElementById("editQNote").value.trim();
-  q.ans = document.getElementById("editQAns").value.trim();
-  q.updatedAt = new Date().toISOString();
-
-  await dbAdd(STORE_QUESTIONS, q);
-  document.getElementById("viewEditQuestionModal").classList.remove("active");
-  alert("修改已保存！");
-  renderVault();
-  renderDashboard();
-}
-
-async function deleteCurrentEditingQuestion() {
-  if (!viewingQuestionId) return;
-  if (confirm("确定要删除此错题吗？")) {
-    await dbDelete(STORE_QUESTIONS, viewingQuestionId);
-    document.getElementById("viewEditQuestionModal").classList.remove("active");
-    renderVault();
-    renderDashboard();
-  }
-}
-
-// ================= 6. KaTeX公式渲染与Markdown排版引擎 =================
-// 渲染 LaTeX 数学公式和 Markdown
-function renderRichContent(element, rawText) {
-  // 1. 先用 marked.js 将 Markdown 标记转成规范 HTML
-  let parsedHtml = marked.parse(rawText || "");
-  element.innerHTML = parsedHtml;
-
-  // 2. 调用 KaTeX 自动识别并渲染 $...$ 及 $$...$$ 公式
-  renderMathInElement(element, {
-    delimiters: [
-      { left: "$$", right: "$$", display: true },
-      { left: "$", right: "$", display: false },
-      { left: "\\(", right: "\\)", display: false },
-      { left: "\\[", right: "\\]", display: true }
-    ],
-    throwOnError: false
-  });
-}
-
-// ================= 7. Gemini 思路分析、组词/造句拓展与快照持久化 =================
-let activeAnalysisQuestionId = null;
-
-async function analyzeSingleQuestionById(id) {
-  const all = await dbGetAll(STORE_QUESTIONS);
-  const q = all.find(x => x.id === id);
-  if (!q) return;
-
-  activeAnalysisQuestionId = id;
-  document.getElementById("btnReAnalyze").style.display = "inline-flex";
-
-  // 设置语文/英语拓展词语文本框
-  const extBox = document.getElementById("extWordsPanel");
-  const extLabel = document.getElementById("extWordsHeaderLabel");
-  const extInput = document.getElementById("inpCustomExtensionWords");
-
-  if (q.subject === "chinese" || q.subject === "english") {
-    extBox.style.display = "block";
-    if (q.subject === "chinese") {
-      extLabel.textContent = "📝 常用词语拓展（3~5个常见词）：";
-      extInput.placeholder = "如：名门望族、举世闻名、莫名其妙、不名一钱";
-    } else {
-      extLabel.textContent = "🗣️ 常用短句拓展（1~3个常用例句）：";
-      extInput.placeholder = "如：See you tomorrow. / I will finish my homework by tomorrow morning.";
-    }
-    extInput.value = q.customExtension || "";
-  } else {
-    extBox.style.display = "none";
-  }
-
-  const outputModal = document.getElementById("analysisModal");
-  const outputBox = document.getElementById("analysisOutput");
-
-  if (q.savedAnalysis) {
-    document.getElementById("analysisSourceBadge").textContent = "⚡ 已加载历史保存结果 (不耗Token)";
-    renderRichContent(outputBox, q.savedAnalysis);
-    outputModal.classList.add("active");
-  } else {
-    document.getElementById("analysisSourceBadge").textContent = "🤖 正在请求 AI 实时解析";
-    doAnalyzeThinking([q], id);
-  }
-}
-
-async function saveCustomExtensionWords() {
-  if (!activeAnalysisQuestionId) return;
-  const text = document.getElementById("inpCustomExtensionWords").value.trim();
-  const all = await dbGetAll(STORE_QUESTIONS);
-  const q = all.find(x => x.id === activeAnalysisQuestionId);
-  if (q) {
-    q.customExtension = text;
-    await dbAdd(STORE_QUESTIONS, q);
-    alert("🎉 拓展内容已保存到此错题记录！");
-  }
-}
-
-async function reAnalyzeCurrentWithGemini() {
-  if (!activeAnalysisQuestionId) return;
-  const all = await dbGetAll(STORE_QUESTIONS);
-  const q = all.find(x => x.id === activeAnalysisQuestionId);
-  if (q) {
-    document.getElementById("analysisSourceBadge").textContent = "🔄 正在重新调用 AI 分析";
-    doAnalyzeThinking([q], q.id);
-  }
-}
-
-async function analyzeThinkingWithGemini() {
-  const checked = document.querySelectorAll(".vault-checkbox:checked");
-  if (checked.length === 0) { alert("请先勾选需要分析思路的题目！"); return; }
-  const ids = Array.from(checked).map(b => Number(b.value));
-  const all = await dbGetAll(STORE_QUESTIONS);
-  activeAnalysisQuestionId = null;
-  document.getElementById("btnReAnalyze").style.display = "none";
-  document.getElementById("extWordsPanel").style.display = "none";
-  document.getElementById("analysisSourceBadge").textContent = "🤖 批量实时分析";
-  doAnalyzeThinking(all.filter(q => ids.includes(q.id)), null);
-}
-
-// 核心分析调度
-async function doAnalyzeThinking(selectedQuestions, singleSaveId) {
-  const apiKey = localStorage.getItem("GEMINI_API_KEY");
-  if (!apiKey) { alert("请先配置 Gemini API Key！"); openKeyModal(); return; }
-
-  const outputModal = document.getElementById("analysisModal");
-  const outputBox = document.getElementById("analysisOutput");
-  outputBox.innerHTML = `⏳ 正在请求 Gemini 深度剖析（含 KaTeX 运算符号解析与 503 自动容灾），请稍候约 5~8 秒...`;
-  outputModal.classList.add("active");
-
-  const parts = [];
-  parts.push({
-    text: `你是一位全科特级教师（精通小学奥数解题模型、小学语文生字词与阅读理解、英语语法与造句）。
-请为四年级学生提供极通俗、有启发性的【名师深度思路与解题导图】：
-
-【讲解规范】：
-1. 涉及数学算式、乘号、分数时，请使用标准 LaTeX 格式（行内用 $...$，独立行用 $$...$$，乘号必须用 \\times，分数用 \\frac{}{}），以便系统完美渲染！
-2. 🎯【考点模型】：指出所属学科及具体核心考点；
-3. ⚠️【思维陷阱/错因剖析】：孩子最容易在哪一步卡壳、笔误或想偏？
-4. 🔑【破题第一步】：抓哪个题眼或切入点？
-5. 📐【小学化直观图解/推导】：多用画图法、设数法、语境代入法拆解；
-6. 🗣️【家长一句话启发话术】：提问引导孩子自主想通。
-
-【⭐ 语文与英语拓展专属强制要求】：
-- 若是语文生字/词语，在第一行必须单列输出【组词拓展】：提供 3~5 个该生字在该年级课标内最常见的常用词语或成语！
-- 若是英语单词/短语，在第一行必须单列输出【短句拓展】：提供 1~3 个契合该年级难度的常用生活/考试例句！`
-  });
-
-  selectedQuestions.forEach((q, idx) => {
-    const subInfo = SUBJECTS[q.subject || 'math'] || SUBJECTS.math;
-    parts.push({ text: `\n\n=== 【题目 ${idx + 1}】(学科：${subInfo.name}，考点：${q.module || '未分'}，内容/错字：${q.note || ''}，答案：${q.ans || ''}) ===` });
-    if (q.img && q.img.startsWith("data:image")) {
-      parts.push({ inline_data: { mime_type: q.img.split(";")[0].split(":")[1] || "image/png", data: q.img.split(",")[1] } });
-    }
-  });
-
-  let successText = "";
-  for (const model of GEMINI_MODELS) {
-    try {
-      const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`, {
-        method: "POST", headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ contents: [{ parts }] })
-      });
-      const data = await res.json();
-      if (res.status === 200 && data.candidates && data.candidates[0].content.parts[0].text) {
-        successText = data.candidates[0].content.parts[0].text;
-        break;
-      }
-    } catch(err) {
-      console.warn(`Model ${model} request failed, trying next...`);
-    }
-  }
-
-  if (successText) {
-    // 自动提取语文 3-5 词 或 英语 1-3 句，回填到置顶文本框
-    if (singleSaveId) {
-      const all = await dbGetAll(STORE_QUESTIONS);
-      const targetQ = all.find(x => x.id === singleSaveId);
-      if (targetQ) {
-        targetQ.savedAnalysis = successText;
-
-        // 正则提取拓展短语并更新
-        const extMatch = successText.match(/【(?:组词拓展|短句拓展)】[：:]\s*([^\n\r]+)/);
-        if (extMatch && extMatch[1] && !targetQ.customExtension) {
-          targetQ.customExtension = extMatch[1].trim();
-          document.getElementById("inpCustomExtensionWords").value = targetQ.customExtension;
-        }
-
-        await dbAdd(STORE_QUESTIONS, targetQ);
-        renderVault();
-      }
-    }
-    renderRichContent(outputBox, successText);
-  } else {
-    outputBox.innerHTML = `<span style="color:#dc2626;">⚠️ Google 服务器瞬时繁忙（503），已自动尝试备用模型仍未接通。请稍等 1 分钟后再试！</span>`;
-  }
-}
-
-function copyAnalysisText() {
-  const text = document.getElementById("analysisOutput").innerText;
-  navigator.clipboard.writeText(text).then(() => alert("已复制！"));
-}
-function printAnalysisContent() {
-  const w = window.open('', '', 'width=800,height=600');
-  w.document.write(`<html><head><title>思路导图</title>
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
-  <style>body{font-family:sans-serif;line-height:1.65;padding:20px;}</style></head>
-  <body><h2>名师思路导图</h2>${document.getElementById("analysisOutput").innerHTML}</body></html>`);
-  w.document.close();
-  setTimeout(() => w.print(), 500);
-}
-
-// ================= 8. 相似题出题业务 =================
-async function generateSimilarSingleById(id) {
-  const all = await dbGetAll(STORE_QUESTIONS);
-  const q = all.find(x => x.id === id);
-  if (q) doGenerateSimilar([q]);
-}
-async function generateSimilarWithGemini() {
-  const checked = document.querySelectorAll(".vault-checkbox:checked");
-  if (checked.length === 0) { alert("请先勾选题目！"); return; }
-  const ids = Array.from(checked).map(b => Number(b.value));
-  const all = await dbGetAll(STORE_QUESTIONS);
-  doGenerateSimilar(all.filter(q => ids.includes(q.id)));
-}
-
-async function doGenerateSimilar(selectedQuestions) {
-  const apiKey = localStorage.getItem("GEMINI_API_KEY");
-  if (!apiKey) { alert("请先配置 Gemini API Key！"); openKeyModal(); return; }
-
-  const outputModal = document.getElementById("similarModal");
-  const outputBox = document.getElementById("similarOutput");
-  outputBox.innerHTML = `⏳ 正在请求 Gemini 智能出相似题（含数学公式美化）...`;
-  outputModal.classList.add("active");
-
-  const parts = [];
-  parts.push({
-    text: `你是一位全科金牌名师。请针对选中的这 ${selectedQuestions.length} 道错题，分别出一道【考点模型相同、解题逻辑一致、情境与数字不同】的高仿练习题。如果是数学题，乘号必须用 \\times，公式使用 LaTeX 规范；如果是语文错字，则出一道同类形近字/音近字辨析题并附带常用组词；如果是英语词汇，则出语法语境单选题。分模块提供：【📝 相似变式题】、【💡 直观解法提示】、【🎯 参考答案】。`
-  });
-
-  selectedQuestions.forEach((q, idx) => {
-    const subInfo = SUBJECTS[q.subject || 'math'] || SUBJECTS.math;
-    parts.push({ text: `\n\n=== 【原题 ${idx + 1}】(学科：${subInfo.name}，考点：${q.module || '基础'}，内容：${q.note || ''}) ===` });
-    if (q.img && q.img.startsWith("data:image")) {
-      parts.push({ inline_data: { mime_type: q.img.split(";")[0].split(":")[1] || "image/png", data: q.img.split(",")[1] } });
-    }
-  });
-
-  let successText = "";
-  for (const model of GEMINI_MODELS) {
-    try {
-      const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`, {
-        method: "POST", headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ contents: [{ parts }] })
-      });
-      const data = await res.json();
-      if (res.status === 200 && data.candidates && data.candidates[0].content.parts[0].text) {
-        successText = data.candidates[0].content.parts[0].text;
-        break;
-      }
-    } catch(err) {}
-  }
-
-  if (successText) {
-    renderRichContent(outputBox, successText);
-  } else {
-    outputBox.innerHTML = `<span style="color:#dc2626;">生成失败，Google 接口暂时繁忙，请稍后再试。</span>`;
-  }
-}
-
-function copySimilarText() {
-  const text = document.getElementById("similarOutput").innerText;
-  navigator.clipboard.writeText(text).then(() => alert("已复制！"));
-}
-function printSimilarContent() {
-  const w = window.open('', '', 'width=800,height=600');
-  w.document.write(`<html><head><title>举一反三</title>
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
-  <style>body{font-family:sans-serif;line-height:1.6;padding:20px;}</style></head>
-  <body><h2>举一反三练习</h2>${document.getElementById("similarOutput").innerHTML}</body></html>`);
-  w.document.close();
-  setTimeout(() => w.print(), 500);
-}
-
-// ================= 9. 考场原卷PDF缩放与手势框选裁切 =================
-let activeExam = null;
-let examTimer = null;
-let examSecondsRemaining = 0;
-let userExamAnswers = {};
-let currentZoom = 1.0;
-let pinchStartDist = 0;
-let pinchStartZoom = 1.0;
-
-function applyZoom(z) {
-  currentZoom = Math.min(Math.max(z, 0.8), 3.5);
-  const wrapper = document.getElementById("paperContentWrapper");
-  if (wrapper) wrapper.style.width = (currentZoom * 100) + "%";
-  const label = document.getElementById("zoomLevelText");
-  if (label) label.textContent = Math.round(currentZoom * 100) + "%";
-}
-function zoomPaper(delta) { applyZoom(currentZoom + delta); }
-function resetZoomPaper() { applyZoom(1.0); }
-
-function initPinchZoom() {
-  const container = document.getElementById("paperGalleryContainer");
-  if (!container) return;
-  container.addEventListener("touchstart", (e) => {
-    if (isSnippingMode) return;
-    if (e.touches.length === 2) {
-      pinchStartDist = Math.hypot(e.touches[0].clientX - e.touches[1].clientX, e.touches[0].clientY - e.touches[1].clientY);
-      pinchStartZoom = currentZoom;
-    }
-  }, { passive: true });
-  container.addEventListener("touchmove", (e) => {
-    if (isSnippingMode) return;
-    if (e.touches.length === 2 && pinchStartDist > 0) {
-      const currentDist = Math.hypot(e.touches[0].clientX - e.touches[1].clientX, e.touches[0].clientY - e.touches[1].clientY);
-      applyZoom(pinchStartZoom * (currentDist / pinchStartDist));
-    }
-  }, { passive: true });
-  container.addEventListener("touchend", (e) => { if (e.touches.length < 2) pinchStartDist = 0; }, { passive: true });
-}
-
-let isSnippingMode = false;
-let currentSnipTarget = null;
-let currentSnipRect = null;
-let isPointerDown = false;
-let startX = 0, startY = 0, snipPageIdx = 0;
-
-function startSnipping(num, userOpt, correctOpt) {
-  if (!activeExam.pages || activeExam.pages.length === 0) { alert("未上传原卷图片！"); return; }
-  isSnippingMode = true;
-  currentSnipTarget = { num, userOpt, correctOpt };
-  currentSnipRect = null;
-  document.getElementById("snipTopBanner").style.display = "flex";
-  document.getElementById("snipBannerText").textContent = `✂️ 正在框选【第 ${num} 题】：请在试卷上画框圈出题目`;
-  document.getElementById("snipConfirmBar").style.display = "none";
-  document.getElementById("zoomFloatingBar").style.display = "none";
-
-  document.querySelectorAll(".crop-overlay-canvas").forEach(canvas => {
-    canvas.style.display = "block";
-    canvas.width = canvas.offsetWidth;
-    canvas.height = canvas.offsetHeight;
-    const ctx = canvas.getContext("2d");
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-  });
-}
-
-function initOverlayCanvasListeners(canvas) {
-  canvas.addEventListener("pointerdown", (e) => {
-    if (!isSnippingMode) return;
-    isPointerDown = true;
-    snipPageIdx = Number(canvas.dataset.pageIdx);
-    startX = e.offsetX; startY = e.offsetY;
-    canvas.setPointerCapture(e.pointerId);
-    document.getElementById("snipConfirmBar").style.display = "none";
-    document.querySelectorAll(".crop-overlay-canvas").forEach(c => c.getContext("2d").clearRect(0, 0, c.width, c.height));
-  });
-  canvas.addEventListener("pointermove", (e) => {
-    if (!isPointerDown) return;
-    const curX = e.offsetX, curY = e.offsetY;
-    const rectX = Math.min(startX, curX), rectY = Math.min(startY, curY);
-    const rectW = Math.abs(curX - startX), rectH = Math.abs(curY - startY);
-    const ctx = canvas.getContext("2d");
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    ctx.fillStyle = "rgba(37, 99, 235, 0.25)";
-    ctx.fillRect(rectX, rectY, rectW, rectH);
-    ctx.strokeStyle = "#2563eb"; ctx.lineWidth = 2; ctx.setLineDash([5, 5]);
-    ctx.strokeRect(rectX, rectY, rectW, rectH);
-  });
-  canvas.addEventListener("pointerup", (e) => {
-    if (!isPointerDown) return;
-    isPointerDown = false;
-    canvas.releasePointerCapture(e.pointerId);
-    const curX = e.offsetX, curY = e.offsetY;
-    const rectX = Math.min(startX, curX), rectY = Math.min(startY, curY);
-    const rectW = Math.abs(curX - startX), rectH = Math.abs(curY - startY);
-    if (rectW > 20 && rectH > 20) {
-      currentSnipRect = { pageIdx: snipPageIdx, x: rectX, y: rectY, w: rectW, h: rectH, canvasW: canvas.offsetWidth, canvasH: canvas.offsetHeight };
-      document.getElementById("snipConfirmBar").style.display = "flex";
-    }
-  });
-}
-
-function exitSnippingMode() {
-  isSnippingMode = false;
-  currentSnipTarget = null;
-  currentSnipRect = null;
-  document.getElementById("snipTopBanner").style.display = "none";
-  document.getElementById("snipConfirmBar").style.display = "none";
-  document.getElementById("zoomFloatingBar").style.display = "flex";
-  document.querySelectorAll(".crop-overlay-canvas").forEach(c => { c.style.display = "none"; c.getContext("2d").clearRect(0, 0, c.width, c.height); });
-}
-
-function confirmSaveSnip() {
-  if (!currentSnipRect || !currentSnipTarget) return;
-  const pageImgSrc = activeExam.pages[currentSnipRect.pageIdx];
-  const img = new Image();
-  img.onload = async () => {
-    const scaleX = img.naturalWidth / currentSnipRect.canvasW;
-    const scaleY = img.naturalHeight / currentSnipRect.canvasH;
-    const cropX = Math.max(0, currentSnipRect.x * scaleX);
-    const cropY = Math.max(0, currentSnipRect.y * scaleY);
-    const cropW = Math.min(img.naturalWidth - cropX, currentSnipRect.w * scaleX);
-    const cropH = Math.min(img.naturalHeight - cropY, currentSnipRect.h * scaleY);
-
-    const cropCanvas = document.createElement("canvas");
-    cropCanvas.width = cropW; cropCanvas.height = cropH;
-    cropCanvas.getContext("2d").drawImage(img, cropX, cropY, cropW, cropH, 0, 0, cropW, cropH);
-    const base64Data = cropCanvas.toDataURL("image/jpeg", 0.9);
-
-    await dbAdd(STORE_QUESTIONS, {
-      subject: activeExam.subject || 'math',
-      grade: "四上",
-      module: "真题考点",
-      status: "🔴 待攻克",
-      note: `${activeExam.title} 第${currentSnipTarget.num}题`,
-      ans: currentSnipTarget.correctOpt,
-      ai: `模考作答：错选 ${currentSnipTarget.userOpt}，正解为 ${currentSnipTarget.correctOpt}。`,
-      img: base64Data,
-      updatedAt: new Date().toISOString()
-    });
-
-    const btn = document.getElementById(`snip-btn-${currentSnipTarget.num}`);
-    if (btn) { btn.textContent = "✅ 已保存"; btn.disabled = true; }
-    alert(`🎉 第 ${currentSnipTarget.num} 题已截图存入错题库！`);
-    exitSnippingMode();
-  };
-  img.src = pageImgSrc;
-}
-
-async function startExam(examId) {
-  const exams = await dbGetAll(STORE_EXAMS);
-  activeExam = exams.find(x => x.id === examId);
-  if (!activeExam) return;
-
-  document.getElementById("runningExamTitle").textContent = activeExam.title;
-  document.getElementById("examView").style.display = "flex";
-  document.getElementById("examResultPanel").style.display = "none";
-  document.getElementById("runningSubmitBtn").style.display = "inline-flex";
-
-  const wrapper = document.getElementById("paperContentWrapper");
-  resetZoomPaper();
-
-  if (activeExam.pages && activeExam.pages.length > 0) {
-    wrapper.innerHTML = activeExam.pages.map((p, idx) => `
-      <div class="page-container" style="position:relative; width:100%; display:flex; justify-content:center;">
-        <img src="${p}" class="paper-page-img" data-page-idx="${idx}" alt="第${idx+1}页" style="width:100%; display:block;">
-        <canvas class="crop-overlay-canvas" data-page-idx="${idx}" style="position:absolute; top:0; left:0; width:100%; height:100%; display:none; touch-action:none; cursor:crosshair;"></canvas>
-      </div>
-    `).join('');
-    document.querySelectorAll(".crop-overlay-canvas").forEach(c => initOverlayCanvasListeners(c));
-  } else {
-    wrapper.innerHTML = `<div style="background:white; padding:30px; border-radius:8px; text-align:center; max-width:400px; color:#64748b;"><h4>本卷未上传原卷 PDF</h4><p style="font-size:0.85rem; margin-top:6px;">请看纸卷答题，右侧涂卡！</p></div>`;
-  }
-
-  userExamAnswers = {};
-  const bubbleSheet = document.getElementById("bubbleSheet");
-  bubbleSheet.innerHTML = Array.from({length: 16}, (_, i) => i + 1).map(num => `
-    <div class="bubble-item">
-      <span style="font-weight:700; font-size:0.8rem;">第${num}题</span>
-      <div class="bubble-opts">
-        ${['A','B','C','D'].map(opt => `<div class="bubble-btn" id="b-${num}-${opt}" onclick="pickBubble(${num}, '${opt}')">${opt}</div>`).join('')}
-      </div>
-    </div>
-  `).join('');
-
-  const faqSheet = document.getElementById("faqSheet");
-  faqSheet.innerHTML = [17, 18, 19, 20].map(num => `
-    <div style="margin-bottom:10px;">
-      <label style="font-size:0.8rem; font-weight:700;">第 ${num} 题解答草稿：</label>
-      <input type="text" id="faq-input-${num}" style="width:100%; margin-top:2px;">
-      <div class="ans-reveal" id="faq-reveal-${num}"></div>
-    </div>
-  `).join('');
-
-  examSecondsRemaining = activeExam.duration * 60;
-  clearInterval(examTimer);
-  examTimer = setInterval(() => {
-    if (examSecondsRemaining <= 0) { clearInterval(examTimer); submitRunningExam(); return; }
-    examSecondsRemaining--;
-    const m = String(Math.floor(examSecondsRemaining / 60)).padStart(2, '0');
-    const s = String(examSecondsRemaining % 60).padStart(2, '0');
-    document.getElementById("runningTimer").textContent = `${m}:${s}`;
-  }, 1000);
-}
-
-function pickBubble(num, opt) {
-  userExamAnswers[num] = opt;
-  ['A','B','C','D'].forEach(o => document.getElementById(`b-${num}-${o}`).classList.remove("selected"));
-  document.getElementById(`b-${num}-${opt}`).classList.add("selected");
-}
-
-let lastWrongQuestionsToSync = [];
-function submitRunningExam() {
-  clearInterval(examTimer);
-  document.getElementById("runningSubmitBtn").style.display = "none";
-  let mcqScore = 0;
-  lastWrongQuestionsToSync = [];
-  const standardKeys = activeExam.keysFull || (activeExam.keys ? activeExam.keys.replace(/[^A-D]/g, '').split('') : []);
-
-  for (let i = 1; i <= 16; i++) {
-    const userOpt = userExamAnswers[i];
-    const correctOpt = standardKeys[i - 1] || "";
-    ['A','B','C','D'].forEach(o => document.getElementById(`b-${i}-${o}`).classList.remove("selected"));
-    if (userOpt && userOpt === correctOpt) {
-      mcqScore += 5;
-      document.getElementById(`b-${i}-${userOpt}`).classList.add("correct");
-    } else {
-      if (userOpt) document.getElementById(`b-${i}-${userOpt}`).classList.add("wrong");
-      if (correctOpt) document.getElementById(`b-${i}-${correctOpt}`).classList.add("correct");
-      lastWrongQuestionsToSync.push({ num: i, userOpt: userOpt || "未填", correctOpt });
-    }
-  }
-
-  [17, 18, 19, 20].forEach((num, idx) => {
-    const box = document.getElementById(`faq-reveal-${num}`);
-    box.classList.add("show");
-    box.innerHTML = `<b>参考答案：</b><br>${(activeExam.faqAns && activeExam.faqAns[idx]) || '见原卷答案'}`;
-  });
-
-  document.getElementById("finalScoreText").textContent = `选择题得分：${mcqScore} / 80`;
-  document.getElementById("examResultPanel").style.display = "block";
-
-  const container = document.getElementById("wrongItemsContainer");
-  if (lastWrongQuestionsToSync.length === 0) {
-    container.innerHTML = `<div style="color:#16a34a; font-weight:bold; text-align:center; padding:12px; background:#f0fdf4; border-radius:6px;">🎉 恭喜！选择题全部答对！</div>`;
-  } else {
-    container.innerHTML = `
-      <div style="font-weight:bold; font-size:0.85rem; color:#b91c1c; margin-bottom:8px;">
-        做错 ${lastWrongQuestionsToSync.length} 道选择题，请点击下方按钮在试卷上画框截图保存：
-      </div>
-      ${lastWrongQuestionsToSync.map(item => `
-        <div style="display:flex; justify-content:space-between; align-items:center; background:#fff; border:1px solid #e2e8f0; border-radius:6px; padding:8px 10px; margin-bottom:6px;">
-          <span style="font-size:0.85rem;"><b>第 ${item.num} 题</b> (错选: <span style="color:#dc2626;">${item.userOpt}</span> / 正解: <span style="color:#16a34a;">${item.correctOpt}</span>)</span>
-          <button class="btn btn-primary" id="snip-btn-${item.num}" style="padding:4px 10px; font-size:0.75rem;" onclick="startSnipping(${item.num}, '${item.userOpt}', '${item.correctOpt}')">✂️ 框选保存</button>
-        </div>
-      `).join('')}
-    `;
-  }
-}
-
-function exitExam() {
-  if (confirm("确定退出当前考试界面吗？")) {
-    clearInterval(examTimer);
-    exitSnippingMode();
-    document.getElementById("examView").style.display = "none";
-  }
-}
-
-// 试卷上传
-let editingExamId = null;
-let tempNewExamPages = [];
-
-function openUploadExamModal() {
-  editingExamId = null;
-  document.getElementById("modalExamTitleText").textContent = "录入新试卷";
-  document.getElementById("newExamTitle").value = "";
-  document.getElementById("newExamDuration").value = 90;
-  document.getElementById("newExamKeys").value = "";
-  document.getElementById("newExamFaqAns").value = "";
-  tempNewExamPages = [];
-  document.getElementById("newExamPreview").innerHTML = "";
-  document.getElementById("uploadExamModal").classList.add("active");
-}
-
-async function editExam(id) {
-  const exams = await dbGetAll(STORE_EXAMS);
-  const ex = exams.find(x => x.id === id);
-  if (!ex) return;
-  editingExamId = id;
-  document.getElementById("modalExamTitleText").textContent = "编辑试卷";
-  document.getElementById("newExamTitle").value = ex.title || "";
-  document.getElementById("newExamDuration").value = ex.duration || 90;
-  document.getElementById("newExamKeys").value = ex.keys || (ex.keysFull ? ex.keysFull.join('') : '');
-  document.getElementById("newExamFaqAns").value = (ex.faqAns || []).join('\n');
-  tempNewExamPages = [...(ex.pages || [])];
-  renderExamPreview();
-  document.getElementById("uploadExamModal").classList.add("active");
-}
-
-function renderExamPreview() {
-  document.getElementById("newExamPreview").innerHTML = tempNewExamPages.map((src, idx) => `
-    <div style="position:relative; display:inline-block;">
-      <img src="${src}" style="height:70px; border-radius:6px; border:1px solid #cbd5e1;">
-      <span style="position:absolute; top:-6px; right:-6px; background:#ef4444; color:white; border-radius:50%; width:18px; height:18px; font-size:12px; text-align:center; cursor:pointer;" onclick="tempNewExamPages.splice(${idx},1); renderExamPreview();">×</span>
-    </div>
-  `).join('');
-}
-
-async function handleExamFiles(files) {
-  for (const file of Array.from(files)) {
-    if (file.type === "application/pdf" || file.name.toLowerCase().endsWith(".pdf")) {
-      const arrayBuffer = await file.arrayBuffer();
-      const pdfDoc = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
-      for (let i = 1; i <= pdfDoc.numPages; i++) {
-        const page = await pdfDoc.getPage(i);
-        const viewport = page.getViewport({ scale: 1.8 });
-        const canvas = document.createElement("canvas");
-        canvas.height = viewport.height; canvas.width = viewport.width;
-        await page.render({ canvasContext: canvas.getContext("2d"), viewport: viewport }).promise;
-        tempNewExamPages.push(canvas.toDataURL("image/jpeg", 0.88));
-      }
-    } else {
-      const reader = new FileReader();
-      reader.onload = (e) => { tempNewExamPages.push(e.target.result); renderExamPreview(); };
-      reader.readAsDataURL(file);
-    }
-  }
-  renderExamPreview();
-}
-
-async function saveNewExam() {
-  const title = document.getElementById("newExamTitle").value.trim();
-  const keysStr = document.getElementById("newExamKeys").value.trim().toUpperCase().replace(/[^A-D]/g, '');
-  if (!title) { alert("请输入试卷名称！"); return; }
-  const item = {
-    title: title,
-    subject: currentPortalSubject,
-    duration: Number(document.getElementById("newExamDuration").value) || 90,
-    keys: keysStr,
-    keysFull: keysStr.split(''),
-    faqAns: document.getElementById("newExamFaqAns").value.split('\n').filter(Boolean),
-    pages: tempNewExamPages
-  };
-  if (editingExamId) item.id = editingExamId;
-  await dbAdd(STORE_EXAMS, item);
-  document.getElementById("uploadExamModal").classList.remove("active");
-  renderSubjectPortal();
-  alert("保存成功！");
-}
-
-async function deleteExam(id) {
-  if (confirm("确定要删除这套试卷吗？")) {
-    await dbDelete(STORE_EXAMS, id);
-    renderSubjectPortal();
-  }
-}
-async function deleteSingleQuestion(id) {
-  if (confirm("确定要删除此错题吗？")) {
-    await dbDelete(STORE_QUESTIONS, id);
-    renderVault();
-  }
-}
-function toggleSelectAllVault() {
-  const boxes = document.querySelectorAll(".vault-checkbox");
-  const anyUnchecked = Array.from(boxes).some(b => !b.checked);
-  boxes.forEach(b => b.checked = anyUnchecked);
-}
-
-// 备份与恢复
 async function exportData() {
   const questions = await dbGetAll(STORE_QUESTIONS);
   const exams = await dbGetAll(STORE_EXAMS);
