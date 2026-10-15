@@ -2,6 +2,7 @@
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
+<!-- 允许双指缩放，最大支持 5 倍缩放 -->
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
@@ -177,17 +178,15 @@
   .q-img-wrap { width: 100%; max-height: 200px; overflow: hidden; background: #f8fafc; border-radius: 8px; margin: 8px 0; border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; }
   .q-img-wrap img { max-width: 100%; max-height: 200px; object-fit: contain; }
   
-  /* 纯文字字词卡片样式 */
+  /* 纯文字字词/单词卡片样式 */
   .word-card-text {
-    font-size: 1.6rem;
+    font-size: 1.5rem;
     font-weight: 800;
-    color: var(--chinese-color);
     text-align: center;
-    padding: 20px 10px;
-    background: #fff1f2;
+    padding: 18px 10px;
     border-radius: 8px;
     margin: 8px 0;
-    letter-spacing: 2px;
+    letter-spacing: 1px;
   }
 
   /* 考场双屏与缩放 */
@@ -234,7 +233,7 @@
 <header>
   <div class="brand" onclick="switchNav('dashboard')">
     <span>🍎 智学多学科管家</span>
-    <span style="font-size:0.7rem; font-weight:bold; background:#e0f2fe; color:#0369a1; padding:2px 8px; border-radius:12px;">v5.2 稳健版</span>
+    <span style="font-size:0.7rem; font-weight:bold; background:#e0f2fe; color:#0369a1; padding:2px 8px; border-radius:12px;">v5.3</span>
   </div>
   <div class="nav-tabs">
     <div class="nav-tab active" id="tabNavDashboard" onclick="switchNav('dashboard')">🏠 首页工作台</div>
@@ -382,13 +381,13 @@
 
 <!-- ================= 弹窗集合 ================= -->
 
-<!-- 语文/英语/通用【专属错题录入弹窗】（错字输入 vs 拍照裁剪） -->
+<!-- 专属错题录入弹窗（数学仅拍照裁切，语文英语按学科定制提示与举例） -->
 <div class="modal-overlay" id="errorEntryModal">
   <div class="modal">
     <h3 style="margin-bottom:12px;" id="errorEntryModalTitle">录入错题</h3>
     
-    <!-- 两个子通道切换 -->
-    <div class="modal-subtabs">
+    <!-- 分段子选项卡（数学模式下会自动隐藏，仅保留拍照） -->
+    <div class="modal-subtabs" id="errorEntryModalSubtabs">
       <div class="modal-subtab active" id="tabEntryWord" onclick="switchErrorEntryTab('word')">✍️ 1. 错字/词语录入</div>
       <div class="modal-subtab" id="tabEntryPhoto" onclick="switchErrorEntryTab('photo')">📸 2. 试卷拍照裁剪</div>
     </div>
@@ -412,14 +411,14 @@
       </div>
     </div>
 
-    <!-- 通道 1：纯错字/词语输入 -->
+    <!-- 通道 1：字词/单词录入（根据学科动态切换中/英专属占位提示） -->
     <div id="panelEntryWord">
       <div class="form-group">
-        <label>输入错字 / 听写词语 / 拼音</label>
-        <input type="text" id="inpWordText" placeholder="如：璧（和氏璧 / 璧玉）或 易错生字" style="font-size:1.1rem; font-weight:bold;">
+        <label id="lblWordTitle">输入错字 / 听写词语 / 拼音</label>
+        <input type="text" id="inpWordText" placeholder="如：璧（和氏璧 / 璧玉）" style="font-size:1.1rem; font-weight:bold;">
       </div>
       <div class="form-group">
-        <label>纠正/释义/正音（选填）</label>
+        <label id="lblWordNote">纠正 / 释义 / 正音 / 搭配（选填）</label>
         <input type="text" id="inpWordNote" placeholder="如：注意下半部分是‘玉’不是‘土’">
       </div>
     </div>
@@ -446,7 +445,7 @@
   </div>
 </div>
 
-<!-- 录入完整真题卷弹窗（仅数学或有整卷需求的科目使用） -->
+<!-- 录入完整真题卷弹窗（仅数学使用） -->
 <div class="modal-overlay" id="uploadExamModal">
   <div class="modal">
     <h3 style="margin-bottom:12px;" id="modalExamTitleText">编辑试卷</h3>
@@ -466,7 +465,7 @@
   </div>
 </div>
 
-<!-- Gemini 深度分析展示弹窗（支持查看保存快照与重刷） -->
+<!-- Gemini 深度分析展示弹窗 -->
 <div class="modal-overlay" id="analysisModal">
   <div class="modal" style="max-width:760px;">
     <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;">
@@ -513,7 +512,7 @@
 </div>
 
 <script>
-// 多模型备用容灾列表（自动避开 503 与 404）
+// 多模型备用容灾列表
 const GEMINI_MODELS = ["gemini-3.8-flash", "gemini-2.5-flash", "gemini-1.5-flash"];
 
 // 学科与模块定义
@@ -653,27 +652,25 @@ function startSmartReview() {
   switchNav("vault");
 }
 
-// 2. 学科专属空间渲染（按需求严格区分按钮）
+// 2. 学科空间渲染
 async function renderSubjectPortal() {
   const currentSub = SUBJECTS[currentPortalSubject] || SUBJECTS.math;
   document.getElementById("portalSubjectTitle").textContent = `${currentSub.icon} ${currentSub.name} · ${currentPortalSubject==='math'?'奥数真题与错题空间':'日常错题复习空间'}`;
 
-  // 动态按钮配置：数学显示【录入真题/错题】，语文英语显示【录入错题】
   const btnContainer = document.getElementById("portalActionBtnContainer");
   if (currentPortalSubject === "math") {
     btnContainer.innerHTML = `
       <div style="display:flex; gap:6px;">
         <button class="btn btn-primary" onclick="openUploadExamModal()">＋ 录入真题试卷</button>
-        <button class="btn btn-outline" onclick="openSubjectErrorEntryModal('math')">＋ 录入单题错题</button>
+        <button class="btn btn-outline" onclick="openSubjectErrorEntryModal('math')">＋ 录入错题(拍照裁剪)</button>
       </div>
     `;
   } else {
     btnContainer.innerHTML = `
-      <button class="btn btn-primary" style="background:${currentSub.color};" onclick="openSubjectErrorEntryModal('${currentPortalSubject}')">＋ 录入错题 (错字/拍照)</button>
+      <button class="btn btn-primary" style="background:${currentSub.color};" onclick="openSubjectErrorEntryModal('${currentPortalSubject}')">＋ 录入错题</button>
     `;
   }
 
-  // 试卷列表仅数学主页重点呈现整套真题，其他科目呈现错题列表
   const exams = await dbGetAll(STORE_EXAMS);
   const filteredExams = exams.filter(e => (e.subject || 'math') === currentPortalSubject);
   const container = document.getElementById("portalExamList");
@@ -693,19 +690,18 @@ async function renderSubjectPortal() {
       </div>
     `).join('');
   } else {
-    // 语文和英语直接展示该学科的错题清单，方便快速复习
     const allQuestions = await dbGetAll(STORE_QUESTIONS);
     const subQuestions = allQuestions.filter(q => q.subject === currentPortalSubject);
     if (subQuestions.length === 0) {
-      container.innerHTML = `<div style="grid-column:1/-1; text-align:center; padding:40px; color:#94a3b8;">暂无本学科错题。点击右上角【＋ 录入错题】输入错字或拍照！</div>`;
+      container.innerHTML = `<div style="grid-column:1/-1; text-align:center; padding:40px; color:#94a3b8;">暂无本学科错题。点击右上角【＋ 录入错题】输入错词或拍照！</div>`;
       return;
     }
     container.innerHTML = subQuestions.map(q => renderQuestionCardHtml(q)).join('');
   }
 }
 
-// ================= 3. 语文/英语专属错题录入业务（记住前次标签） =================
-let activeEntryTab = "word"; // 'word' or 'photo'
+// ================= 3. 错题录入业务（核心修改：数学隐藏错字栏，英语去除中文“璧”提示） =================
+let activeEntryTab = "word";
 let activeCameraCropBase64 = "";
 
 function openSubjectErrorEntryModal(subjectKey) {
@@ -728,7 +724,36 @@ function openSubjectErrorEntryModal(subjectKey) {
   document.getElementById("cropWorkspace").style.display = "none";
   document.getElementById("cameraPhotoText").style.display = "block";
 
-  switchErrorEntryTab(subjectKey === 'chinese' ? 'word' : 'photo');
+  const subTabs = document.getElementById("errorEntryModalSubtabs");
+
+  // ⭐ 修改点 1：如果是数学，隐藏“错字/词语”选项卡，只保留拍照裁剪
+  if (subjectKey === "math") {
+    subTabs.style.display = "none";
+    switchErrorEntryTab("photo");
+  } 
+  // ⭐ 修改点 2：如果是英语，定制英文专用标签与举例，去掉中文“璧”等例子
+  else if (subjectKey === "english") {
+    subTabs.style.display = "flex";
+    document.getElementById("tabEntryWord").innerHTML = "🔤 1. 单词/短语录入";
+    document.getElementById("tabEntryPhoto").innerHTML = "📸 2. 试卷拍照裁剪";
+    document.getElementById("lblWordTitle").textContent = "输入易错单词 / 词组短语 / 听写词汇";
+    document.getElementById("inpWordText").placeholder = "如：embarrass, accommodation, through/thorough 等";
+    document.getElementById("lblWordNote").textContent = "词义 / 易错点 / 辨析搭配（选填）";
+    document.getElementById("inpWordNote").placeholder = "如：注意双写r和双写s；词义：使尴尬/难堪；搭配：be embarrassed about";
+    switchErrorEntryTab("word");
+  } 
+  // 语文模式：保留错字词语与中文“璧”举例
+  else {
+    subTabs.style.display = "flex";
+    document.getElementById("tabEntryWord").innerHTML = "✍️ 1. 错字/词语录入";
+    document.getElementById("tabEntryPhoto").innerHTML = "📸 2. 试卷拍照裁剪";
+    document.getElementById("lblWordTitle").textContent = "输入错字 / 听写词语 / 拼音";
+    document.getElementById("inpWordText").placeholder = "如：璧（和氏璧 / 璧玉）或 易错生字";
+    document.getElementById("lblWordNote").textContent = "纠正 / 释义 / 正音（选填）";
+    document.getElementById("inpWordNote").placeholder = "如：注意下半部分是‘玉’不是‘土’";
+    switchErrorEntryTab("word");
+  }
+
   document.getElementById("errorEntryModal").classList.add("active");
 }
 
@@ -740,11 +765,7 @@ function switchErrorEntryTab(tab) {
   document.getElementById("panelEntryPhoto").style.display = tab === "photo" ? "block" : "none";
 }
 
-// 拍照与画框裁切交互
-let cropModalImg = null;
-let cropStart = null;
-let cropBox = null;
-
+// 拍照与裁切
 function handleCameraCropFile(file) {
   if (!file) return;
   const reader = new FileReader();
@@ -798,7 +819,6 @@ function initCropModalCanvas(imgEl) {
     const rW = Math.abs(curX - sX), rH = Math.abs(curY - sY);
 
     if (rW > 20 && rH > 20) {
-      // 裁切生成 Base64
       const scaleX = imgEl.naturalWidth / canvas.width;
       const scaleY = imgEl.naturalHeight / canvas.height;
       const offCanvas = document.createElement("canvas");
@@ -818,7 +838,6 @@ async function saveSubjectErrorEntry() {
   const grade = document.getElementById("inpEntryGrade").value;
   const moduleTag = document.getElementById("inpEntryModule").value;
   
-  // 核心：保存用户的标签偏好，下一次录入自动作为默认值
   localStorage.setItem("LAST_GRADE_TAG", grade);
   localStorage.setItem("LAST_MODULE_" + currentPortalSubject, moduleTag);
 
@@ -830,15 +849,15 @@ async function saveSubjectErrorEntry() {
     updatedAt: new Date().toISOString()
   };
 
-  if (activeEntryTab === "word") {
+  if (activeEntryTab === "word" && currentPortalSubject !== "math") {
     const wordText = document.getElementById("inpWordText").value.trim();
-    if (!wordText) { alert("请输入错字或词语！"); return; }
+    if (!wordText) { alert("请输入词汇或生字！"); return; }
     item.isWord = true;
     item.note = wordText;
     item.ans = document.getElementById("inpWordNote").value.trim();
-    item.img = ""; // 纯文字无需大图
+    item.img = "";
   } else {
-    if (!activeCameraCropBase64) { alert("请先拍照并在图片上画框截取题目！"); return; }
+    if (!activeCameraCropBase64) { alert("请先拍照并在图片上拖拽画框截取题目！"); return; }
     item.isWord = false;
     item.note = `${grade} · ${moduleTag} 错题`;
     item.ans = "";
@@ -876,6 +895,8 @@ async function renderVault() {
 
 function renderQuestionCardHtml(q) {
   const subInfo = SUBJECTS[q.subject || 'math'] || SUBJECTS.math;
+  let wordStyle = `background:${subInfo.bg}; color:${subInfo.color};`;
+
   return `
     <div class="q-card">
       <div style="display:flex; justify-content:space-between; align-items:center;">
@@ -889,8 +910,8 @@ function renderQuestionCardHtml(q) {
         </div>
       </div>
       
-      <!-- 纯错字显示大字块，拍照题显示图片 -->
-      ${q.isWord ? `<div class="word-card-text">${q.note}</div>` : `<div class="q-img-wrap"><img src="${q.img}"></div>`}
+      <!-- 纯词汇显示专属色块，拍照题显示裁切原图 -->
+      ${q.isWord ? `<div class="word-card-text" style="${wordStyle}">${q.note}</div>` : `<div class="q-img-wrap"><img src="${q.img}"></div>`}
 
       <div style="display:flex; justify-content:space-between; font-size:0.8rem; color:#64748b; margin-bottom:8px;">
         <span>${q.grade || '四年级'} · <b>${q.module || '基础考点'}</b></span>
@@ -956,7 +977,6 @@ async function cycleQuestionStatus(id, curStatus) {
 // ================= 5. Gemini 503容灾调用 & 思路持久化 & 语文组词 =================
 let activeAnalysisQuestionId = null;
 
-// 点击单题思路分析：如果以前分析过，0秒加载快照！
 async function analyzeSingleQuestionById(id) {
   const all = await dbGetAll(STORE_QUESTIONS);
   const q = all.find(x => x.id === id);
@@ -966,19 +986,17 @@ async function analyzeSingleQuestionById(id) {
   document.getElementById("btnReAnalyze").style.display = "inline-flex";
 
   if (q.savedAnalysis) {
-    // 已经保存过：立刻读取快照
+    // 0秒读取已保存快照
     const outputModal = document.getElementById("analysisModal");
     document.getElementById("analysisSourceBadge").textContent = "⚡ 已加载历史保存结果 (不耗Token)";
     document.getElementById("analysisOutput").textContent = q.savedAnalysis;
     outputModal.classList.add("active");
   } else {
-    // 第一次分析：调用 Gemini
     document.getElementById("analysisSourceBadge").textContent = "🤖 正在请求 AI 实时解析";
     doAnalyzeThinking([q], id);
   }
 }
 
-// 强制重新分析
 async function reAnalyzeCurrentWithGemini() {
   if (!activeAnalysisQuestionId) return;
   const all = await dbGetAll(STORE_QUESTIONS);
@@ -989,7 +1007,6 @@ async function reAnalyzeCurrentWithGemini() {
   }
 }
 
-// 批量思路分析
 async function analyzeThinkingWithGemini() {
   const checked = document.querySelectorAll(".vault-checkbox:checked");
   if (checked.length === 0) { alert("请先勾选需要分析思路的题目！"); return; }
@@ -1001,7 +1018,7 @@ async function analyzeThinkingWithGemini() {
   doAnalyzeThinking(all.filter(q => ids.includes(q.id)), null);
 }
 
-// 执行思路分析（包含 503 备用模型轮换、保存快照、语文自动组词）
+// 执行思路分析（包含 503 轮换、保存快照、语文自动组词拓展）
 async function doAnalyzeThinking(selectedQuestions, singleSaveId) {
   const apiKey = localStorage.getItem("GEMINI_API_KEY");
   if (!apiKey) { alert("请先配置 Gemini API Key！"); openKeyModal(); return; }
@@ -1013,7 +1030,7 @@ async function doAnalyzeThinking(selectedQuestions, singleSaveId) {
 
   const parts = [];
   parts.push({
-    text: `你是一位全科特级教师（精通小学奥数解题模型、小学语文生字词/阅读理解、英语语法）。
+    text: `你是一位全科特级教师（精通小学奥数解题模型、小学语文生字词/阅读理解、英语语法短语辨析）。
 请为四年级学生提供极通俗、有启发性的【名师深度思路与解题导图】：
 
 【讲解模块规范】：
@@ -1023,7 +1040,7 @@ async function doAnalyzeThinking(selectedQuestions, singleSaveId) {
 4. 📐【小学化直观图解/推导】：多用画图法、设数法、语境代入法拆解；
 5. 🗣️【家长一句话启发话术】：提问引导孩子自主想通。
 
-【⭐ 特别强化要求（语文科目专属）】：
+【⭐ 语文科目专属强化要求】：
 如果题目属于语文的“生字、词语、拼音、修改病句”，必须额外增加【📝 组词与词义拓展】模块：
 为该错字/生词提供 2~3 个四年级课标内高频易错的常用词语或成语，并注音、写出简明词义，方便家长直接给孩子做组词听写复习！`
   });
@@ -1036,7 +1053,6 @@ async function doAnalyzeThinking(selectedQuestions, singleSaveId) {
     }
   });
 
-  // 轮换调用备用模型，抵抗 503 错误
   let successText = "";
   for (const model of GEMINI_MODELS) {
     try {
@@ -1047,7 +1063,7 @@ async function doAnalyzeThinking(selectedQuestions, singleSaveId) {
       const data = await res.json();
       if (res.status === 200 && data.candidates && data.candidates[0].content.parts[0].text) {
         successText = data.candidates[0].content.parts[0].text;
-        break; // 成功则跳出重试
+        break;
       }
     } catch(err) {
       console.warn(`Model ${model} request failed, trying next...`);
@@ -1057,14 +1073,14 @@ async function doAnalyzeThinking(selectedQuestions, singleSaveId) {
   if (successText) {
     outputBox.textContent = successText;
 
-    // 核心：如果是单题分析，自动将分析结果持久化保存进 IndexedDB！
+    // 单题自动保存快照进 IndexedDB
     if (singleSaveId) {
       const all = await dbGetAll(STORE_QUESTIONS);
       const targetQ = all.find(x => x.id === singleSaveId);
       if (targetQ) {
         targetQ.savedAnalysis = successText;
         await dbAdd(STORE_QUESTIONS, targetQ);
-        renderVault(); // 刷新卡片显示“已存”徽章
+        renderVault();
       }
     }
   } else {
@@ -1094,7 +1110,7 @@ async function generateSimilarWithGemini() {
 
 async function doGenerateSimilar(selectedQuestions) {
   const apiKey = localStorage.getItem("GEMINI_API_KEY");
-  if (!apiKey) { alert("请先配置 API Key！"); openKeyModal(); return; }
+  if (!apiKey) { alert("请先配置 Gemini API Key！"); openKeyModal(); return; }
 
   const outputModal = document.getElementById("similarModal");
   const outputBox = document.getElementById("similarOutput");
@@ -1103,7 +1119,7 @@ async function doGenerateSimilar(selectedQuestions) {
 
   const parts = [];
   parts.push({
-    text: `你是一位全科金牌名师。请针对选中的这 ${selectedQuestions.length} 道错题，分别出一道【考点模型相同、解题逻辑一致、情境与数字不同】的高仿练习题。如果是语文错字，则出一道同类形近字/音近字辨析题并附带常用组词。分模块提供：【📝 相似变式题】、【💡 直观解法提示】、【🎯 参考答案】。`
+    text: `你是一位全科金牌名师。请针对选中的这 ${selectedQuestions.length} 道错题，分别出一道【考点模型相同、解题逻辑一致、情境与数字不同】的高仿练习题。如果是语文错字，则出一道同类形近字/音近字辨析题并附带常用组词；如果是英语词汇，则出语法语境单选题。分模块提供：【📝 相似变式题】、【💡 直观解法提示】、【🎯 参考答案】。`
   });
 
   selectedQuestions.forEach((q, idx) => {
