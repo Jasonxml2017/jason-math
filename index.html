@@ -32,7 +32,7 @@
   * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
   body { font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, "PingFang SC", sans-serif; background: var(--bg); color: var(--text); padding-bottom: 60px; }
   header { background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(12px); border-bottom: 1px solid var(--border); padding: 10px 18px; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 100; }
-  .brand { display: flex; align-items: center; gap: 8px; font-size: 1.15rem; font-weight: 800; cursor: pointer; }
+  .brand { display: flex; align-items: center; gap: 8px; font-size: 1.15rem; font-weight: 800; color: var(--text); cursor: pointer; }
   .nav-tabs { display: flex; gap: 6px; }
   .nav-tab { padding: 6px 14px; border-radius: 20px; font-size: 0.88rem; font-weight: 700; cursor: pointer; color: var(--text-sub); transition: 0.2s; }
   .nav-tab.active { background: #0f172a; color: white; }
@@ -65,7 +65,7 @@
   .subject-card:hover { transform: translateY(-3px); box-shadow: 0 8px 24px rgba(0,0,0,0.06); }
   .subject-icon { width: 44px; height: 44px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; margin-bottom: 12px; }
 
-  /* 错题总库与过滤栏 */
+  /* 过滤栏 */
   .vault-filter-panel { background: white; border: 1px solid var(--border); border-radius: 16px; padding: 16px; margin-bottom: 18px; display: flex; flex-direction: column; gap: 12px; }
   .filter-row { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
   .filter-chip { padding: 5px 12px; border-radius: 16px; font-size: 0.82rem; font-weight: 600; background: #f1f5f9; color: var(--text-sub); cursor: pointer; border: 1px solid transparent; transition: 0.2s; }
@@ -73,9 +73,9 @@
 
   .q-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(330px, 1fr)); gap: 16px; }
   .q-card { background: white; border: 1px solid var(--border); border-radius: 14px; padding: 16px; display: flex; flex-direction: column; position: relative; box-shadow: 0 2px 8px rgba(0,0,0,0.02); }
-  .q-img-wrap { width: 100%; max-height: 200px; overflow: hidden; background: #f8fafc; border-radius: 8px; margin: 8px 0; border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; }
+  .q-img-wrap { width: 100%; max-height: 200px; overflow: hidden; background: #f8fafc; border-radius: 8px; margin: 8px 0; border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; cursor: pointer; }
   .q-img-wrap img { max-width: 100%; max-height: 200px; object-fit: contain; }
-  .word-card-text { font-size: 1.5rem; font-weight: 800; text-align: center; padding: 18px 10px; border-radius: 8px; margin: 8px 0 4px; letter-spacing: 1px; }
+  .word-card-text { font-size: 1.5rem; font-weight: 800; text-align: center; padding: 18px 10px; border-radius: 8px; margin: 8px 0 4px; letter-spacing: 1px; cursor: pointer; }
   .card-extension-badge { background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 8px; padding: 8px 12px; font-size: 0.88rem; color: #166534; margin: 6px 0 10px; line-height: 1.45; }
 
   /* 考场全屏双屏视图 */
@@ -97,7 +97,7 @@
   .bubble-btn.correct { background: var(--success); color: white; border-color: var(--success); }
   .bubble-btn.wrong { background: var(--danger); color: white; border-color: var(--danger); }
 
-  /* 弹窗基类 (支持点击空白处自然退出) */
+  /* 弹窗基类 */
   .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); display: none; align-items: center; justify-content: center; z-index: 1000; padding: 16px; }
   .modal-overlay.active { display: flex; }
   .modal { background: white; width: 100%; max-width: 650px; max-height: 90vh; border-radius: 16px; padding: 22px; overflow-y: auto; }
@@ -121,7 +121,7 @@
   .modal-subtab { flex: 1; text-align: center; padding: 6px; font-size: 0.85rem; font-weight: 700; cursor: pointer; border-radius: 6px; color: #64748b; }
   .modal-subtab.active { background: white; color: var(--primary); }
 
-  /* 今日攻坚界面 */
+  /* 今日攻坚全屏 */
   #smartReviewView { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: #0f172a; z-index: 600; flex-direction: column; color: white; }
   .review-top-bar { background: #1e293b; padding: 12px 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #334155; }
   .review-content-area { flex: 1; overflow-y: auto; padding: 20px; display: flex; justify-content: center; }
@@ -137,7 +137,7 @@
   .reader-paper p { margin-bottom: 16px; text-indent: 2em; }
   .comprehension-box { background: #f5efe6; border-left: 4px solid #d97706; padding: 16px; border-radius: 8px; margin-top: 24px; font-size: 0.95rem; }
 
-  /* 双击极简直接收藏小气泡 */
+  /* 双击极简直接收藏气泡 */
   #quickCollectBubble {
     display: none; position: fixed; background: #0f172a; color: white; padding: 6px 14px;
     border-radius: 20px; box-shadow: 0 6px 20px rgba(0,0,0,0.35); z-index: 999;
@@ -145,8 +145,8 @@
   }
   #quickCollectBubble:hover { background: #1e293b; }
 
-  /* 全屏生词好句视图 */
-  #vocabFullView { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: var(--bg); z-index: 620; flex-direction: column; overflow-y: auto; }
+  /* ⭐ 全屏生词好句视图（层级提升至 700，彻底解决在阅读器里打不开的问题） */
+  #vocabFullView { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: var(--bg); z-index: 700; flex-direction: column; overflow-y: auto; }
 </style>
 </head>
 <body>
@@ -154,7 +154,7 @@
 <header>
   <div class="brand" onclick="switchNav('dashboard')">
     <span>🍎 智学多学科管家</span>
-    <span style="font-size:0.7rem; font-weight:bold; background:#e0f2fe; color:#0369a1; padding:2px 8px; border-radius:12px;">v6.3 旗舰版</span>
+    <span style="font-size:0.7rem; font-weight:bold; background:#e0f2fe; color:#0369a1; padding:2px 8px; border-radius:12px;">v6.5 稳定版</span>
   </div>
   <div class="nav-tabs">
     <div class="nav-tab active" id="tabNavDashboard" onclick="switchNav('dashboard')">🏠 首页工作台</div>
@@ -230,7 +230,7 @@
   <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px; flex-wrap:wrap; gap:8px;">
     <div>
       <h2 style="font-size:1.3rem;">🎯 错题复习总库</h2>
-      <p style="font-size:0.85rem; color:var(--text-sub);">点击卡片【🔍 原题】可查看原图与编辑；点击【💡 思路】自动渲染公式与组词</p>
+      <p style="font-size:0.85rem; color:var(--text-sub);">点击卡片上的【字或原图】直接查看原题；点击【思路】自动渲染公式与组词</p>
     </div>
     <div style="display:flex; gap:6px; flex-wrap:wrap;">
       <button class="btn btn-outline" onclick="toggleSelectAllVault()">全选/反选</button>
@@ -304,6 +304,7 @@
     <div style="display:flex; align-items:center; gap:8px;">
       <button class="btn btn-outline" id="btnSpeechRead" style="background:white;" onclick="toggleSpeechReading()">🔊 朗读本文</button>
       <button class="btn btn-outline" style="background:white;" onclick="refreshDailyReading()">🔄 换一篇</button>
+      <!-- ⭐ 需求 1：阅读器内打开生词好句本 -->
       <button class="btn btn-outline" style="background:#fef3c7; color:#b45309;" onclick="openVocabFullScreenView()">📖 生词好句</button>
       <button class="btn btn-outline" style="background:white;" onclick="closeDailyReadingModal()">退出阅读</button>
     </div>
@@ -380,7 +381,7 @@
   </div>
 </div>
 
-<!-- ================= 弹窗集合 (支持点击空白处自然退出) ================= -->
+<!-- ================= 弹窗集合 ================= -->
 
 <!-- 倒计时管理 -->
 <div class="modal-overlay" id="countdownManageModal">
@@ -422,7 +423,7 @@
   </div>
 </div>
 
-<!-- 错题录入弹窗 (连续录入不关窗) -->
+<!-- ⭐ 需求 3：错题录入弹窗 (已去掉冗余输入框及示例) -->
 <div class="modal-overlay" id="errorEntryModal">
   <div class="modal" onclick="event.stopPropagation()">
     <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
@@ -444,9 +445,12 @@
       </div>
       <div class="form-group"><label>分类标签</label><select id="inpEntryModule"></select></div>
     </div>
+    <!-- ⭐ 仅保留错字/词输入框，去除了冗余释义框及示范文字 -->
     <div id="panelEntryWord">
-      <div class="form-group"><label id="lblWordTitle">输入错字 / 听写词语 / 拼音</label><input type="text" id="inpWordText" placeholder="如：璧（和氏璧 / 璧玉）" style="font-size:1.1rem; font-weight:bold;"></div>
-      <div class="form-group"><label id="lblWordNote">纠正 / 释义 / 正音 / 搭配（选填）</label><input type="text" id="inpWordNote" placeholder="如：注意下半部分是‘玉’不是‘土’"></div>
+      <div class="form-group">
+        <label id="lblWordTitle">输入错字 / 听写词语 / 拼音</label>
+        <input type="text" id="inpWordText" placeholder="" style="font-size:1.1rem; font-weight:bold;">
+      </div>
     </div>
     <div id="panelEntryPhoto" style="display:none;">
       <div style="border:2px dashed #93c5fd; padding:15px; text-align:center; border-radius:8px; margin-bottom:10px; cursor:pointer;" onclick="document.getElementById('cameraPhotoFile').click()">
@@ -905,7 +909,7 @@ function stopSpeechReading() {
   if (btn) btn.innerHTML = "🔊 朗读本文";
 }
 
-// 双击划选极简收藏
+// ⭐ 双击极简直接收藏（无需等待查询，一键秒藏）
 let currentSelectedWord = "";
 function initReaderWordLookupListener() {
   const view = document.getElementById("dailyReadingView");
@@ -944,17 +948,17 @@ async function quickCollectCurrentSelection() {
     text: currentSelectedWord,
     type: activeReaderLang,
     phoneticOrPinyin: "",
-    meaning: "来自每日一读，点击【💡 AI补齐】自动获取释义",
+    meaning: "来自每日一读，点击【💡 AI补齐】可自动获取释义与例句",
     sentence: "",
     grade: grade,
     status: "🔴 待记住",
     createdAt: new Date().toISOString()
   });
   hideQuickCollectBubble();
-  alert(`⭐ 已成功将【${currentSelectedWord}】收藏到【生词好句本】！`);
+  alert(`⭐ 已成功将【${currentSelectedWord}】存入【生词好句本】！`);
 }
 
-// ================= 全屏【生词好句本】独立学习空间 =================
+// ================= ⭐ 需求 2 & 4：全屏【生词好句本】独立学习空间 (无编辑按钮，英汉统称释义，字词点触即查) =================
 let currentVocabFilter = "";
 
 function openVocabFullScreenView() {
@@ -971,9 +975,9 @@ function closeVocabFullScreenView() {
 
 function filterVocabList(type) {
   currentVocabFilter = type;
-  document.getElementById("vfAll").classList.toggle("active", type==='');
-  document.getElementById("vfChi").classList.toggle("active", type==='chinese');
-  document.getElementById("vfEng").classList.toggle("active", type==='english');
+  document.getElementById("vfAll").classList.toggle("active", type === '');
+  document.getElementById("vfChi").classList.toggle("active", type === 'chinese');
+  document.getElementById("vfEng").classList.toggle("active", type === 'english');
   renderVocabGrid();
 }
 
@@ -993,7 +997,10 @@ async function renderVocabGrid() {
       <div class="q-card" style="border-top:4px solid ${isChi?'var(--chinese-color)':'var(--english-color)'};">
         <div style="display:flex; justify-content:space-between; align-items:center;">
           <div>
-            <span style="font-size:1.35rem; font-weight:800; color:${isChi?'var(--chinese-color)':'var(--english-color)'};">${v.text}</span>
+            <!-- ⭐ 需求 4：点击词条上的字等同于查看功能 -->
+            <span style="font-size:1.35rem; font-weight:800; color:${isChi?'var(--chinese-color)':'var(--english-color)'}; cursor:pointer;" onclick="deepAnalyzeVocab(${v.id})" title="点击查看深度分析">
+              ${v.text}
+            </span>
             <span style="font-size:0.85rem; color:#64748b; margin-left:8px;">${v.phoneticOrPinyin || ''}</span>
           </div>
           <div>
@@ -1002,14 +1009,14 @@ async function renderVocabGrid() {
           </div>
         </div>
 
+        <!-- ⭐ 需求 2：中英文均统称为“释义”，彻底去掉了编辑功能 -->
         <div style="margin:10px 0; font-size:0.88rem; line-height:1.5;">
-          <div><b>${isChi?'释义':'中文意思'}：</b>${v.meaning || '暂无释义'}</div>
+          <div><b>释义：</b>${v.meaning || '暂无释义'}</div>
           ${v.sentence ? `<div style="margin-top:4px; color:#15803d;"><b>${isChi?'例句':'造句'}：</b>${v.sentence}</div>` : ''}
         </div>
 
         <div style="display:flex; gap:6px; margin-top:auto; padding-top:8px; border-top:1px solid #e2e8f0;">
-          <button class="btn btn-amber" style="flex:1; justify-content:center; font-size:0.75rem;" onclick="promptEditVocabItem(${v.id})">✏️ 编辑</button>
-          <button class="btn" style="flex:1; justify-content:center; background:#e0f2fe; color:#0369a1; font-size:0.75rem;" onclick="autoCompleteVocabWithGemini(${v.id})">💡 AI补齐/解析</button>
+          <button class="btn" style="flex:1; justify-content:center; background:#e0f2fe; color:#0369a1; font-size:0.78rem;" onclick="autoCompleteVocabWithGemini(${v.id})">💡 AI补齐/解析</button>
         </div>
       </div>
     `;
@@ -1020,35 +1027,50 @@ async function cycleVocabStatus(id, curStatus) {
   const all = await dbGetAll(STORE_VOCAB);
   const v = all.find(x => x.id === id);
   if (!v) return;
-  if (!curStatus || curStatus.includes("待记住")) v.status = "🟡 巩固中";
-  else if (curStatus.includes("巩固")) v.status = "🟢 已掌握";
-  else v.status = "🔴 待记住";
+  if (!curStatus || curStatus.includes("待记住")) {
+    v.status = "🟡 巩固中";
+    playPleasantSound(); // 欢快正向音效
+  } else if (curStatus.includes("巩固")) {
+    v.status = "🟢 已掌握";
+    playPleasantSound();
+  } else {
+    v.status = "🔴 待记住";
+  }
   await dbAdd(STORE_VOCAB, v);
   renderVocabGrid();
 }
 
 async function deleteVocabItem(id) {
-  if (confirm("确定要从生词好句本中删除这条记录吗？")) {
+  if (confirm("确定要删除这条生词好句吗？")) {
     await dbDelete(STORE_VOCAB, id);
     renderVocabGrid();
   }
 }
 
-async function promptEditVocabItem(id) {
+async function deepAnalyzeVocab(id) {
   const all = await dbGetAll(STORE_VOCAB);
   const v = all.find(x => x.id === id);
   if (!v) return;
-  const isChi = v.type === "chinese";
-  const py = prompt(isChi ? "修改拼音：" : "修改音标：", v.phoneticOrPinyin || "");
-  if (py !== null) v.phoneticOrPinyin = py.trim();
-  const mn = prompt(isChi ? "修改释义：" : "修改中文意思：", v.meaning || "");
-  if (mn !== null) v.meaning = mn.trim();
-  const st = prompt("修改例句/造句：", v.sentence || "");
-  if (st !== null) v.sentence = st.trim();
-  await dbAdd(STORE_VOCAB, v);
-  renderVocabGrid();
+
+  const mockQ = {
+    subject: v.type === 'chinese' ? 'chinese' : 'english',
+    module: "生词好句拓展",
+    note: v.text,
+    ans: v.meaning || v.details || "",
+    img: ""
+  };
+  analyzeThinkingWithGeminiDirect([mockQ]);
 }
 
+function analyzeThinkingWithGeminiDirect(questions) {
+  activeAnalysisQuestionId = null;
+  document.getElementById("btnReAnalyze").style.display = "none";
+  document.getElementById("extWordsPanel").style.display = "none";
+  document.getElementById("analysisSourceBadge").textContent = "🤖 生词名师思路";
+  doAnalyzeThinking(questions, null);
+}
+
+// AI 智能补全拼音、释义与例句
 async function autoCompleteVocabWithGemini(id) {
   const apiKey = localStorage.getItem("GEMINI_API_KEY");
   if (!apiKey) { alert("请先配置 Gemini API Key！"); openKeyModal(); return; }
@@ -1078,13 +1100,36 @@ async function autoCompleteVocabWithGemini(id) {
           v.sentence = parsed.sentence || "";
           await dbAdd(STORE_VOCAB, v);
           renderVocabGrid();
-          alert(`🎉 已成功由 AI 补全【${v.text}】的拼音、释义与例句！`);
+          alert(`🎉 已成功补全【${v.text}】的拼音与释义！`);
           return;
         }
       }
     } catch(e) {}
   }
   alert("AI 暂时繁忙，请稍后再试。");
+}
+
+// ================= ⭐ 需求 5：原生 Web Audio 欢快愉悦音效引擎 =================
+function playPleasantSound() {
+  try {
+    const ctx = new (window.AudioContext || window.webkitAudioContext)();
+    if (ctx.state === 'suspended') ctx.resume();
+    // 悦耳欢快大三和弦琶音: C5(523.25) -> E5(659.25) -> G5(783.99) -> C6(1046.50)
+    const notes = [523.25, 659.25, 783.99, 1046.50];
+    notes.forEach((freq, i) => {
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(freq, ctx.currentTime + i * 0.08);
+      gain.gain.setValueAtTime(0, ctx.currentTime + i * 0.08);
+      gain.gain.linearRampToValueAtTime(0.18, ctx.currentTime + i * 0.08 + 0.02);
+      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + i * 0.08 + 0.35);
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.start(ctx.currentTime + i * 0.08);
+      osc.stop(ctx.currentTime + i * 0.08 + 0.36);
+    });
+  } catch(e) {}
 }
 
 // ================= 今日攻坚引擎 =================
@@ -1178,10 +1223,14 @@ function toggleReviewAnswerVisibility() {
   drawer.style.display = drawer.style.display === "none" ? "block" : "none";
 }
 
+// ⭐ 需求 5：记住/做对单词时播放欢快音乐
 async function stepReviewQuestion(newStatus) {
   const q = reviewQueue[reviewCurrentIdx];
   if (q) {
     q.status = newStatus;
+    if (newStatus === "🟡 巩固中" || newStatus === "🟢 已斩杀") {
+      playPleasantSound(); // 触发欢快清脆的通关音效！
+    }
     if (newStatus === "🟢 已斩杀") reviewKilledCount++;
     await dbAdd(STORE_QUESTIONS, q);
   }
@@ -1257,7 +1306,7 @@ async function renderSubjectPortal() {
   }
 }
 
-// 连续录入错题业务
+// ⭐ 需求 3 & 4：连续录入错题（去掉了演示例子与辅助输入框）
 let activeEntryTab = "word", activeCameraCropBase64 = "";
 function openSubjectErrorEntryModal(subjectKey) {
   const sub = SUBJECTS[subjectKey] || SUBJECTS.chinese;
@@ -1268,7 +1317,7 @@ function openSubjectErrorEntryModal(subjectKey) {
   const lastModule = localStorage.getItem("LAST_MODULE_" + subjectKey) || sub.modules[0];
   document.getElementById("inpEntryModule").innerHTML = sub.modules.map(m => `<option value="${m}" ${m===lastModule?'selected':''}>${m}</option>`).join('');
 
-  document.getElementById("inpWordText").value = ""; document.getElementById("inpWordNote").value = "";
+  document.getElementById("inpWordText").value = "";
   activeCameraCropBase64 = ""; document.getElementById("cropWorkspace").style.display = "none"; document.getElementById("cameraPhotoText").style.display = "block";
 
   const subTabs = document.getElementById("errorEntryModalSubtabs");
@@ -1278,19 +1327,15 @@ function openSubjectErrorEntryModal(subjectKey) {
     subTabs.style.display = "flex";
     document.getElementById("tabEntryWord").innerHTML = "🔤 1. 单词/短语录入";
     document.getElementById("tabEntryPhoto").innerHTML = "📸 2. 试卷拍照裁剪";
-    document.getElementById("lblWordTitle").textContent = "输入易错单词 / 词组短语 / 听写词汇";
-    document.getElementById("inpWordText").placeholder = "如：embarrass, accommodation, through/thorough 等";
-    document.getElementById("lblWordNote").textContent = "词义 / 易错点 / 辨析搭配（选填）";
-    document.getElementById("inpWordNote").placeholder = "如：注意双写r和双写s；词义：使尴尬/难堪";
+    document.getElementById("lblWordTitle").textContent = "输入单词 / 词组短语";
+    document.getElementById("inpWordText").placeholder = "";
     switchErrorEntryTab("word");
   } else {
     subTabs.style.display = "flex";
     document.getElementById("tabEntryWord").innerHTML = "✍️ 1. 错字/词语录入";
     document.getElementById("tabEntryPhoto").innerHTML = "📸 2. 试卷拍照裁剪";
-    document.getElementById("lblWordTitle").textContent = "输入错字 / 听写词语 / 拼音";
-    document.getElementById("inpWordText").placeholder = "如：璧（和氏璧 / 璧玉）或 易错生字";
-    document.getElementById("lblWordNote").textContent = "纠正 / 释义 / 正音（选填）";
-    document.getElementById("inpWordNote").placeholder = "如：注意下半部分是‘玉’不是‘土’";
+    document.getElementById("lblWordTitle").textContent = "输入错字 / 词语 / 拼音";
+    document.getElementById("inpWordText").placeholder = "";
     switchErrorEntryTab("word");
   }
   document.getElementById("errorEntryModal").classList.add("active");
@@ -1309,7 +1354,7 @@ function handleCameraCropFile(file) {
   const reader = new FileReader();
   reader.onload = (e) => {
     const imgEl = document.getElementById("cropTargetImg");
-    imgEl.src = dataUrl = e.target.result;
+    imgEl.src = e.target.result;
     imgEl.onload = () => {
       document.getElementById("cropWorkspace").style.display = "block";
       document.getElementById("cameraPhotoText").style.display = "none";
@@ -1362,9 +1407,9 @@ async function saveSubjectErrorEntry() {
   if (activeEntryTab === "word" && currentPortalSubject !== "math") {
     const wordText = document.getElementById("inpWordText").value.trim();
     if (!wordText) { alert("请输入词汇或生字！"); return; }
-    item.isWord = true; item.note = wordText; item.ans = document.getElementById("inpWordNote").value.trim(); item.img = "";
+    item.isWord = true; item.note = wordText; item.ans = ""; item.img = "";
   } else {
-    if (!activeCameraCropBase64) { alert("请先拍照并在图片上画框截取题目！"); return; }
+    if (!activeCameraCropBase64) { alert("请先拍照并在图片上拖拽画框截取题目！"); return; }
     item.isWord = false; item.note = `${grade} · ${moduleTag} 错题`; item.ans = ""; item.img = activeCameraCropBase64;
   }
 
@@ -1372,7 +1417,6 @@ async function saveSubjectErrorEntry() {
 
   document.getElementById("entrySuccessNotice").textContent = `✅ 已成功存入！请继续录入下一题`;
   document.getElementById("inpWordText").value = "";
-  document.getElementById("inpWordNote").value = "";
   activeCameraCropBase64 = "";
   document.getElementById("cropWorkspace").style.display = "none";
   document.getElementById("cameraPhotoText").style.display = "block";
@@ -1381,7 +1425,7 @@ async function saveSubjectErrorEntry() {
   renderDashboard();
 }
 
-// 错题总库渲染
+// 错题总库与卡片渲染
 async function renderVault() {
   renderFilterChips();
   const allQuestions = await dbGetAll(STORE_QUESTIONS);
@@ -1410,24 +1454,32 @@ function renderQuestionCardHtml(q) {
     extDirectHtml = `<div class="card-extension-badge" style="background:#f8fafc; border-color:#e2e8f0; color:#94a3b8;">尚未生成拓展组词/短句（点击【思路】可自动生成）</div>`;
   }
 
+  // ⭐ 需求 4：点击词条上的字/图片/标题直接等同于“查看原题”
   return `
     <div class="q-card">
       <div style="display:flex; justify-content:space-between; align-items:center;">
         <label style="display:flex; align-items:center; gap:6px; font-weight:700; cursor:pointer;">
           <input type="checkbox" class="vault-checkbox" value="${q.id}">
-          <span style="font-size:0.95rem;">${q.note || '错题'}</span>
+          <span style="font-size:0.95rem; cursor:pointer;" onclick="openViewEditModal(${q.id})" title="点击查看原题">${q.note || '错题'}</span>
         </label>
         <div>
           <span style="font-size:0.75rem; background:${subInfo.bg}; color:${subInfo.color}; padding:2px 8px; border-radius:10px; font-weight:bold;">${subInfo.name}</span>
           <button class="btn btn-danger" style="padding:2px 6px; font-size:0.75rem;" onclick="deleteSingleQuestion(${q.id})">删</button>
         </div>
       </div>
-      ${q.isWord ? `<div class="word-card-text" style="${wordStyle}">${q.note}</div>` : `<div class="q-img-wrap"><img src="${q.img}"></div>`}
+      
+      <!-- 点击字块或图片直接触发查看原题 -->
+      ${q.isWord 
+        ? `<div class="word-card-text" style="${wordStyle}" onclick="openViewEditModal(${q.id})" title="点击查看原题">${q.note}</div>` 
+        : `<div class="q-img-wrap" onclick="openViewEditModal(${q.id})" title="点击查看原题"><img src="${q.img}"></div>`}
+
       ${extDirectHtml}
+
       <div style="display:flex; justify-content:space-between; font-size:0.8rem; color:#64748b; margin-bottom:8px;">
         <span>${q.grade || '四上'} · <b>${q.module || '基础考点'}</b></span>
         <span style="cursor:pointer;" onclick="cycleQuestionStatus(${q.id}, '${q.status}')">${q.status || '🔴 待攻克'} ⟳</span>
       </div>
+
       <div style="display:grid; grid-template-columns: 1fr 1.15fr 1fr; gap:6px; margin-top:auto; padding-top:8px; border-top:1px solid #e2e8f0;">
         <button class="btn btn-amber" style="justify-content:center; font-size:0.78rem;" onclick="openViewEditModal(${q.id})">🔍 原题</button>
         <button class="btn" style="justify-content:center; background:#e0f2fe; color:#0369a1; font-size:0.78rem;" onclick="analyzeSingleQuestionById(${q.id})">💡 思路${q.savedAnalysis ? '(已存)' : ''}</button>
@@ -1564,7 +1616,7 @@ function renderRichContent(element, rawText) {
   });
 }
 
-// Gemini 思路分析与拓展组词（含 503 避峰重试）
+// Gemini 思路分析与拓展组词
 let activeAnalysisQuestionId = null;
 async function analyzeSingleQuestionById(id) {
   const all = await dbGetAll(STORE_QUESTIONS);
@@ -2042,7 +2094,6 @@ function exitExam() {
   }
 }
 
-// 试卷上传
 let editingExamId = null;
 let tempNewExamPages = [];
 
