@@ -1,3 +1,10 @@
+！
+
+---
+
+### 最新完整代码（v6.0 每日一读与生词好句旗舰版）
+
+```html
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
@@ -5,7 +12,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
-<title>智学多学科管家 & 错题工作台</title>
+<title>智学多学科管家 & 每日一读</title>
 
 <!-- 1. PDF.js 引擎 -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
@@ -13,7 +20,7 @@
   if (window.pdfjsLib) pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
 </script>
 
-<!-- 2. Markdown (Marked) & KaTeX 数学公式渲染库 -->
+<!-- 2. Markdown & KaTeX 数学公式渲染库 -->
 <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
 <script src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
@@ -32,7 +39,7 @@
   * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
   body { font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, "PingFang SC", sans-serif; background: var(--bg); color: var(--text); padding-bottom: 60px; }
   header { background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(12px); border-bottom: 1px solid var(--border); padding: 10px 18px; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 100; }
-  .brand { display: flex; align-items: center; gap: 8px; font-size: 1.15rem; font-weight: 800; cursor: pointer; }
+  .brand { display: flex; align-items: center; gap: 8px; font-size: 1.15rem; font-weight: 800; color: var(--text); cursor: pointer; }
   .nav-tabs { display: flex; gap: 6px; }
   .nav-tab { padding: 6px 14px; border-radius: 20px; font-size: 0.88rem; font-weight: 700; cursor: pointer; color: var(--text-sub); transition: 0.2s; }
   .nav-tab.active { background: #0f172a; color: white; }
@@ -46,14 +53,14 @@
   .btn-amber { background: #fef3c7; color: #b45309; }
   .container { max-width: 1200px; margin: 18px auto; padding: 0 16px; }
 
-  /* 首页横幅与打卡 */
+  /* 首页横幅 */
   .greeting-banner { display: flex; justify-content: space-between; align-items: center; background: white; border: 1px solid var(--border); border-radius: 16px; padding: 18px 22px; margin-bottom: 20px; box-shadow: 0 4px 20px rgba(0,0,0,0.02); flex-wrap: wrap; gap: 12px; }
   .checkin-status-bar { display: flex; align-items: center; gap: 12px; margin-top: 6px; font-size: 0.85rem; flex-wrap: wrap; }
   .checkin-badge-todo { background: #fef2f2; color: #dc2626; border: 1px solid #fecaca; padding: 3px 10px; border-radius: 12px; font-weight: 700; cursor: pointer; }
   .checkin-badge-done { background: #f0fdf4; color: #16a34a; border: 1px solid #bbf7d0; padding: 3px 10px; border-radius: 12px; font-weight: 700; cursor: pointer; }
   .countdown-badge { background: #fff7ed; color: #c2410c; border: 1px solid #fed7aa; padding: 6px 14px; border-radius: 20px; font-size: 0.85rem; font-weight: 700; display: inline-flex; align-items: center; gap: 6px; }
 
-  /* 错题攻坚大卡片 */
+  /* 核心中枢大卡片 */
   .hero-vault-card { background: linear-gradient(135deg, #7c3aed 0%, #4f46e5 100%); color: white; border-radius: 18px; padding: 24px; margin-bottom: 24px; box-shadow: 0 10px 25px rgba(124, 58, 237, 0.2); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px; }
   .hero-vault-stats { display: flex; gap: 12px; align-items: center; margin-top: 10px; flex-wrap: wrap; }
   .stat-pill { background: rgba(255, 255, 255, 0.2); padding: 4px 12px; border-radius: 12px; font-size: 0.85rem; }
@@ -78,7 +85,7 @@
   .word-card-text { font-size: 1.5rem; font-weight: 800; text-align: center; padding: 18px 10px; border-radius: 8px; margin: 8px 0 4px; letter-spacing: 1px; }
   .card-extension-badge { background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 8px; padding: 8px 12px; font-size: 0.88rem; color: #166534; margin: 6px 0 10px; line-height: 1.45; }
 
-  /* 全真考场视图 */
+  /* 考场全屏双屏视图 */
   #examView { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: #0f172a; z-index: 500; flex-direction: column; }
   .exam-header { background: #1e293b; color: white; padding: 10px 18px; display: flex; justify-content: space-between; align-items: center; }
   .exam-body { flex: 1; display: flex; overflow: hidden; }
@@ -125,12 +132,28 @@
   .modal-subtab { flex: 1; text-align: center; padding: 6px; font-size: 0.85rem; font-weight: 700; cursor: pointer; border-radius: 6px; color: #64748b; }
   .modal-subtab.active { background: white; color: var(--primary); }
 
-  /* 沉浸式攻坚全屏 */
+  /* 沉浸式今日攻坚界面 */
   #smartReviewView { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: #0f172a; z-index: 600; flex-direction: column; color: white; }
   .review-top-bar { background: #1e293b; padding: 12px 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #334155; }
   .review-content-area { flex: 1; overflow-y: auto; padding: 20px; display: flex; justify-content: center; }
   .review-card-stage { background: white; color: var(--text); width: 100%; max-width: 760px; border-radius: 20px; padding: 24px; box-shadow: 0 10px 35px rgba(0,0,0,0.3); display: flex; flex-direction: column; justify-content: space-between; }
   .subject-guide-tip { border-radius: 12px; padding: 12px 16px; font-size: 0.88rem; margin-bottom: 14px; display: flex; align-items: flex-start; gap: 8px; line-height: 1.5; }
+
+  /* ================= ⭐ 每日一读与阅读器样式 ================= */
+  #dailyReadingView { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: #fdfbf7; z-index: 650; flex-direction: column; color: #292524; }
+  .reader-top-bar { background: #f5efe6; border-bottom: 1px solid #e7dfd5; padding: 12px 20px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px; }
+  .reader-content-body { flex: 1; overflow-y: auto; padding: 30px 20px; display: flex; justify-content: center; }
+  .reader-paper { width: 100%; max-width: 760px; font-size: 1.15rem; line-height: 1.9; color: #292524; letter-spacing: 0.5px; position: relative; }
+  .reader-paper h1 { font-size: 1.6rem; margin-bottom: 16px; color: #1c1917; text-align: center; }
+  .reader-paper p { margin-bottom: 16px; text-indent: 2em; }
+  .reader-paper .comprehension-box { background: #f5efe6; border-left: 4px solid #d97706; padding: 16px; border-radius: 8px; margin-top: 24px; font-size: 0.95rem; }
+
+  /* 双击查词气泡 */
+  #wordLookupPopup {
+    display: none; position: fixed; background: #0f172a; color: white; padding: 12px 16px;
+    border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.5); z-index: 999;
+    max-width: 320px; font-size: 0.88rem; line-height: 1.5;
+  }
 </style>
 </head>
 <body>
@@ -138,11 +161,12 @@
 <header>
   <div class="brand" onclick="switchNav('dashboard')">
     <span>🍎 智学多学科管家</span>
-    <span style="font-size:0.7rem; font-weight:bold; background:#e0f2fe; color:#0369a1; padding:2px 8px; border-radius:12px;">v5.8 稳定版</span>
+    <span style="font-size:0.7rem; font-weight:bold; background:#e0f2fe; color:#0369a1; padding:2px 8px; border-radius:12px;">v6.0 每日一读</span>
   </div>
   <div class="nav-tabs">
     <div class="nav-tab active" id="tabNavDashboard" onclick="switchNav('dashboard')">🏠 首页工作台</div>
     <div class="nav-tab" id="tabNavVault" onclick="switchNav('vault')">🎯 错题复习总库</div>
+    <div class="nav-tab" id="tabNavVocab" onclick="openVocabNotebookModal()">📖 生词好句本</div>
   </div>
   <div class="header-actions">
     <button class="btn btn-outline" onclick="exportData()" title="备份全科数据">💾 备份</button>
@@ -159,6 +183,7 @@
       <div class="checkin-status-bar">
         <span id="checkinBadge" onclick="promptManualCheckin()" title="点击可一键补卡或撤销">⚠️ 今日尚未完成攻坚打卡 (点此打卡)</span>
         <span>🔥 连续打卡: <b id="streakDaysText" style="color:#c2410c;">0</b> 天</span>
+        <!-- ⭐ 需求 1：在线活跃时长实时累计 -->
         <span>⏱️ 今日专注时长: <b id="todayStudyMinutesText" style="color:#2563eb; cursor:pointer;" onclick="promptEditMinutes()" title="点击可修改补录时长">0</b> 分钟</span>
       </div>
     </div>
@@ -170,17 +195,21 @@
 
   <div class="hero-vault-card">
     <div>
-      <span style="font-size:0.85rem; text-transform:uppercase; letter-spacing:1px; opacity:0.9;">Ebbinghaus Daily Review</span>
-      <h3 style="font-size:1.5rem; margin:4px 0 8px;">🎯 全科错题复习中枢</h3>
+      <span style="font-size:0.85rem; text-transform:uppercase; letter-spacing:1px; opacity:0.9;">Ebbinghaus Daily Review & Reading</span>
+      <h3 style="font-size:1.5rem; margin:4px 0 8px;">🎯 全科错题复习与阅读中枢</h3>
       <div class="hero-vault-stats" id="dashboardVaultStats">
         <span class="stat-pill">📐 数学: 0 题待攻克</span>
         <span class="stat-pill">📖 语文: 0 题</span>
         <span class="stat-pill">🔤 英语: 0 题</span>
       </div>
     </div>
-    <div style="display:flex; gap:10px;">
-      <button class="btn" id="btnHeroReview" style="background:white; color:#4f46e5; font-size:0.9rem; padding:8px 18px; font-weight:800;" onclick="startEbbinghausDailyReview()">
+    <div style="display:flex; gap:10px; flex-wrap:wrap;">
+      <button class="btn" id="btnHeroReview" style="background:white; color:#4f46e5; font-size:0.9rem; padding:8px 16px; font-weight:800;" onclick="startEbbinghausDailyReview()">
         ⚡ 开启今日攻坚
+      </button>
+      <!-- ⭐ 需求 2：每日一读核心入口 -->
+      <button class="btn" style="background:#059669; color:white; font-size:0.9rem; padding:8px 16px; font-weight:800;" onclick="openDailyReadingModal()">
+        📖 每日一读 (中/英双篇)
       </button>
       <button class="btn" style="background:rgba(255,255,255,0.2); color:white; border:1px solid rgba(255,255,255,0.4);" onclick="switchNav('vault')">错题总库</button>
     </div>
@@ -216,6 +245,7 @@
       <button class="btn btn-outline" onclick="toggleSelectAllVault()">全选/反选</button>
       <button class="btn btn-primary" style="background:#0284c7;" onclick="analyzeThinkingWithGemini()">💡 批量分析思路</button>
       <button class="btn btn-success" onclick="generateSimilarWithGemini()">🤖 批量出题</button>
+      <button class="btn btn-outline" style="background:#fef3c7; color:#b45309;" onclick="openVocabNotebookModal()">📖 生词好句本</button>
     </div>
   </div>
 
@@ -246,7 +276,64 @@
   <div class="q-grid" id="qList"></div>
 </div>
 
-<!-- ================= 沉浸式今日攻坚全屏卡片 ================= -->
+<!-- ================= ⭐ 需求 2：全屏每日一读沉浸阅读器 ================= -->
+<div id="dailyReadingView">
+  <div class="reader-top-bar">
+    <div style="display:flex; align-items:center; gap:12px;">
+      <span style="font-size:1.1rem; font-weight:800; color:#065f46;">📖 每日一读 · 视野拓展</span>
+      <div style="display:flex; background:#e7dfd5; padding:3px; border-radius:8px;">
+        <span class="modal-subtab active" id="tabReaderChinese" onclick="switchReaderLanguage('chinese')" style="padding:4px 12px;">🇨🇳 中文篇 (拓展阅读)</span>
+        <span class="modal-subtab" id="tabReaderEnglish" onclick="switchReaderLanguage('english')" style="padding:4px 12px;">🇬🇧 英文篇 (美文阅读)</span>
+      </div>
+    </div>
+    <div style="display:flex; align-items:center; gap:8px;">
+      <span style="font-size:0.82rem; color:#78716c;">💡 提示：双击文中生词/短语可即时查音注译并收藏！</span>
+      <button class="btn btn-outline" style="background:white;" onclick="refreshDailyReading()">🔄 换一篇</button>
+      <button class="btn btn-outline" style="background:#fef3c7; color:#b45309;" onclick="openVocabNotebookModal()">📖 我的生词好句</button>
+      <button class="btn btn-outline" style="background:white;" onclick="closeDailyReadingModal()">退出阅读</button>
+    </div>
+  </div>
+
+  <div class="reader-content-body">
+    <div class="reader-paper" id="readingArticleContainer">
+      <div style="text-align:center; padding:60px 0; color:#78716c;">正在加载今日精选阅读...</div>
+    </div>
+  </div>
+</div>
+
+<!-- 双击查词气泡 -->
+<div id="wordLookupPopup">
+  <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+    <b style="font-size:1rem; color:#38bdf8;" id="popupWordText">Word</b>
+    <span style="font-size:0.75rem; color:#94a3b8; cursor:pointer;" onclick="closeWordLookupPopup()">✕</span>
+  </div>
+  <div id="popupWordDetails" style="margin-bottom:10px; font-size:0.85rem;">正在查询释义与拼音...</div>
+  <div style="display:flex; gap:6px;">
+    <button class="btn btn-success" style="padding:4px 8px; font-size:0.75rem; flex:1; justify-content:center;" onclick="saveLookedUpWordToVocab()">⭐ 收藏到生词好句本</button>
+  </div>
+</div>
+
+<!-- ================= ⭐ 需求 2：生词好句本独立弹窗 ================= -->
+<div class="modal-overlay" id="vocabNotebookModal">
+  <div class="modal" style="max-width:780px;">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; flex-wrap:wrap; gap:8px;">
+      <h3 style="font-size:1.15rem; color:#b45309;">📖 我的生词好句本</h3>
+      <div style="display:flex; gap:6px;">
+        <span class="filter-chip active" id="vfAll" onclick="filterVocabList('')">全部</span>
+        <span class="filter-chip" id="vfChi" onclick="filterVocabList('chinese')">📖 语文生词好句</span>
+        <span class="filter-chip" id="vfEng" onclick="filterVocabList('english')">🔤 英语生词好句</span>
+      </div>
+    </div>
+    <div style="max-height:60vh; overflow-y:auto;">
+      <div class="q-grid" id="vocabCardGrid"></div>
+    </div>
+    <div style="display:flex; justify-content:flex-end; margin-top:14px;">
+      <button class="btn btn-outline" onclick="document.getElementById('vocabNotebookModal').classList.remove('active')">关闭</button>
+    </div>
+  </div>
+</div>
+
+<!-- 沉浸式今日攻坚界面 -->
 <div id="smartReviewView">
   <div class="review-top-bar">
     <div style="display:flex; align-items:center; gap:12px;">
@@ -258,13 +345,12 @@
       <button class="btn btn-outline" style="color:white; border-color:#64748b; background:transparent;" onclick="exitSmartReview()">退出并保存时长</button>
     </div>
   </div>
-
   <div class="review-content-area">
     <div class="review-card-stage" id="reviewStageCard"></div>
   </div>
 </div>
 
-<!-- ================= 考场全屏视图 (PDF渲染、双指缩放、框选截题) ================= -->
+<!-- 考场全屏视图 -->
 <div id="examView">
   <div class="exam-header">
     <span style="font-size:1rem; font-weight:700;" id="runningExamTitle">试卷标题</span>
@@ -274,12 +360,10 @@
       <button class="btn btn-success" id="runningSubmitBtn" onclick="submitRunningExam()">交卷评分</button>
     </div>
   </div>
-
   <div id="snipTopBanner">
     <span id="snipBannerText">请在试卷上画框圈出题目...</span>
     <button class="btn btn-outline" style="padding:2px 8px; font-size:0.75rem; background:white;" onclick="exitSnippingMode()">取消截图</button>
   </div>
-
   <div class="exam-body">
     <div class="exam-left-paper" id="paperGalleryContainer">
       <div id="paperContentWrapper" style="width:100%; margin:0 auto; display:flex; flex-direction:column; align-items:center; gap:16px;"></div>
@@ -312,24 +396,17 @@
 
 <!-- ================= 弹窗集合 ================= -->
 
-<!-- 倒计时目标管理弹窗 -->
+<!-- 倒计时管理 -->
 <div class="modal-overlay" id="countdownManageModal">
   <div class="modal" style="max-width:520px;">
-    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
-      <h3 style="font-size:1.15rem;">🏆 备考倒计时目标管理</h3>
-    </div>
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;"><h3 style="font-size:1.15rem;">🏆 备考倒计时目标管理</h3></div>
     <div id="countdownGoalsEditorList" style="margin-bottom:14px; max-height:240px; overflow-y:auto;"></div>
     <div style="border-top:1px dashed #cbd5e1; padding-top:12px;">
       <h4 style="font-size:0.9rem; color:#475569; margin-bottom:8px;">＋ 添加新目标</h4>
-      <div style="display:grid; grid-template-columns: 1fr 1fr; gap:8px;">
-        <input type="text" id="newGoalTitle" placeholder="如：期末冲刺">
-        <input type="date" id="newGoalDate">
-      </div>
+      <div style="display:grid; grid-template-columns: 1fr 1fr; gap:8px;"><input type="text" id="newGoalTitle" placeholder="如：期末冲刺"><input type="date" id="newGoalDate"></div>
       <button class="btn btn-outline" style="width:100%; margin-top:8px; justify-content:center;" onclick="addNewCountdownGoal()">＋ 确认添加该目标</button>
     </div>
-    <div style="display:flex; justify-content:flex-end; gap:8px; margin-top:16px;">
-      <button class="btn btn-primary" onclick="closeCountdownManageModal()">完成并关闭</button>
-    </div>
+    <div style="display:flex; justify-content:flex-end; gap:8px; margin-top:16px;"><button class="btn btn-primary" onclick="closeCountdownManageModal()">完成并关闭</button></div>
   </div>
 </div>
 
@@ -341,17 +418,9 @@
       <span id="viewModalSubjectBadge" style="font-size:0.75rem; padding:2px 8px; border-radius:10px; font-weight:bold;"></span>
     </div>
     <div id="viewModalPreviewContainer" style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px; padding:12px; text-align:center; margin-bottom:14px; max-height:280px; overflow:auto;"></div>
-    
     <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin-bottom:12px;">
       <div class="form-group"><label>所属学科</label><select id="editQSubject" onchange="updateEditModalModules()"></select></div>
-      <div class="form-group">
-        <label>所属年级</label>
-        <select id="editQGrade">
-          <option value="四上">四年级上册 (四上)</option><option value="四下">四年级下册 (四下)</option>
-          <option value="五上">五年级上册 (五上)</option><option value="五下">五年级下册 (五下)</option>
-          <option value="六上">六年级上册 (六上)</option><option value="六下">六年级下册 (六下)</option>
-        </select>
-      </div>
+      <div class="form-group"><label>所属年级</label><select id="editQGrade"><option value="四上">四年级上册 (四上)</option><option value="四下">四年级下册 (四下)</option><option value="五上">五年级上册 (五上)</option><option value="五下">五年级下册 (五下)</option><option value="六上">六年级上册 (六上)</option><option value="六下">六年级下册 (六下)</option></select></div>
     </div>
     <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin-bottom:12px;">
       <div class="form-group"><label>分类模块</label><select id="editQModule"></select></div>
@@ -360,13 +429,9 @@
     <div class="form-group"><label>题目备注 / 错字 / 标题</label><input type="text" id="editQNote"></div>
     <div class="form-group"><label>参考答案 / 纠错释义</label><input type="text" id="editQAns"></div>
     <div class="form-group"><label>常用拓展（组词或例句）</label><input type="text" id="editQExt" placeholder="如：名门望族、举世闻名、莫名其妙"></div>
-
     <div style="display:flex; justify-content:space-between; align-items:center; margin-top:16px;">
       <button class="btn btn-danger" onclick="deleteCurrentEditingQuestion()">🗑️ 删除此题</button>
-      <div style="display:flex; gap:8px;">
-        <button class="btn btn-outline" onclick="document.getElementById('viewEditQuestionModal').classList.remove('active')">关闭</button>
-        <button class="btn btn-primary" onclick="saveCurrentEditingQuestion()">💾 保存修改</button>
-      </div>
+      <div style="display:flex; gap:8px;"><button class="btn btn-outline" onclick="document.getElementById('viewEditQuestionModal').classList.remove('active')">关闭</button><button class="btn btn-primary" onclick="saveCurrentEditingQuestion()">💾 保存修改</button></div>
     </div>
   </div>
 </div>
@@ -380,14 +445,7 @@
       <div class="modal-subtab" id="tabEntryPhoto" onclick="switchErrorEntryTab('photo')">📸 2. 试卷拍照裁剪</div>
     </div>
     <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin-bottom:12px;">
-      <div class="form-group">
-        <label>所属年级（已记住上次选择）</label>
-        <select id="inpEntryGrade">
-          <option value="四上">四年级上册 (四上)</option><option value="四下">四年级下册 (四下)</option>
-          <option value="五上">五年级上册 (五上)</option><option value="五下">五年级下册 (五下)</option>
-          <option value="六上">六年级上册 (六上)</option><option value="六下">六年级下册 (六下)</option>
-        </select>
-      </div>
+      <div class="form-group"><label>所属年级（已记住上次选择）</label><select id="inpEntryGrade"><option value="四上">四年级上册 (四上)</option><option value="四下">四年级下册 (四下)</option><option value="五上">五年级上册 (五上)</option><option value="五下">五年级下册 (五下)</option><option value="六上">六年级上册 (六上)</option><option value="六下">六年级下册 (六下)</option></select></div>
       <div class="form-group"><label>分类标签</label><select id="inpEntryModule"></select></div>
     </div>
     <div id="panelEntryWord">
@@ -400,37 +458,24 @@
         <input type="file" id="cameraPhotoFile" accept="image/*" capture="environment" style="display:none;" onchange="handleCameraCropFile(this.files[0])">
       </div>
       <div id="cropWorkspace" style="display:none; position:relative; max-height:280px; overflow:auto; background:#334155; border-radius:8px; padding:10px; text-align:center;">
-        <div style="position:relative; display:inline-block;">
-          <img id="cropTargetImg" style="max-width:100%; display:block; user-select:none;">
-          <canvas id="cropModalCanvas" style="position:absolute; top:0; left:0; width:100%; height:100%; touch-action:none; cursor:crosshair;"></canvas>
-        </div>
+        <div style="position:relative; display:inline-block;"><img id="cropTargetImg" style="max-width:100%; display:block; user-select:none;"><canvas id="cropModalCanvas" style="position:absolute; top:0; left:0; width:100%; height:100%; touch-action:none; cursor:crosshair;"></canvas></div>
       </div>
       <p style="font-size:0.75rem; color:#64748b; margin-top:4px;">拍照后，在图上用手指拖拽画框，自动裁切题目区域！</p>
     </div>
-    <div style="display:flex; justify-content:flex-end; gap:8px; margin-top:16px;">
-      <button class="btn btn-outline" onclick="document.getElementById('errorEntryModal').classList.remove('active')">取消</button>
-      <button class="btn btn-primary" onclick="saveSubjectErrorEntry()">💾 保存到错题库</button>
-    </div>
+    <div style="display:flex; justify-content:flex-end; gap:8px; margin-top:16px;"><button class="btn btn-outline" onclick="document.getElementById('errorEntryModal').classList.remove('active')">取消</button><button class="btn btn-primary" onclick="saveSubjectErrorEntry()">💾 保存到错题库</button></div>
   </div>
 </div>
 
-<!-- 录入完整真题卷弹窗 -->
+<!-- 录入真题卷弹窗 -->
 <div class="modal-overlay" id="uploadExamModal">
   <div class="modal">
     <h3 style="margin-bottom:12px;" id="modalExamTitleText">编辑试卷</h3>
     <div class="form-group"><label>试卷名称</label><input type="text" id="newExamTitle" placeholder="如：第32届 WMO 地方省测"></div>
     <div class="form-group"><label>考试限时（分钟）</label><input type="number" id="newExamDuration" value="90"></div>
-    <div class="form-group">
-      <label>上传原卷（🔥支持 PDF 文件或多选照片）</label>
-      <input type="file" id="newExamFiles" accept="image/*,.pdf,application/pdf" multiple onchange="handleExamFiles(this.files)">
-      <div id="newExamPreview" style="display:flex; gap:8px; margin-top:8px; flex-wrap:wrap;"></div>
-    </div>
+    <div class="form-group"><label>上传原卷（🔥支持 PDF 文件或多选照片）</label><input type="file" id="newExamFiles" accept="image/*,.pdf,application/pdf" multiple onchange="handleExamFiles(this.files)"><div id="newExamPreview" style="display:flex; gap:8px; margin-top:8px; flex-wrap:wrap;"></div></div>
     <div class="form-group"><label>16道单选答案（连续填16位大写字母）</label><input type="text" id="newExamKeys" placeholder="BBADDCACBACA..." maxlength="16"></div>
     <div class="form-group"><label>解答题参考答案（分行填写）</label><textarea id="newExamFaqAns" style="height:80px;" placeholder="17. 6条; 710元..."></textarea></div>
-    <div style="display:flex; justify-content:flex-end; gap:8px;">
-      <button class="btn btn-outline" onclick="document.getElementById('uploadExamModal').classList.remove('active')">取消</button>
-      <button class="btn btn-primary" onclick="saveNewExam()">保存</button>
-    </div>
+    <div style="display:flex; justify-content:flex-end; gap:8px;"><button class="btn btn-outline" onclick="document.getElementById('uploadExamModal').classList.remove('active')">取消</button><button class="btn btn-primary" onclick="saveNewExam()">保存</button></div>
   </div>
 </div>
 
@@ -438,21 +483,11 @@
 <div class="modal-overlay" id="analysisModal">
   <div class="modal" style="max-width:780px;">
     <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;">
-      <div style="display:flex; align-items:center; gap:8px;">
-        <h3 style="color:#0369a1;">💡 深度思路与名师导图</h3>
-        <span id="analysisSourceBadge" style="font-size:0.75rem; background:#e0f2fe; color:#0369a1; padding:2px 8px; border-radius:10px; font-weight:bold;"></span>
-      </div>
-      <div style="display:flex; gap:6px;">
-        <button class="btn btn-outline" id="btnReAnalyze" onclick="reAnalyzeCurrentWithGemini()">🔄 重新由 AI 分析</button>
-        <button class="btn btn-outline" onclick="copyAnalysisText()">📋 复制</button>
-        <button class="btn btn-primary" onclick="printAnalysisContent()">🖨️ 打印</button>
-      </div>
+      <div style="display:flex; align-items:center; gap:8px;"><h3 style="color:#0369a1;">💡 深度思路与名师导图</h3><span id="analysisSourceBadge" style="font-size:0.75rem; background:#e0f2fe; color:#0369a1; padding:2px 8px; border-radius:10px; font-weight:bold;"></span></div>
+      <div style="display:flex; gap:6px;"><button class="btn btn-outline" id="btnReAnalyze" onclick="reAnalyzeCurrentWithGemini()">🔄 重新由 AI 分析</button><button class="btn btn-outline" onclick="copyAnalysisText()">📋 复制</button><button class="btn btn-primary" onclick="printAnalysisContent()">🖨️ 打印</button></div>
     </div>
     <div class="ext-words-box" id="extWordsPanel" style="display:none;">
-      <div class="ext-words-title">
-        <span id="extWordsHeaderLabel">📝 常用词语拓展（3~5个常见词）</span>
-        <button class="btn btn-outline" style="padding:2px 8px; font-size:0.75rem; background:white;" onclick="saveCustomExtensionWords()">💾 保存拓展内容</button>
-      </div>
+      <div class="ext-words-title"><span id="extWordsHeaderLabel">📝 常用词语拓展（3~5个常见词）</span><button class="btn btn-outline" style="padding:2px 8px; font-size:0.75rem; background:white;" onclick="saveCustomExtensionWords()">💾 保存拓展内容</button></div>
       <input type="text" id="inpCustomExtensionWords" placeholder="在此输入词语或例句拓展..." style="width:100%; border:1px solid #86efac; background:white; font-size:0.95rem; font-weight:600; color:#166534;">
     </div>
     <div class="analysis-output-box" id="analysisOutput">正在加载分析结果...</div>
@@ -463,13 +498,7 @@
 <!-- Gemini 相似题弹窗 -->
 <div class="modal-overlay" id="similarModal">
   <div class="modal" style="max-width:750px;">
-    <div style="display:flex; justify-content:space-between; align-items:center;">
-      <h3 style="color:#15803d;">🎯 举一反三 · 相似变式题</h3>
-      <div style="display:flex; gap:6px;">
-        <button class="btn btn-outline" onclick="copySimilarText()">📋 复制</button>
-        <button class="btn btn-primary" onclick="printSimilarContent()">🖨️ 打印</button>
-      </div>
-    </div>
+    <div style="display:flex; justify-content:space-between; align-items:center;"><h3 style="color:#15803d;">🎯 举一反三 · 相似变式题</h3><div style="display:flex; gap:6px;"><button class="btn btn-outline" onclick="copySimilarText()">📋 复制</button><button class="btn btn-primary" onclick="printSimilarContent()">🖨️ 打印</button></div></div>
     <div class="analysis-output-box" id="similarOutput">生成中...</div>
     <div style="display:flex; justify-content:flex-end;"><button class="btn btn-outline" onclick="document.getElementById('similarModal').classList.remove('active')">关闭</button></div>
   </div>
@@ -480,62 +509,38 @@
   <div class="modal" style="max-width:400px;">
     <h3>配置 Gemini API Key</h3>
     <input type="text" id="inpApiKey" placeholder="AIzaSy..." style="width:100%; margin:10px 0;">
-    <div style="display:flex; justify-content:flex-end; gap:8px;">
-      <button class="btn btn-outline" onclick="document.getElementById('keyModal').classList.remove('active')">取消</button>
-      <button class="btn btn-primary" onclick="saveApiKey()">保存</button>
-    </div>
+    <div style="display:flex; justify-content:flex-end; gap:8px;"><button class="btn btn-outline" onclick="document.getElementById('keyModal').classList.remove('active')">取消</button><button class="btn btn-primary" onclick="saveApiKey()">保存</button></div>
   </div>
 </div>
 
 <script>
 // 高可用模型轮换池
-const GEMINI_MODELS = [
-  "gemini-3.8-flash",
-  "gemini-3.5-flash-lite",
-  "gemini-2.0-flash",
-  "gemini-1.5-flash"
-];
+const GEMINI_MODELS = ["gemini-3.8-flash", "gemini-3.5-flash-lite", "gemini-2.0-flash", "gemini-1.5-flash"];
 
 const SUBJECTS = {
-  math: {
-    id: "math", name: "数学思维", icon: "📐",
-    desc: "WMO竞赛真题、高频几何模型、行程工程与错题攻坚",
-    color: "#2563eb", bg: "#eff6ff",
-    modules: ["几何模型", "行程问题", "数论整除", "计数组合", "计算与数列", "典型应用题"]
-  },
-  chinese: {
-    id: "chinese", name: "语文素养", icon: "📖",
-    desc: "易错生字词打卡、阅读理解、古诗文默写与作文",
-    color: "#be123c", bg: "#fff1f2",
-    modules: ["字词拼音", "修改病句", "文言诗词", "阅读理解", "表达应用", "其它错题"]
-  },
-  english: {
-    id: "english", name: "英语进阶", icon: "🔤",
-    desc: "易错单词听写、语法时态、完形填空与阅读理解",
-    color: "#059669", bg: "#ecfdf5",
-    modules: ["词汇短语", "语法时态", "完形填空", "阅读理解", "句型转换", "其它错题"]
-  }
+  math: { id: "math", name: "数学思维", icon: "📐", desc: "WMO竞赛真题、高频几何模型、行程工程与错题攻坚", color: "#2563eb", bg: "#eff6ff", modules: ["几何模型", "行程问题", "数论整除", "计数组合", "计算与数列", "典型应用题"] },
+  chinese: { id: "chinese", name: "语文素养", icon: "📖", desc: "易错生字词打卡、阅读理解、古诗文默写与作文", color: "#be123c", bg: "#fff1f2", modules: ["字词拼音", "修改病句", "文言诗词", "阅读理解", "表达应用", "其它错题"] },
+  english: { id: "english", name: "英语进阶", icon: "🔤", desc: "易错单词听写、语法时态、完形填空与阅读理解", color: "#059669", bg: "#ecfdf5", modules: ["词汇短语", "语法时态", "完形填空", "阅读理解", "句型转换", "其它错题"] }
 };
 
 let currentPortalSubject = "math";
-let filterSubject = "";
-let filterModule = "";
-let filterGrade = "";
-let filterStatus = "";
+let filterSubject = "", filterModule = "", filterGrade = "", filterStatus = "";
 
-// 数据库 IndexedDB
+// 数据库 IndexedDB (v7 新增 vocab 生词好句表)
 let db = null;
 const DB_NAME = "MathVaultDB";
 const STORE_QUESTIONS = "questions";
 const STORE_EXAMS = "exams";
+const STORE_VOCAB = "vocab";
 
 function initDB() {
   return new Promise((resolve) => {
-    const req = indexedDB.open(DB_NAME, 6);
+    const req = indexedDB.open(DB_NAME, 7);
     req.onupgradeneeded = (e) => {
       const database = e.target.result;
       if (!database.objectStoreNames.contains(STORE_QUESTIONS)) database.createObjectStore(STORE_QUESTIONS, { keyPath: "id", autoIncrement: true });
       if (!database.objectStoreNames.contains(STORE_EXAMS)) database.createObjectStore(STORE_EXAMS, { keyPath: "id", autoIncrement: true });
+      if (!database.objectStoreNames.contains(STORE_VOCAB)) database.createObjectStore(STORE_VOCAB, { keyPath: "id", autoIncrement: true });
     };
     req.onsuccess = async (e) => {
       db = e.target.result;
@@ -591,16 +596,35 @@ function switchNav(viewName) {
   if (viewName === "portal") renderSubjectPortal();
 }
 
-// ================= ⭐ 核心修复：打卡状态、专注时长与手动打卡 =================
-function getTodayDateStr() {
-  const d = new Date();
-  const y = d.getFullYear();
-  const m = String(d.getMonth() + 1).padStart(2, '0');
-  const day = String(d.getDate()).padStart(2, '0');
-  return `${y}-${m}-${day}`;
+// ================= ⭐ 需求 1：在线活跃时长实时累计 =================
+let lastActiveTimestamp = Date.now();
+function initActiveTimeTracker() {
+  const today = getTodayDateStr();
+  setInterval(() => {
+    if (document.visibilityState === 'visible') {
+      const now = Date.now();
+      const elapsedSec = Math.round((now - lastActiveTimestamp) / 1000);
+      if (elapsedSec > 0 && elapsedSec < 15) {
+        let curM = Number(localStorage.getItem("TODAY_MINUTES_" + today) || 0);
+        let curSec = Number(localStorage.getItem("TODAY_SECS_" + today) || 0) + elapsedSec;
+        if (curSec >= 60) {
+          curM += Math.floor(curSec / 60);
+          curSec = curSec % 60;
+          localStorage.setItem("TODAY_MINUTES_" + today, curM);
+          renderCheckinStatus();
+        }
+        localStorage.setItem("TODAY_SECS_" + today, curSec);
+      }
+    }
+    lastActiveTimestamp = Date.now();
+  }, 5000);
 }
 
-// 统一打卡与时长累计核心
+function getTodayDateStr() {
+  const d = new Date();
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+}
+
 function performCheckin(minutesToAdd = 0, forceCheckin = true) {
   const today = getTodayDateStr();
   const lastCheckin = localStorage.getItem("LAST_CHECKIN_DATE");
@@ -611,11 +635,8 @@ function performCheckin(minutesToAdd = 0, forceCheckin = true) {
   const yStr = `${yd.getFullYear()}-${String(yd.getMonth()+1).padStart(2,'0')}-${String(yd.getDate()).padStart(2,'0')}`;
 
   if (forceCheckin && lastCheckin !== today) {
-    if (lastCheckin === yStr) {
-      streak += 1;
-    } else {
-      streak = 1;
-    }
+    if (lastCheckin === yStr) streak += 1;
+    else streak = 1;
     localStorage.setItem("CHECKIN_STREAK", streak);
     localStorage.setItem("LAST_CHECKIN_DATE", today);
   }
@@ -647,7 +668,6 @@ function renderCheckinStatus() {
   document.getElementById("todayStudyMinutesText").textContent = minutes;
 }
 
-// 家长一键手动补打卡/撤销
 function promptManualCheckin() {
   const today = getTodayDateStr();
   const lastCheckin = localStorage.getItem("LAST_CHECKIN_DATE");
@@ -662,7 +682,6 @@ function promptManualCheckin() {
   }
 }
 
-// 家长手动调整今日学习时长
 function promptEditMinutes() {
   const today = getTodayDateStr();
   const curM = Number(localStorage.getItem("TODAY_MINUTES_" + today) || 0);
@@ -675,75 +694,44 @@ function promptEditMinutes() {
   }
 }
 
-// 倒计时管理（增、删、改）
-function getDefaultCountdownGoals() {
-  return [{ id: 1, title: "WMO 地方省测", date: "2026-11-29" }];
-}
-
+// 倒计时管理
+function getDefaultCountdownGoals() { return [{ id: 1, title: "WMO 地方省测", date: "2026-11-29" }]; }
 function getCountdownGoals() {
   try {
     const str = localStorage.getItem("COUNTDOWN_GOALS");
     return str ? JSON.parse(str) : getDefaultCountdownGoals();
-  } catch(e) {
-    return getDefaultCountdownGoals();
-  }
+  } catch(e) { return getDefaultCountdownGoals(); }
 }
-
-function saveCountdownGoals(goals) {
-  localStorage.setItem("COUNTDOWN_GOALS", JSON.stringify(goals));
-  renderCountdownBadges();
-}
-
+function saveCountdownGoals(goals) { localStorage.setItem("COUNTDOWN_GOALS", JSON.stringify(goals)); renderCountdownBadges(); }
 function renderCountdownBadges() {
   const goals = getCountdownGoals();
   const container = document.getElementById("countdownBadgesList");
-  if (goals.length === 0) {
-    container.innerHTML = `<span class="countdown-badge" style="background:#f1f5f9; color:#64748b; border-color:#e2e8f0;">暂无倒计时目标</span>`;
-    return;
-  }
+  if (goals.length === 0) { container.innerHTML = `<span class="countdown-badge" style="background:#f1f5f9; color:#64748b; border-color:#e2e8f0;">暂无倒计时目标</span>`; return; }
   const now = new Date();
   container.innerHTML = goals.map(g => {
     const target = new Date(g.date + "T09:00:00");
     const diffDays = Math.ceil((target - now) / (1000 * 60 * 60 * 24));
-    let text = "";
-    if (diffDays > 0) text = `🏆 距 ${g.title} 还有 ${diffDays} 天`;
-    else if (diffDays === 0) text = `🏆 今天是 ${g.title} 比赛日！冲刺！`;
-    else text = `🏆 ${g.title} 已结束`;
+    let text = diffDays > 0 ? `🏆 距 ${g.title} 还有 ${diffDays} 天` : (diffDays === 0 ? `🏆 今天是 ${g.title} 比赛日！冲刺！` : `🏆 ${g.title} 已结束`);
     return `<span class="countdown-badge">${text}</span>`;
   }).join('');
 }
-
 function openCountdownManageModal() {
   const goals = getCountdownGoals();
-  const listEl = document.getElementById("countdownGoalsEditorList");
-  listEl.innerHTML = goals.map((g, idx) => `
+  document.getElementById("countdownGoalsEditorList").innerHTML = goals.map((g, idx) => `
     <div style="display:flex; justify-content:space-between; align-items:center; background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px; padding:8px 12px; margin-bottom:8px;">
       <div><b style="font-size:0.95rem;">${g.title}</b><div style="font-size:0.8rem; color:#64748b;">目标日期: ${g.date}</div></div>
       <button class="btn btn-danger" style="padding:4px 8px; font-size:0.75rem;" onclick="removeCountdownGoal(${idx})">删除</button>
     </div>
   `).join('');
-  document.getElementById("newGoalTitle").value = "";
-  document.getElementById("newGoalDate").value = "";
+  document.getElementById("newGoalTitle").value = ""; document.getElementById("newGoalDate").value = "";
   document.getElementById("countdownManageModal").classList.add("active");
 }
-function closeCountdownManageModal() {
-  document.getElementById("countdownManageModal").classList.remove("active");
-  renderCountdownBadges();
-}
-function removeCountdownGoal(idx) {
-  const goals = getCountdownGoals();
-  goals.splice(idx, 1);
-  saveCountdownGoals(goals);
-  openCountdownManageModal();
-}
+function closeCountdownManageModal() { document.getElementById("countdownManageModal").classList.remove("active"); renderCountdownBadges(); }
+function removeCountdownGoal(idx) { const goals = getCountdownGoals(); goals.splice(idx, 1); saveCountdownGoals(goals); openCountdownManageModal(); }
 function addNewCountdownGoal() {
-  const title = document.getElementById("newGoalTitle").value.trim();
-  const date = document.getElementById("newGoalDate").value;
-  if (!title || !date) { alert("请输入目标名称并选择目标日期！"); return; }
-  const goals = getCountdownGoals();
-  goals.push({ id: Date.now(), title, date });
-  saveCountdownGoals(goals);
-  openCountdownManageModal();
+  const title = document.getElementById("newGoalTitle").value.trim(); const date = document.getElementById("newGoalDate").value;
+  if (!title || !date) { alert("请输入目标名称并选择日期！"); return; }
+  const goals = getCountdownGoals(); goals.push({ id: Date.now(), title, date }); saveCountdownGoals(goals); openCountdownManageModal();
 }
 
 // 1. 仪表盘渲染
@@ -779,12 +767,251 @@ async function renderDashboard() {
   `).join('');
 }
 
-function openSubjectPortal(subjectId) {
-  currentPortalSubject = subjectId;
-  switchNav("portal");
+function openSubjectPortal(subjectId) { currentPortalSubject = subjectId; switchNav("portal"); }
+
+// ================= ⭐ 需求 2：每日一读核心业务（中英双语、双击查词、生词好句本） =================
+let activeReaderLang = "chinese"; // 'chinese' or 'english'
+let currentArticleData = { chinese: null, english: null };
+
+function openDailyReadingModal() {
+  document.getElementById("dailyReadingView").style.display = "flex";
+  loadDailyReadingArticle();
+  initReaderWordLookupListener();
 }
 
-// ================= 今日攻坚引擎（动态全量攻坚，退出即时保存） =================
+function closeDailyReadingModal() {
+  document.getElementById("dailyReadingView").style.display = "none";
+  closeWordLookupPopup();
+}
+
+function switchReaderLanguage(lang) {
+  activeReaderLang = lang;
+  document.getElementById("tabReaderChinese").classList.toggle("active", lang === 'chinese');
+  document.getElementById("tabReaderEnglish").classList.toggle("active", lang === 'english');
+  displayDailyArticle();
+}
+
+async function loadDailyReadingArticle() {
+  const today = getTodayDateStr();
+  const cachedChi = localStorage.getItem(`DAILY_READING_CHI_${today}`);
+  const cachedEng = localStorage.getItem(`DAILY_READING_ENG_${today}`);
+
+  if (cachedChi && cachedEng) {
+    currentArticleData.chinese = cachedChi;
+    currentArticleData.english = cachedEng;
+    displayDailyArticle();
+  } else {
+    await fetchAndGenerateDailyReading();
+  }
+}
+
+async function refreshDailyReading() {
+  if (confirm("确定要让 AI 为今日重新编写一篇全新的中英文拓展短文吗？")) {
+    await fetchAndGenerateDailyReading();
+  }
+}
+
+async function fetchAndGenerateDailyReading() {
+  const apiKey = localStorage.getItem("GEMINI_API_KEY");
+  if (!apiKey) { alert("请先在右上角【🔑 Key】中配置 Gemini API Key！"); openKeyModal(); return; }
+
+  const container = document.getElementById("readingArticleContainer");
+  container.innerHTML = `<div style="text-align:center; padding:60px 0;"><h3 style="color:#059669; margin-bottom:8px;">⏳ 正在由 Gemini 精心定制四年级中英文美文...</h3><p style="color:#78716c; font-size:0.9rem;">契合阅读理解考试难度与词汇量，请稍候约 8~12 秒...</p></div>`;
+
+  const promptText = `你是一位小学四年级全科特级语文与英语名师。请为小学四年级学生编写今日课外拓展阅读短文，分别包含中文篇和英文篇，要求开阔视野、富有趣味：
+
+严格按以下 JSON 格式返回，不要附带任何多余问候语：
+{
+  "chinese": "<h1>文章标题</h1><p>第一段内容（自然科普/历史小故事/寓言，词句优美生动，约350-450字）...</p><p>第二段...</p><div class='comprehension-box'><b>💡 思考小问答：</b><br>1. 题目一？<br>2. 题目二？</div>",
+  "english": "<h1>English Title</h1><p>Paragraph 1 (Interesting science fun fact, nature or inspiring adventure, grade 4-5 vocabulary, about 130-180 words)...</p><p>Paragraph 2...</p><div class='comprehension-box'><b>💡 Reading Comprehension Questions:</b><br>1. Question 1?<br>2. Question 2?</div>"
+}`;
+
+  let successData = null;
+  for (const model of GEMINI_MODELS) {
+    try {
+      const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`, {
+        method: "POST", headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ contents: [{ parts: [{ text: promptText }] }] })
+      });
+      const data = await res.json();
+      if (res.status === 200 && data.candidates && data.candidates[0].content.parts[0].text) {
+        const raw = data.candidates[0].content.parts[0].text;
+        const jsonMatch = raw.match(/\{[\s\S]*\}/);
+        if (jsonMatch) {
+          successData = JSON.parse(jsonMatch[0]);
+          break;
+        }
+      }
+      if (res.status === 503) await sleep(1200);
+    } catch(err) { await sleep(1000); }
+  }
+
+  if (successData && successData.chinese && successData.english) {
+    const today = getTodayDateStr();
+    localStorage.setItem(`DAILY_READING_CHI_${today}`, successData.chinese);
+    localStorage.setItem(`DAILY_READING_ENG_${today}`, successData.english);
+    currentArticleData = successData;
+    displayDailyArticle();
+  } else {
+    container.innerHTML = `<div style="text-align:center; padding:40px; color:#dc2626;"><h3>⚠️ 生成失败，Google 接口繁忙</h3><button class="btn btn-primary" style="margin-top:12px;" onclick="fetchAndGenerateDailyReading()">🔄 重新尝试生成</button></div>`;
+  }
+}
+
+function displayDailyArticle() {
+  const container = document.getElementById("readingArticleContainer");
+  const content = activeReaderLang === 'chinese' ? currentArticleData.chinese : currentArticleData.english;
+  container.innerHTML = content || `<div style="text-align:center; padding:40px;">暂无内容，请点击右上角【换一篇】重新生成。</div>`;
+}
+
+// 监听双击/划选查词
+let currentLookupWord = "";
+let currentLookupInfo = null;
+
+function initReaderWordLookupListener() {
+  const paper = document.getElementById("dailyReadingView");
+  paper.onmouseup = paper.ontouchend = async (e) => {
+    // 延时等待选区稳定
+    setTimeout(async () => {
+      const selection = window.getSelection();
+      const text = selection.toString().trim();
+      if (text && text.length >= 1 && text.length <= 40) {
+        const range = selection.getRangeAt(0);
+        const rect = range.getBoundingClientRect();
+        showWordLookupTooltip(text, rect.left, rect.top - 10);
+      }
+    }, 150);
+  };
+}
+
+async function showWordLookupTooltip(word, x, y) {
+  currentLookupWord = word;
+  const popup = document.getElementById("wordLookupPopup");
+  document.getElementById("popupWordText").textContent = word;
+  document.getElementById("popupWordDetails").innerHTML = `⏳ 正在查询释义与拼音...`;
+
+  popup.style.display = "block";
+  popup.style.left = Math.min(Math.max(10, x), window.innerWidth - 330) + "px";
+  popup.style.top = Math.max(70, y - 90) + "px";
+
+  // 请求轻量翻译/注音
+  const apiKey = localStorage.getItem("GEMINI_API_KEY");
+  if (!apiKey) {
+    document.getElementById("popupWordDetails").innerHTML = `请先配置 API Key 查看实时音标与释义`;
+    return;
+  }
+
+  const prompt = activeReaderLang === 'chinese'
+    ? `请为汉字/生词【${word}】注上准确拼音，并给出适合小学四年级孩子的通俗释义（一两句话），附带1个常用例句。`
+    : `请为英文单词/短语【${word}】提供音标、词性、精准中文翻译（简洁），并附带1个简单的英文小例句。`;
+
+  try {
+    const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`, {
+      method: "POST", headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] })
+    });
+    const data = await res.json();
+    if (data.candidates && data.candidates[0].content.parts[0].text) {
+      const resultText = data.candidates[0].content.parts[0].text;
+      currentLookupInfo = resultText;
+      document.getElementById("popupWordDetails").innerHTML = resultText.replace(/\n/g, '<br>');
+    }
+  } catch(e) {
+    document.getElementById("popupWordDetails").textContent = "查询失败：" + e.message;
+  }
+}
+
+function closeWordLookupPopup() { document.getElementById("wordLookupPopup").style.display = "none"; }
+
+// 收藏到生词好句本
+async function saveLookedUpWordToVocab() {
+  if (!currentLookupWord) return;
+  await dbAdd(STORE_VOCAB, {
+    text: currentLookupWord,
+    type: activeReaderLang,
+    details: currentLookupInfo || "自定义收藏词句",
+    grade: "四上",
+    createdAt: new Date().toISOString()
+  });
+  alert(`⭐ 已成功将【${currentLookupWord}】加入【生词好句本】！`);
+  closeWordLookupPopup();
+}
+
+// 生词好句本展示
+let currentVocabFilter = "";
+function filterVocabList(type) {
+  currentVocabFilter = type;
+  document.getElementById("vfAll").classList.toggle("active", type==='');
+  document.getElementById("vfChi").classList.toggle("active", type==='chinese');
+  document.getElementById("vfEng").classList.toggle("active", type==='english');
+  renderVocabGrid();
+}
+
+async function openVocabNotebookModal() {
+  document.getElementById("vocabNotebookModal").classList.add("active");
+  currentVocabFilter = "";
+  renderVocabGrid();
+}
+
+async function renderVocabGrid() {
+  const all = await dbGetAll(STORE_VOCAB);
+  const filtered = all.filter(v => currentVocabFilter === "" || v.type === currentVocabFilter);
+  const container = document.getElementById("vocabCardGrid");
+
+  if (filtered.length === 0) {
+    container.innerHTML = `<div style="grid-column:1/-1; text-align:center; padding:30px; color:#94a3b8;">暂无生词好句。在【每日一读】中双击生词即可随时收藏！</div>`;
+    return;
+  }
+
+  container.innerHTML = filtered.map(v => {
+    const isChi = v.type === "chinese";
+    return `
+      <div class="q-card" style="border-color:${isChi?'#fecdd3':'#a7f3d0'};">
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+          <b style="font-size:1.2rem; color:${isChi?'var(--chinese-color)':'var(--english-color)'};">${v.text}</b>
+          <button class="btn btn-danger" style="padding:2px 6px; font-size:0.75rem;" onclick="deleteVocabItem(${v.id})">删</button>
+        </div>
+        <div style="font-size:0.85rem; color:#475569; margin:8px 0; background:#f8fafc; padding:8px; border-radius:6px; line-height:1.5;">
+          ${v.details.replace(/\n/g, '<br>')}
+        </div>
+        <div style="display:flex; gap:6px; margin-top:auto; padding-top:6px; border-top:1px solid #e2e8f0;">
+          <button class="btn btn-amber" style="flex:1; justify-content:center; font-size:0.75rem;" onclick="deepAnalyzeVocab(${v.id})">💡 深度思路/造句</button>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+async function deleteVocabItem(id) {
+  if (confirm("确定要从生词好句本中删除这项吗？")) {
+    await dbDelete(STORE_VOCAB, id);
+    renderVocabGrid();
+  }
+}
+
+async function deepAnalyzeVocab(id) {
+  const all = await dbGetAll(STORE_VOCAB);
+  const v = all.find(x => x.id === id);
+  if (!v) return;
+
+  const mockQ = {
+    subject: v.type === 'chinese' ? 'chinese' : 'english',
+    module: "生词好句拓展",
+    note: v.text,
+    ans: v.details,
+    img: ""
+  };
+  analyzeThinkingWithGeminiDirect([mockQ]);
+}
+
+function analyzeThinkingWithGeminiDirect(questions) {
+  activeAnalysisQuestionId = null;
+  document.getElementById("btnReAnalyze").style.display = "none";
+  document.getElementById("extWordsPanel").style.display = "none";
+  document.getElementById("analysisSourceBadge").textContent = "🤖 生词名师思路";
+  doAnalyzeThinking(questions, null);
+}
+
+// ================= 今日攻坚引擎 =================
 let reviewQueue = [];
 let reviewCurrentIdx = 0;
 let reviewTimerInterval = null;
@@ -793,24 +1020,12 @@ let reviewKilledCount = 0;
 
 async function startEbbinghausDailyReview() {
   const all = await dbGetAll(STORE_QUESTIONS);
-  if (all.length === 0) {
-    alert("题库里目前还没有错题！做一套模考或录入错题后即可开启智能攻坚。");
-    return;
-  }
-
+  if (all.length === 0) { alert("题库里目前还没有错题！录入错题后即可开启智能攻坚。"); return; }
   const pending = all.filter(q => q.status !== '🟢 已斩杀');
   pending.sort((a, b) => (a.status === '🔴 待攻克' ? -1 : 1));
 
-  if (pending.length === 0) {
-    alert("太棒了！所有错题都已被彻底斩杀！现在为你抽取已掌握题目进行防遗忘温故。");
-    reviewQueue = [...all];
-  } else {
-    reviewQueue = pending;
-  }
-
-  reviewCurrentIdx = 0;
-  reviewSeconds = 0;
-  reviewKilledCount = 0;
+  reviewQueue = pending.length > 0 ? pending : [...all];
+  reviewCurrentIdx = 0; reviewSeconds = 0; reviewKilledCount = 0;
 
   document.getElementById("smartReviewView").style.display = "flex";
   startReviewTimer();
@@ -829,10 +1044,7 @@ function startReviewTimer() {
 
 function renderCurrentReviewCard() {
   const total = reviewQueue.length;
-  if (reviewCurrentIdx >= total) {
-    finishSmartReview();
-    return;
-  }
+  if (reviewCurrentIdx >= total) { finishSmartReview(); return; }
 
   const q = reviewQueue[reviewCurrentIdx];
   const subInfo = SUBJECTS[q.subject || 'math'] || SUBJECTS.math;
@@ -841,44 +1053,20 @@ function renderCurrentReviewCard() {
 
   let guideTipHtml = "";
   if (q.subject === "english") {
-    guideTipHtml = `
-      <div class="subject-guide-tip" style="background:#ecfdf5; color:#065f46; border:1px solid #a7f3d0;">
-        <span style="font-size:1.2rem;">🗣️</span>
-        <div><b>【出声朗读法】</b> 把此单词或例句<b>大声出声朗读 3 遍</b>，并尝试现场用新主语造一个短句！</div>
-      </div>
-    `;
+    guideTipHtml = `<div class="subject-guide-tip" style="background:#ecfdf5; color:#065f46; border:1px solid #a7f3d0;"><span style="font-size:1.2rem;">🗣️</span><div><b>【出声朗读法】</b> 把此单词或例句<b>大声出声朗读 3 遍</b>，并尝试现场用新主语造一个短句！</div></div>`;
   } else if (q.subject === "chinese") {
-    guideTipHtml = `
-      <div class="subject-guide-tip" style="background:#fff1f2; color:#9f1239; border:1px solid #fecdd3;">
-        <span style="font-size:1.2rem;">⚡</span>
-        <div><b>【闪卡消灭法】</b> 快速口答字音与偏旁！在心里默写一遍，查看下方已关联的组词。</div>
-      </div>
-    `;
+    guideTipHtml = `<div class="subject-guide-tip" style="background:#fff1f2; color:#9f1239; border:1px solid #fecdd3;"><span style="font-size:1.2rem;">⚡</span><div><b>【闪卡消灭法】</b> 快速口答字音与偏旁！在心里默写一遍，查看下方已关联的组词。</div></div>`;
   } else {
-    guideTipHtml = `
-      <div class="subject-guide-tip" style="background:#eff6ff; color:#1e40af; border:1px solid #bfdbfe;">
-        <span style="font-size:1.2rem;">📐</span>
-        <div><b>【遮挡演算 + 小老师讲题法】</b> 严禁看答案！在草稿纸上重算完整步骤，并给家长讲清题眼与机关！</div>
-      </div>
-    `;
+    guideTipHtml = `<div class="subject-guide-tip" style="background:#eff6ff; color:#1e40af; border:1px solid #bfdbfe;"><span style="font-size:1.2rem;">📐</span><div><b>【遮挡演算 + 小老师讲题法】</b> 严禁看答案！在草稿纸上重算完整步骤，并给家长讲清题眼与机关！</div></div>`;
   }
 
-  let questionVisual = "";
-  if (q.isWord) {
-    questionVisual = `<div class="word-card-text" style="background:${subInfo.bg}; color:${subInfo.color}; font-size:2rem; padding:24px 10px;">${q.note}</div>`;
-  } else if (q.img) {
-    questionVisual = `<div style="text-align:center; margin:15px 0;"><img src="${q.img}" style="max-width:100%; max-height:260px; border-radius:10px; box-shadow:0 2px 10px rgba(0,0,0,0.06);"></div>`;
-  } else {
-    questionVisual = `<div style="padding:15px; font-size:1.1rem; font-weight:bold;">${q.note}</div>`;
-  }
+  let questionVisual = q.isWord
+    ? `<div class="word-card-text" style="background:${subInfo.bg}; color:${subInfo.color}; font-size:2rem; padding:24px 10px;">${q.note}</div>`
+    : (q.img ? `<div style="text-align:center; margin:15px 0;"><img src="${q.img}" style="max-width:100%; max-height:260px; border-radius:10px; box-shadow:0 2px 10px rgba(0,0,0,0.06);"></div>` : `<div style="padding:15px; font-size:1.1rem; font-weight:bold;">${q.note}</div>`);
 
-  let extHtml = "";
-  if (q.customExtension) {
-    extHtml = `<div class="card-extension-badge" style="margin:10px 0; font-size:0.95rem;"><b>📝 拓展复习：</b>${q.customExtension}</div>`;
-  }
+  let extHtml = q.customExtension ? `<div class="card-extension-badge" style="margin:10px 0; font-size:0.95rem;"><b>📝 拓展复习：</b>${q.customExtension}</div>` : "";
 
-  const stage = document.getElementById("reviewStageCard");
-  stage.innerHTML = `
+  document.getElementById("reviewStageCard").innerHTML = `
     <div>
       <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
         <div style="display:flex; align-items:center; gap:8px;">
@@ -887,43 +1075,29 @@ function renderCurrentReviewCard() {
         </div>
         <span style="font-size:0.82rem; font-weight:bold; color:#d97706;">状态: ${q.status || '🔴 待攻克'}</span>
       </div>
-
       ${guideTipHtml}
       ${questionVisual}
       ${extHtml}
-
       <div style="margin-top:14px;">
-        <button class="btn btn-outline" style="width:100%; justify-content:center; padding:8px;" onclick="toggleReviewAnswerVisibility()">
-          👁️ 遮挡模式：点击核对答案与解题思路
-        </button>
+        <button class="btn btn-outline" style="width:100%; justify-content:center; padding:8px;" onclick="toggleReviewAnswerVisibility()">👁️ 遮挡模式：点击核对答案与思路</button>
         <div id="reviewAnswerDrawer" style="display:none; margin-top:10px; padding:12px; background:#f1f5f9; border-left:4px solid var(--primary); border-radius:6px; font-size:0.92rem;">
           <div style="font-weight:bold; color:#16a34a; margin-bottom:4px;">参考答案：${q.ans || '见思路'}</div>
           <div id="reviewAnalysisBox"></div>
         </div>
       </div>
     </div>
-
     <div style="margin-top:20px; border-top:1px solid #e2e8f0; padding-top:16px;">
       <div style="font-size:0.82rem; color:#64748b; margin-bottom:8px; text-align:center;">根据刚才的重算/默写表现，评定本题新状态：</div>
       <div style="display:grid; grid-template-columns: 1fr 1fr 1fr; gap:8px;">
-        <button class="btn" style="background:#fee2e2; color:#b91c1c; justify-content:center; padding:10px;" onclick="stepReviewQuestion('🔴 待攻克')">
-          🔴 没做对(保留待攻克)
-        </button>
-        <button class="btn" style="background:#fef3c7; color:#b45309; justify-content:center; padding:10px;" onclick="stepReviewQuestion('🟡 巩固中')">
-          🟡 做对了(升为已巩固)
-        </button>
-        <button class="btn" style="background:#dcfce7; color:#15803d; justify-content:center; padding:10px; font-weight:800;" onclick="stepReviewQuestion('🟢 已斩杀')">
-          🟢 彻底掌握(直接斩杀!)
-        </button>
+        <button class="btn" style="background:#fee2e2; color:#b91c1c; justify-content:center; padding:10px;" onclick="stepReviewQuestion('🔴 待攻克')">🔴 没做对(保留待攻克)</button>
+        <button class="btn" style="background:#fef3c7; color:#b45309; justify-content:center; padding:10px;" onclick="stepReviewQuestion('🟡 巩固中')">🟡 做对了(升为已巩固)</button>
+        <button class="btn" style="background:#dcfce7; color:#15803d; justify-content:center; padding:10px; font-weight:800;" onclick="stepReviewQuestion('🟢 已斩杀')">🟢 彻底掌握(直接斩杀!)</button>
       </div>
     </div>
   `;
 
-  if (q.savedAnalysis) {
-    renderRichContent(document.getElementById("reviewAnalysisBox"), q.savedAnalysis);
-  } else {
-    document.getElementById("reviewAnalysisBox").textContent = q.ai || '暂无详细分析，可在错题卡片中调用Gemini生成。';
-  }
+  if (q.savedAnalysis) renderRichContent(document.getElementById("reviewAnalysisBox"), q.savedAnalysis);
+  else document.getElementById("reviewAnalysisBox").textContent = q.ai || '暂无详细分析，可在卡片中调用Gemini生成。';
 }
 
 function toggleReviewAnswerVisibility() {
@@ -948,12 +1122,11 @@ function finishSmartReview() {
   performCheckin(minutesSpent, true);
 
   const streak = Number(localStorage.getItem("CHECKIN_STREAK") || 1);
-  alert(`🎉 太棒了 Jason！今日攻坚已全部完成！\n\n⏱️ 本次专注时长：${minutesSpent} 分钟\n🏆 成功斩杀题目：${reviewKilledCount} 道\n🔥 已连续打卡：${streak} 天！\n\n继续加油！`);
+  alert(`🎉 太棒了 Jason！今日攻坚已全部完成！\n\n⏱️ 本次专注时长：${minutesSpent} 分钟\n🏆 成功斩杀题目：${reviewKilledCount} 道\n🔥 连续打卡：${streak} 天！\n\n继续加油！`);
 
   exitSmartReview();
 }
 
-// 退出并即时保存当前已学时长
 function exitSmartReview() {
   clearInterval(reviewTimerInterval);
   if (reviewSeconds > 30) {
@@ -965,7 +1138,7 @@ function exitSmartReview() {
   renderVault();
 }
 
-// 2. 学科空间渲染
+// 学科空间渲染
 async function renderSubjectPortal() {
   const currentSub = SUBJECTS[currentPortalSubject] || SUBJECTS.math;
   document.getElementById("portalSubjectTitle").textContent = `${currentSub.icon} ${currentSub.name} · ${currentPortalSubject==='math'?'奥数真题与错题空间':'日常错题复习空间'}`;
@@ -979,9 +1152,7 @@ async function renderSubjectPortal() {
       </div>
     `;
   } else {
-    btnContainer.innerHTML = `
-      <button class="btn btn-primary" style="background:${currentSub.color};" onclick="openSubjectErrorEntryModal('${currentPortalSubject}')">＋ 录入错题</button>
-    `;
+    btnContainer.innerHTML = `<button class="btn btn-primary" style="background:${currentSub.color};" onclick="openSubjectErrorEntryModal('${currentPortalSubject}')">＋ 录入错题</button>`;
   }
 
   const exams = await dbGetAll(STORE_EXAMS);
@@ -1013,32 +1184,22 @@ async function renderSubjectPortal() {
   }
 }
 
-// 3. 错题录入业务
-let activeEntryTab = "word";
-let activeCameraCropBase64 = "";
-
+// 错题录入业务
+let activeEntryTab = "word", activeCameraCropBase64 = "";
 function openSubjectErrorEntryModal(subjectKey) {
   const sub = SUBJECTS[subjectKey] || SUBJECTS.chinese;
   document.getElementById("errorEntryModalTitle").textContent = `${sub.icon} ${sub.name} · 录入错题`;
 
-  const lastGrade = localStorage.getItem("LAST_GRADE_TAG") || "四上";
-  document.getElementById("inpEntryGrade").value = lastGrade;
-
+  document.getElementById("inpEntryGrade").value = localStorage.getItem("LAST_GRADE_TAG") || "四上";
   const lastModule = localStorage.getItem("LAST_MODULE_" + subjectKey) || sub.modules[0];
-  const modSelect = document.getElementById("inpEntryModule");
-  modSelect.innerHTML = sub.modules.map(m => `<option value="${m}" ${m===lastModule?'selected':''}>${m}</option>`).join('');
+  document.getElementById("inpEntryModule").innerHTML = sub.modules.map(m => `<option value="${m}" ${m===lastModule?'selected':''}>${m}</option>`).join('');
 
-  document.getElementById("inpWordText").value = "";
-  document.getElementById("inpWordNote").value = "";
-  activeCameraCropBase64 = "";
-  document.getElementById("cropWorkspace").style.display = "none";
-  document.getElementById("cameraPhotoText").style.display = "block";
+  document.getElementById("inpWordText").value = ""; document.getElementById("inpWordNote").value = "";
+  activeCameraCropBase64 = ""; document.getElementById("cropWorkspace").style.display = "none"; document.getElementById("cameraPhotoText").style.display = "block";
 
   const subTabs = document.getElementById("errorEntryModalSubtabs");
-
   if (subjectKey === "math") {
-    subTabs.style.display = "none";
-    switchErrorEntryTab("photo");
+    subTabs.style.display = "none"; switchErrorEntryTab("photo");
   } else if (subjectKey === "english") {
     subTabs.style.display = "flex";
     document.getElementById("tabEntryWord").innerHTML = "🔤 1. 单词/短语录入";
@@ -1058,7 +1219,6 @@ function openSubjectErrorEntryModal(subjectKey) {
     document.getElementById("inpWordNote").placeholder = "如：注意下半部分是‘玉’不是‘土’";
     switchErrorEntryTab("word");
   }
-
   document.getElementById("errorEntryModal").classList.add("active");
 }
 
@@ -1074,9 +1234,8 @@ function handleCameraCropFile(file) {
   if (!file) return;
   const reader = new FileReader();
   reader.onload = (e) => {
-    const dataUrl = e.target.result;
     const imgEl = document.getElementById("cropTargetImg");
-    imgEl.src = dataUrl;
+    imgEl.src = e.target.result;
     imgEl.onload = () => {
       document.getElementById("cropWorkspace").style.display = "block";
       document.getElementById("cameraPhotoText").style.display = "none";
@@ -1088,51 +1247,31 @@ function handleCameraCropFile(file) {
 
 function initCropModalCanvas(imgEl) {
   const canvas = document.getElementById("cropModalCanvas");
-  canvas.width = imgEl.clientWidth || 320;
-  canvas.height = imgEl.clientHeight || 240;
-  const ctx = canvas.getContext("2d");
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  canvas.width = imgEl.clientWidth || 320; canvas.height = imgEl.clientHeight || 240;
+  const ctx = canvas.getContext("2d"); ctx.clearRect(0, 0, canvas.width, canvas.height);
+  let isDrawing = false, sX = 0, sY = 0;
 
-  let isDrawing = false;
-  let sX = 0, sY = 0;
-
-  canvas.onpointerdown = (e) => {
-    isDrawing = true;
-    sX = e.offsetX; sY = e.offsetY;
-    canvas.setPointerCapture(e.pointerId);
-  };
+  canvas.onpointerdown = (e) => { isDrawing = true; sX = e.offsetX; sY = e.offsetY; canvas.setPointerCapture(e.pointerId); };
   canvas.onpointermove = (e) => {
     if (!isDrawing) return;
     const curX = e.offsetX, curY = e.offsetY;
     const rX = Math.min(sX, curX), rY = Math.min(sY, curY);
     const rW = Math.abs(curX - sX), rH = Math.abs(curY - sY);
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-    ctx.fillStyle = "rgba(37, 99, 235, 0.25)";
-    ctx.fillRect(rX, rY, rW, rH);
-    ctx.strokeStyle = "#2563eb";
-    ctx.lineWidth = 2;
-    ctx.setLineDash([4, 4]);
-    ctx.strokeRect(rX, rY, rW, rH);
+    ctx.fillStyle = "rgba(37, 99, 235, 0.25)"; ctx.fillRect(rX, rY, rW, rH);
+    ctx.strokeStyle = "#2563eb"; ctx.lineWidth = 2; ctx.setLineDash([4, 4]); ctx.strokeRect(rX, rY, rW, rH);
   };
   canvas.onpointerup = (e) => {
     if (!isDrawing) return;
-    isDrawing = false;
-    canvas.releasePointerCapture(e.pointerId);
+    isDrawing = false; canvas.releasePointerCapture(e.pointerId);
     const curX = e.offsetX, curY = e.offsetY;
     const rX = Math.min(sX, curX), rY = Math.min(sY, curY);
     const rW = Math.abs(curX - sX), rH = Math.abs(curY - sY);
-
     if (rW > 20 && rH > 20) {
-      const scaleX = imgEl.naturalWidth / canvas.width;
-      const scaleY = imgEl.naturalHeight / canvas.height;
+      const scaleX = imgEl.naturalWidth / canvas.width, scaleY = imgEl.naturalHeight / canvas.height;
       const offCanvas = document.createElement("canvas");
-      offCanvas.width = rW * scaleX;
-      offCanvas.height = rH * scaleY;
-      offCanvas.getContext("2d").drawImage(
-        imgEl,
-        rX * scaleX, rY * scaleY, rW * scaleX, rH * scaleY,
-        0, 0, offCanvas.width, offCanvas.height
-      );
+      offCanvas.width = rW * scaleX; offCanvas.height = rH * scaleY;
+      offCanvas.getContext("2d").drawImage(imgEl, rX * scaleX, rY * scaleY, rW * scaleX, rH * scaleY, 0, 0, offCanvas.width, offCanvas.height);
       activeCameraCropBase64 = offCanvas.toDataURL("image/jpeg", 0.9);
     }
   };
@@ -1141,31 +1280,18 @@ function initCropModalCanvas(imgEl) {
 async function saveSubjectErrorEntry() {
   const grade = document.getElementById("inpEntryGrade").value;
   const moduleTag = document.getElementById("inpEntryModule").value;
-  
   localStorage.setItem("LAST_GRADE_TAG", grade);
   localStorage.setItem("LAST_MODULE_" + currentPortalSubject, moduleTag);
 
-  let item = {
-    subject: currentPortalSubject,
-    grade: grade,
-    module: moduleTag,
-    status: "🔴 待攻克",
-    updatedAt: new Date().toISOString()
-  };
+  let item = { subject: currentPortalSubject, grade, module: moduleTag, status: "🔴 待攻克", updatedAt: new Date().toISOString() };
 
   if (activeEntryTab === "word" && currentPortalSubject !== "math") {
     const wordText = document.getElementById("inpWordText").value.trim();
     if (!wordText) { alert("请输入词汇或生字！"); return; }
-    item.isWord = true;
-    item.note = wordText;
-    item.ans = document.getElementById("inpWordNote").value.trim();
-    item.img = "";
+    item.isWord = true; item.note = wordText; item.ans = document.getElementById("inpWordNote").value.trim(); item.img = "";
   } else {
-    if (!activeCameraCropBase64) { alert("请先拍照并在图片上拖拽画框截取题目！"); return; }
-    item.isWord = false;
-    item.note = `${grade} · ${moduleTag} 错题`;
-    item.ans = "";
-    item.img = activeCameraCropBase64;
+    if (!activeCameraCropBase64) { alert("请先拍照并在图片上画框截取题目！"); return; }
+    item.isWord = false; item.note = `${grade} · ${moduleTag} 错题`; item.ans = ""; item.img = activeCameraCropBase64;
   }
 
   await dbAdd(STORE_QUESTIONS, item);
@@ -1175,10 +1301,9 @@ async function saveSubjectErrorEntry() {
   renderDashboard();
 }
 
-// ================= 4. 错题总库与卡片渲染（原题/思路/出题） =================
+// 错题总库与卡片渲染（原题/思路/出题）
 async function renderVault() {
   renderFilterChips();
-
   const allQuestions = await dbGetAll(STORE_QUESTIONS);
   const filtered = allQuestions.filter(q => {
     const qSub = q.subject || 'math';
@@ -1190,10 +1315,7 @@ async function renderVault() {
   });
 
   const container = document.getElementById("qList");
-  if (filtered.length === 0) {
-    container.innerHTML = `<div style="grid-column:1/-1; text-align:center; padding:40px; color:#94a3b8;">没有找到符合条件的错题！</div>`;
-    return;
-  }
+  if (filtered.length === 0) { container.innerHTML = `<div style="grid-column:1/-1; text-align:center; padding:40px; color:#94a3b8;">没有找到符合条件的错题！</div>`; return; }
   container.innerHTML = filtered.map(q => renderQuestionCardHtml(q)).join('');
 }
 
@@ -1220,26 +1342,16 @@ function renderQuestionCardHtml(q) {
           <button class="btn btn-danger" style="padding:2px 6px; font-size:0.75rem;" onclick="deleteSingleQuestion(${q.id})">删</button>
         </div>
       </div>
-      
       ${q.isWord ? `<div class="word-card-text" style="${wordStyle}">${q.note}</div>` : `<div class="q-img-wrap"><img src="${q.img}"></div>`}
-
       ${extDirectHtml}
-
       <div style="display:flex; justify-content:space-between; font-size:0.8rem; color:#64748b; margin-bottom:8px;">
         <span>${q.grade || '四上'} · <b>${q.module || '基础考点'}</b></span>
         <span style="cursor:pointer;" onclick="cycleQuestionStatus(${q.id}, '${q.status}')">${q.status || '🔴 待攻克'} ⟳</span>
       </div>
-
       <div style="display:grid; grid-template-columns: 1fr 1.15fr 1fr; gap:6px; margin-top:auto; padding-top:8px; border-top:1px solid #e2e8f0;">
-        <button class="btn btn-amber" style="justify-content:center; font-size:0.78rem;" onclick="openViewEditModal(${q.id})">
-          🔍 原题
-        </button>
-        <button class="btn" style="justify-content:center; background:#e0f2fe; color:#0369a1; font-size:0.78rem;" onclick="analyzeSingleQuestionById(${q.id})">
-          💡 思路${q.savedAnalysis ? '(已存)' : ''}
-        </button>
-        <button class="btn btn-success" style="justify-content:center; font-size:0.78rem;" onclick="generateSimilarSingleById(${q.id})">
-          🤖 出题
-        </button>
+        <button class="btn btn-amber" style="justify-content:center; font-size:0.78rem;" onclick="openViewEditModal(${q.id})">🔍 原题</button>
+        <button class="btn" style="justify-content:center; background:#e0f2fe; color:#0369a1; font-size:0.78rem;" onclick="analyzeSingleQuestionById(${q.id})">💡 思路${q.savedAnalysis ? '(已存)' : ''}</button>
+        <button class="btn btn-success" style="justify-content:center; font-size:0.78rem;" onclick="generateSimilarSingleById(${q.id})">🤖 出题</button>
       </div>
     </div>
   `;
@@ -1289,9 +1401,8 @@ async function cycleQuestionStatus(id, curStatus) {
   renderVault();
 }
 
-// 5. 查看原题与编辑弹窗
+// 查看原题与编辑弹窗
 let viewingQuestionId = null;
-
 async function openViewEditModal(id) {
   const all = await dbGetAll(STORE_QUESTIONS);
   const q = all.find(x => x.id === id);
@@ -1304,13 +1415,9 @@ async function openViewEditModal(id) {
   document.getElementById("viewModalSubjectBadge").style.color = subInfo.color;
 
   const previewBox = document.getElementById("viewModalPreviewContainer");
-  if (q.isWord) {
-    previewBox.innerHTML = `<div style="font-size:2.2rem; font-weight:800; color:${subInfo.color}; padding:20px 0;">${q.note}</div>`;
-  } else if (q.img) {
-    previewBox.innerHTML = `<img src="${q.img}" style="max-width:100%; max-height:260px; border-radius:6px; box-shadow:0 2px 10px rgba(0,0,0,0.1);">`;
-  } else {
-    previewBox.innerHTML = `<div style="color:#94a3b8; padding:30px;">无原题图片</div>`;
-  }
+  if (q.isWord) previewBox.innerHTML = `<div style="font-size:2.2rem; font-weight:800; color:${subInfo.color}; padding:20px 0;">${q.note}</div>`;
+  else if (q.img) previewBox.innerHTML = `<img src="${q.img}" style="max-width:100%; max-height:260px; border-radius:6px; box-shadow:0 2px 10px rgba(0,0,0,0.1);">`;
+  else previewBox.innerHTML = `<div style="color:#94a3b8; padding:30px;">无原题图片</div>`;
 
   const subSel = document.getElementById("editQSubject");
   subSel.innerHTML = Object.values(SUBJECTS).map(s => `<option value="${s.id}" ${s.id===(q.subject||'math')?'selected':''}>${s.icon} ${s.name}</option>`).join('');
@@ -1328,8 +1435,7 @@ async function openViewEditModal(id) {
 function updateEditModalModules(selectedModule) {
   const subId = document.getElementById("editQSubject").value;
   const sub = SUBJECTS[subId] || SUBJECTS.math;
-  const modSel = document.getElementById("editQModule");
-  modSel.innerHTML = sub.modules.map(m => `<option value="${m}" ${m===selectedModule?'selected':''}>${m}</option>`).join('');
+  document.getElementById("editQModule").innerHTML = sub.modules.map(m => `<option value="${m}" ${m===selectedModule?'selected':''}>${m}</option>`).join('');
 }
 
 async function saveCurrentEditingQuestion() {
@@ -1364,11 +1470,9 @@ async function deleteCurrentEditingQuestion() {
   }
 }
 
-// 6. KaTeX公式渲染与Markdown排版
+// KaTeX公式渲染与Markdown排版
 function renderRichContent(element, rawText) {
-  let parsedHtml = marked.parse(rawText || "");
-  element.innerHTML = parsedHtml;
-
+  element.innerHTML = marked.parse(rawText || "");
   renderMathInElement(element, {
     delimiters: [
       { left: "$$", right: "$$", display: true },
@@ -1380,9 +1484,8 @@ function renderRichContent(element, rawText) {
   });
 }
 
-// 7. Gemini 思路分析与拓展组词（含 503 避峰重试）
+// Gemini 思路分析与拓展组词（含 503 避峰重试）
 let activeAnalysisQuestionId = null;
-
 async function analyzeSingleQuestionById(id) {
   const all = await dbGetAll(STORE_QUESTIONS);
   const q = all.find(x => x.id === id);
@@ -1430,7 +1533,7 @@ async function saveCustomExtensionWords() {
   if (q) {
     q.customExtension = text;
     await dbAdd(STORE_QUESTIONS, q);
-    alert("🎉 拓展内容已保存并已外显在卡片上！");
+    alert("🎉 拓展内容已保存并外显在卡片上！");
     renderVault();
   }
 }
@@ -1494,9 +1597,7 @@ async function doAnalyzeThinking(selectedQuestions, singleSaveId) {
     }
   });
 
-  let successText = "";
-  let lastErrorMsg = "";
-
+  let successText = "", lastErrorMsg = "";
   for (let i = 0; i < GEMINI_MODELS.length; i++) {
     const model = GEMINI_MODELS[i];
     try {
@@ -1515,10 +1616,7 @@ async function doAnalyzeThinking(selectedQuestions, singleSaveId) {
           await sleep(1200);
         }
       }
-    } catch(err) {
-      lastErrorMsg = err.message;
-      await sleep(1000);
-    }
+    } catch(err) { lastErrorMsg = err.message; await sleep(1000); }
   }
 
   if (successText) {
@@ -1548,21 +1646,15 @@ async function doAnalyzeThinking(selectedQuestions, singleSaveId) {
   }
 }
 
-function copyAnalysisText() {
-  const text = document.getElementById("analysisOutput").innerText;
-  navigator.clipboard.writeText(text).then(() => alert("已复制！"));
-}
+function copyAnalysisText() { navigator.clipboard.writeText(document.getElementById("analysisOutput").innerText).then(() => alert("已复制！")); }
 function printAnalysisContent() {
   const w = window.open('', '', 'width=800,height=600');
-  w.document.write(`<html><head><title>思路导图</title>
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
-  <style>body{font-family:sans-serif;line-height:1.65;padding:20px;}</style></head>
-  <body><h2>名师思路导图</h2>${document.getElementById("analysisOutput").innerHTML}</body></html>`);
+  w.document.write(`<html><head><title>思路导图</title><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css"><style>body{font-family:sans-serif;line-height:1.65;padding:20px;}</style></head><body><h2>名师思路导图</h2>${document.getElementById("analysisOutput").innerHTML}</body></html>`);
   w.document.close();
   setTimeout(() => w.print(), 500);
 }
 
-// 8. 相似题出题业务
+// 相似题出题业务
 async function generateSimilarSingleById(id) {
   const all = await dbGetAll(STORE_QUESTIONS);
   const q = all.find(x => x.id === id);
@@ -1611,40 +1703,24 @@ async function doGenerateSimilar(selectedQuestions) {
         break;
       }
       if (res.status === 503) await sleep(1200);
-    } catch(err) {
-      await sleep(1000);
-    }
+    } catch(err) { await sleep(1000); }
   }
 
-  if (successText) {
-    renderRichContent(outputBox, successText);
-  } else {
-    outputBox.innerHTML = `<span style="color:#dc2626;">生成失败，Google 接口暂时繁忙，请稍等 1 分钟后重试。</span>`;
-  }
+  if (successText) renderRichContent(outputBox, successText);
+  else outputBox.innerHTML = `<span style="color:#dc2626;">生成失败，Google 接口暂时繁忙，请稍等 1 分钟后重试。</span>`;
 }
 
-function copySimilarText() {
-  const text = document.getElementById("similarOutput").innerText;
-  navigator.clipboard.writeText(text).then(() => alert("已复制！"));
-}
+function copySimilarText() { navigator.clipboard.writeText(document.getElementById("similarOutput").innerText).then(() => alert("已复制！")); }
 function printSimilarContent() {
   const w = window.open('', '', 'width=800,height=600');
-  w.document.write(`<html><head><title>举一反三</title>
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
-  <style>body{font-family:sans-serif;line-height:1.6;padding:20px;}</style></head>
-  <body><h2>举一反三练习</h2>${document.getElementById("similarOutput").innerHTML}</body></html>`);
+  w.document.write(`<html><head><title>举一反三</title><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css"><style>body{font-family:sans-serif;line-height:1.6;padding:20px;}</style></head><body><h2>举一反三练习</h2>${document.getElementById("similarOutput").innerHTML}</body></html>`);
   w.document.close();
   setTimeout(() => w.print(), 500);
 }
 
-// 9. 考场原卷PDF缩放与手势框选裁切
-let activeExam = null;
-let examTimer = null;
-let examSecondsRemaining = 0;
-let userExamAnswers = {};
-let currentZoom = 1.0;
-let pinchStartDist = 0;
-let pinchStartZoom = 1.0;
+// 考场原卷PDF缩放与手势框选裁切
+let activeExam = null, examTimer = null, examSecondsRemaining = 0, userExamAnswers = {};
+let currentZoom = 1.0, pinchStartDist = 0, pinchStartZoom = 1.0;
 
 function applyZoom(z) {
   currentZoom = Math.min(Math.max(z, 0.8), 3.5);
@@ -1676,38 +1752,27 @@ function initPinchZoom() {
   container.addEventListener("touchend", (e) => { if (e.touches.length < 2) pinchStartDist = 0; }, { passive: true });
 }
 
-let isSnippingMode = false;
-let currentSnipTarget = null;
-let currentSnipRect = null;
-let isPointerDown = false;
-let startX = 0, startY = 0, snipPageIdx = 0;
+let isSnippingMode = false, currentSnipTarget = null, currentSnipRect = null, isPointerDown = false, startX = 0, startY = 0, snipPageIdx = 0;
 
 function startSnipping(num, userOpt, correctOpt) {
   if (!activeExam.pages || activeExam.pages.length === 0) { alert("未上传原卷图片！"); return; }
-  isSnippingMode = true;
-  currentSnipTarget = { num, userOpt, correctOpt };
-  currentSnipRect = null;
+  isSnippingMode = true; currentSnipTarget = { num, userOpt, correctOpt }; currentSnipRect = null;
   document.getElementById("snipTopBanner").style.display = "flex";
   document.getElementById("snipBannerText").textContent = `✂️ 正在框选【第 ${num} 题】：请在试卷上画框圈出题目`;
   document.getElementById("snipConfirmBar").style.display = "none";
   document.getElementById("zoomFloatingBar").style.display = "none";
 
   document.querySelectorAll(".crop-overlay-canvas").forEach(canvas => {
-    canvas.style.display = "block";
-    canvas.width = canvas.offsetWidth;
-    canvas.height = canvas.offsetHeight;
-    const ctx = canvas.getContext("2d");
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    canvas.style.display = "block"; canvas.width = canvas.offsetWidth; canvas.height = canvas.offsetHeight;
+    canvas.getContext("2d").clearRect(0, 0, canvas.width, canvas.height);
   });
 }
 
 function initOverlayCanvasListeners(canvas) {
   canvas.addEventListener("pointerdown", (e) => {
     if (!isSnippingMode) return;
-    isPointerDown = true;
-    snipPageIdx = Number(canvas.dataset.pageIdx);
-    startX = e.offsetX; startY = e.offsetY;
-    canvas.setPointerCapture(e.pointerId);
+    isPointerDown = true; snipPageIdx = Number(canvas.dataset.pageIdx);
+    startX = e.offsetX; startY = e.offsetY; canvas.setPointerCapture(e.pointerId);
     document.getElementById("snipConfirmBar").style.display = "none";
     document.querySelectorAll(".crop-overlay-canvas").forEach(c => c.getContext("2d").clearRect(0, 0, c.width, c.height));
   });
@@ -1716,17 +1781,13 @@ function initOverlayCanvasListeners(canvas) {
     const curX = e.offsetX, curY = e.offsetY;
     const rectX = Math.min(startX, curX), rectY = Math.min(startY, curY);
     const rectW = Math.abs(curX - startX), rectH = Math.abs(curY - startY);
-    const ctx = canvas.getContext("2d");
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    ctx.fillStyle = "rgba(37, 99, 235, 0.25)";
-    ctx.fillRect(rectX, rectY, rectW, rectH);
-    ctx.strokeStyle = "#2563eb"; ctx.lineWidth = 2; ctx.setLineDash([5, 5]);
-    ctx.strokeRect(rectX, rectY, rectW, rectH);
+    const ctx = canvas.getContext("2d"); ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.fillStyle = "rgba(37, 99, 235, 0.25)"; ctx.fillRect(rectX, rectY, rectW, rectH);
+    ctx.strokeStyle = "#2563eb"; ctx.lineWidth = 2; ctx.setLineDash([5, 5]); ctx.strokeRect(rectX, rectY, rectW, rectH);
   });
   canvas.addEventListener("pointerup", (e) => {
     if (!isPointerDown) return;
-    isPointerDown = false;
-    canvas.releasePointerCapture(e.pointerId);
+    isPointerDown = false; canvas.releasePointerCapture(e.pointerId);
     const curX = e.offsetX, curY = e.offsetY;
     const rectX = Math.min(startX, curX), rectY = Math.min(startY, curY);
     const rectW = Math.abs(curX - startX), rectH = Math.abs(curY - startY);
@@ -1738,9 +1799,7 @@ function initOverlayCanvasListeners(canvas) {
 }
 
 function exitSnippingMode() {
-  isSnippingMode = false;
-  currentSnipTarget = null;
-  currentSnipRect = null;
+  isSnippingMode = false; currentSnipTarget = null; currentSnipRect = null;
   document.getElementById("snipTopBanner").style.display = "none";
   document.getElementById("snipConfirmBar").style.display = "none";
   document.getElementById("zoomFloatingBar").style.display = "flex";
@@ -1766,14 +1825,11 @@ function confirmSaveSnip() {
 
     await dbAdd(STORE_QUESTIONS, {
       subject: activeExam.subject || 'math',
-      grade: "四上",
-      module: "真题考点",
-      status: "🔴 待攻克",
+      grade: "四上", module: "真题考点", status: "🔴 待攻克",
       note: `${activeExam.title} 第${currentSnipTarget.num}题`,
       ans: currentSnipTarget.correctOpt,
       ai: `模考作答：错选 ${currentSnipTarget.userOpt}，正解为 ${currentSnipTarget.correctOpt}。`,
-      img: base64Data,
-      updatedAt: new Date().toISOString()
+      img: base64Data, updatedAt: new Date().toISOString()
     });
 
     const btn = document.getElementById(`snip-btn-${currentSnipTarget.num}`);
@@ -1877,7 +1933,6 @@ function submitRunningExam() {
   document.getElementById("finalScoreText").textContent = `选择题得分：${mcqScore} / 80`;
   document.getElementById("examResultPanel").style.display = "block";
 
-  // 模考交卷自动计入打卡时长
   const examMinutesSpent = Math.max(1, Math.round((activeExam.duration * 60 - examSecondsRemaining) / 60));
   performCheckin(examMinutesSpent, true);
 
@@ -2007,10 +2062,12 @@ function toggleSelectAllVault() {
   boxes.forEach(b => b.checked = anyUnchecked);
 }
 
+// 备份与恢复 (包含 vocab 生词好句表)
 async function exportData() {
   const questions = await dbGetAll(STORE_QUESTIONS);
   const exams = await dbGetAll(STORE_EXAMS);
-  const blob = new Blob([JSON.stringify({ version: 6, questions, exams }, null, 2)], { type: "application/json" });
+  const vocab = await dbGetAll(STORE_VOCAB);
+  const blob = new Blob([JSON.stringify({ version: 7, questions, exams, vocab }, null, 2)], { type: "application/json" });
   const a = document.createElement("a");
   a.href = URL.createObjectURL(blob);
   a.download = `智学多学科备份_${new Date().getMonth()+1}月${new Date().getDate()}日.json`;
@@ -2029,6 +2086,7 @@ function importData() {
         const data = JSON.parse(evt.target.result);
         if (data.questions) for (let q of data.questions) await dbAdd(STORE_QUESTIONS, q);
         if (data.exams) for (let ex of data.exams) await dbAdd(STORE_EXAMS, ex);
+        if (data.vocab) for (let v of data.vocab) await dbAdd(STORE_VOCAB, v);
         alert("🎉 全部数据恢复成功！");
         renderDashboard();
       } catch(err) { alert("恢复失败：" + err.message); }
@@ -2052,7 +2110,9 @@ window.onload = async () => {
   await initDB();
   renderDashboard();
   initPinchZoom();
+  initActiveTimeTracker(); // 开启在线活跃时长实时累计
 };
 </script>
 </body>
 </html>
+```
