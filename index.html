@@ -16,8 +16,13 @@
 
 <style>
   :root {
-    --primary: #2563eb; --chinese: #be123c; --english: #059669; --vault: #7c3aed;
-    --success: #16a34a; --danger: #dc2626; --bg: #f8fafc; --border: #e2e8f0; --text: #0f172a;
+    --primary: #2563eb; --primary-hover: #1d4ed8;
+    --math-color: #2563eb; --math-bg: #eff6ff;
+    --chinese-color: #be123c; --chinese-bg: #fff1f2;
+    --english-color: #059669; --english-bg: #ecfdf5;
+    --success: #16a34a; --danger: #dc2626;
+    --bg: #f8fafc; --card: #ffffff; --border: #e2e8f0;
+    --text: #0f172a; --text-sub: #64748b;
   }
   * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
   body { font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, "PingFang SC", sans-serif; background: var(--bg); color: var(--text); padding-bottom: 60px; }
@@ -26,6 +31,7 @@
   .nav-tabs { display: flex; gap: 6px; }
   .nav-tab { padding: 6px 14px; border-radius: 20px; font-size: 0.88rem; font-weight: 700; cursor: pointer; color: #64748b; transition: 0.2s; }
   .nav-tab.active { background: #0f172a; color: white; }
+  .header-actions { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; }
   .btn { border: none; padding: 6px 12px; border-radius: 8px; font-size: 0.82rem; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 4px; transition: 0.2s; }
   .btn:active { transform: scale(0.97); }
   .btn-primary { background: var(--primary); color: white; }
@@ -35,7 +41,7 @@
   .btn-amber { background: #fef3c7; color: #b45309; }
   .container { max-width: 1200px; margin: 18px auto; padding: 0 16px; }
 
-  /* 首页组件 */
+  /* 首页横幅 */
   .greeting-banner { display: flex; justify-content: space-between; align-items: center; background: white; border: 1px solid var(--border); border-radius: 16px; padding: 18px 22px; margin-bottom: 20px; box-shadow: 0 4px 20px rgba(0,0,0,0.02); flex-wrap: wrap; gap: 12px; }
   .checkin-status-bar { display: flex; align-items: center; gap: 12px; margin-top: 6px; font-size: 0.85rem; flex-wrap: wrap; }
   .checkin-badge-todo { background: #fef2f2; color: #dc2626; border: 1px solid #fecaca; padding: 3px 10px; border-radius: 12px; font-weight: 700; }
@@ -71,8 +77,11 @@
   .exam-right-sheet { flex: 40; background: white; overflow-y: auto; padding: 16px; border-left: 1px solid var(--border); }
   @media (max-width: 768px) { .exam-body { flex-direction: column; } .exam-left-paper, .exam-right-sheet { flex: 50; max-height: 50vh; } }
   .zoom-floating-bar { position: sticky; bottom: 12px; margin: 0 auto; width: fit-content; background: rgba(15,23,42,0.85); backdrop-filter: blur(8px); padding: 6px 12px; border-radius: 24px; display: flex; align-items: center; gap: 8px; z-index: 30; }
-  #snipTopBanner { display: none; background: #fef08a; color: #854d0e; padding: 8px 16px; font-size: 0.88rem; font-weight: bold; border-bottom: 2px solid #eab308; justify-content: space-between; align-items: center; }
+  
+  /* 框选与调节操作条 */
+  #snipTopBanner { display: none; background: #fef08a; color: #854d0e; padding: 8px 16px; font-size: 0.88rem; font-weight: bold; border-bottom: 2px solid #eab308; justify-content: space-between; align-items: center; z-index: 100; }
   #snipConfirmBar { display: none; position: sticky; bottom: 60px; margin: 0 auto; width: fit-content; background: #0f172a; color: white; padding: 8px 18px; border-radius: 30px; box-shadow: 0 4px 18px rgba(0,0,0,0.6); z-index: 120; gap: 12px; align-items: center; }
+  
   .bubble-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 20px; }
   .bubble-item { background: #f8fafc; border: 1px solid var(--border); border-radius: 8px; padding: 6px; text-align: center; }
   .bubble-btn { width: 24px; height: 24px; border-radius: 50%; border: 1.5px solid #cbd5e1; font-size: 0.75rem; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; background: white; }
@@ -87,6 +96,9 @@
   .form-group { display: flex; flex-direction: column; gap: 4px; margin-bottom: 12px; }
   .form-group label { font-size: 0.85rem; font-weight: 600; color: #475569; }
   input[type="text"], input[type="number"], input[type="date"], select, textarea { padding: 8px 12px; border: 1px solid var(--border); border-radius: 8px; font-family: inherit; font-size: 0.9rem; }
+  .ans-reveal { margin-top: 10px; padding: 10px; background: #f1f5f9; border-left: 4px solid var(--primary); border-radius: 4px; display: none; font-size: 0.85rem; }
+  .ans-reveal.show { display: block; }
+
   .analysis-output-box { background: #f8fafc; border: 1px solid var(--border); border-radius: 10px; padding: 16px 20px; font-size: 0.95rem; line-height: 1.7; max-height: 55vh; overflow-y: auto; margin: 12px 0; color: #1e293b; }
   .analysis-output-box h3 { margin: 10px 0 4px; font-size: 1.05rem; }
   .analysis-output-box p { margin-bottom: 8px; }
@@ -119,7 +131,7 @@
 <header>
   <div class="brand" onclick="switchNav('dashboard')">
     <span>🍎 智学多学科管家</span>
-    <span style="font-size:0.7rem; font-weight:bold; background:#e0f2fe; color:#0369a1; padding:2px 8px; border-radius:12px;">v6.6 稳定版</span>
+    <span style="font-size:0.7rem; font-weight:bold; background:#e0f2fe; color:#0369a1; padding:2px 8px; border-radius:12px;">v6.8 自由选框版</span>
   </div>
   <div class="nav-tabs">
     <div class="nav-tab active" id="tabNavDashboard" onclick="switchNav('dashboard')">🏠 首页工作台</div>
@@ -218,7 +230,7 @@
   <div class="q-grid" id="qList"></div>
 </div>
 
-<!-- 页面 4：全屏【生词好句本】独立空间 (z-index 700) -->
+<!-- 页面 4：全屏【生词好句本】独立空间 -->
 <div id="vocabFullView">
   <div style="background:white; border-bottom:1px solid var(--border); padding:12px 20px; display:flex; justify-content:space-between; align-items:center; position:sticky; top:0; z-index:50; flex-wrap:wrap; gap:8px;">
     <div style="display:flex; align-items:center; gap:12px;">
@@ -287,11 +299,17 @@
       <button class="btn btn-success" id="runningSubmitBtn" onclick="submitRunningExam()">交卷评分</button>
     </div>
   </div>
-  <div id="snipTopBanner"><span id="snipBannerText">请在试卷上画框圈出题目...</span><button class="btn btn-outline" style="padding:2px 8px; font-size:0.75rem; background:white;" onclick="exitSnippingMode()">取消截图</button></div>
+  <!-- 选框提示条 -->
+  <div id="snipTopBanner"><span id="snipBannerText">请在试卷上拖拽画框圈出题目，画完后可拖动四周圆点调整大小</span><button class="btn btn-outline" style="padding:2px 8px; font-size:0.75rem; background:white;" onclick="exitSnippingMode()">取消截图</button></div>
   <div class="exam-body">
     <div class="exam-left-paper" id="paperGalleryContainer">
       <div id="paperContentWrapper" style="width:100%; margin:0 auto; display:flex; flex-direction:column; align-items:center; gap:16px;"></div>
-      <div id="snipConfirmBar"><span style="font-size:0.85rem;">已框选题目区域</span><button class="btn btn-success" style="padding:5px 12px;" onclick="confirmSaveSnip()">💾 保存该题</button><button class="btn btn-outline" style="padding:5px 12px; color:white; background:transparent; border-color:#64748b;" onclick="exitSnippingMode()">取消</button></div>
+      <!-- ⭐ 确认截图悬浮条 -->
+      <div id="snipConfirmBar">
+        <span style="font-size:0.85rem;">已选好题目范围 (可拉扯四角微调)</span>
+        <button class="btn btn-success" style="padding:5px 12px;" onclick="confirmSaveSnip()">💾 保存该题</button>
+        <button class="btn btn-outline" style="padding:5px 12px; color:white; background:transparent; border-color:#64748b;" onclick="exitSnippingMode()">取消</button>
+      </div>
       <div class="zoom-floating-bar" id="zoomFloatingBar">
         <button class="btn btn-outline" style="padding:3px 8px;" onclick="zoomPaper(-0.25)">🔍−</button>
         <span id="zoomLevelText" style="font-size:0.75rem; font-weight:bold; color:white; min-width:40px; text-align:center;">100%</span>
@@ -302,8 +320,12 @@
     <div class="exam-right-sheet">
       <h4 style="font-size:0.9rem; margin-bottom:10px;">一、单选题答题卡</h4>
       <div class="bubble-grid" id="bubbleSheet"></div>
-      <h4 style="font-size:0.9rem; margin:15px 0 10px;">二、解答题答题草稿</h4>
+      
+      <!-- 解答与填空题区域 -->
+      <h4 style="font-size:0.9rem; margin:15px 0 10px;">二、解答题答题草稿 (17~20题)</h4>
       <div id="faqSheet"></div>
+
+      <!-- 成绩与错题面板 -->
       <div id="examResultPanel" style="display:none; margin-top:15px;">
         <div style="background:#f0fdf4; border:1px solid #bbf7d0; padding:12px; border-radius:8px; text-align:center;"><h3 style="color:#15803d; font-size:1.2rem;" id="finalScoreText">选择题得分：0 / 80</h3></div>
         <div id="wrongItemsContainer" style="margin-top:12px;"></div>
@@ -312,9 +334,9 @@
   </div>
 </div>
 
-<!-- ================= 弹窗集合 (点击空白遮罩处自然退出) ================= -->
+<!-- ================= 弹窗集合 ================= -->
 
-<!-- 添加生词好句弹窗 (含 AI 自动生成释义与造句) -->
+<!-- 添加生词好句弹窗 -->
 <div class="modal-overlay" id="addVocabModal">
   <div class="modal" style="max-width:580px;" onclick="event.stopPropagation()">
     <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px;">
@@ -423,14 +445,14 @@
     <h3 style="margin-bottom:12px;" id="modalExamTitleText">编辑试卷</h3>
     <div class="form-group"><label>试卷名称</label><input type="text" id="newExamTitle" placeholder="如：第32届 WMO 地方省测"></div>
     <div class="form-group"><label>考试限时（分钟）</label><input type="number" id="newExamDuration" value="90"></div>
-    <div class="form-group"><label>上传原卷（🔥支持 PDF 文件或照片）</label><input type="file" id="newExamFiles" accept="image/*,.pdf,application/pdf" multiple onchange="handleExamFiles(this.files)"><div id="newExamPreview" style="display:flex; gap:8px; margin-top:8px; flex-wrap:wrap;"></div></div>
+    <div class="form-group"><label>上传原卷（🔥支持 PDF 文件或多选照片）</label><input type="file" id="newExamFiles" accept="image/*,.pdf,application/pdf" multiple onchange="handleExamFiles(this.files)"><div id="newExamPreview" style="display:flex; gap:8px; margin-top:8px; flex-wrap:wrap;"></div></div>
     <div class="form-group"><label>16道单选答案（连续填16位大写字母）</label><input type="text" id="newExamKeys" placeholder="BBADDCACBACA..." maxlength="16"></div>
     <div class="form-group"><label>解答题参考答案（分行填写）</label><textarea id="newExamFaqAns" style="height:80px;" placeholder="17. 6条; 710元..."></textarea></div>
     <div style="display:flex; justify-content:flex-end; gap:8px;"><button class="btn btn-outline" onclick="document.getElementById('uploadExamModal').classList.remove('active')">取消</button><button class="btn btn-primary" onclick="saveNewExam()">保存</button></div>
   </div>
 </div>
 
-<!-- Gemini 深度分析弹窗 -->
+<!-- Gemini 深度分析展示弹窗 -->
 <div class="modal-overlay" id="analysisModal">
   <div class="modal" style="max-width:780px;" onclick="event.stopPropagation()">
     <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;">
@@ -468,7 +490,7 @@
 // 高可用模型轮换池
 const GEMINI_MODELS = ["gemini-3.8-flash", "gemini-3.5-flash-lite", "gemini-2.0-flash", "gemini-1.5-flash"];
 const SUBJECTS = {
-  math: { id: "math", name: "数学思维", icon: "📐", desc: "WMO竞赛真题、高频几何模型、行程工程与错题攻坚", color: "#2563eb", bg: "#eff6ff", modules: ["几何模型", "行程问题", "数论整除", "计数组合", "计算与数列", "典型应用题"] },
+  math: { id: "math", name: "数学思维", icon: "📐", desc: "WMO竞赛真题、高频几何模型、行程工程与错题攻坚", color: "#2563eb", bg: "#eff6ff", modules: ["几何模型", "行程问题", "数论整除", "计数组合", "计算与数列", "典型应用题", "填空解答"] },
   chinese: { id: "chinese", name: "语文素养", icon: "📖", desc: "易错生字词打卡、阅读理解、古诗文默写与作文", color: "#be123c", bg: "#fff1f2", modules: ["字词拼音", "修改病句", "文言诗词", "阅读理解", "表达应用", "其它错题"] },
   english: { id: "english", name: "英语进阶", icon: "🔤", desc: "易错单词听写、语法时态、完形填空与阅读理解", color: "#059669", bg: "#ecfdf5", modules: ["词汇短语", "语法时态", "完形填空", "阅读理解", "句型转换", "其它错题"] }
 };
@@ -623,7 +645,7 @@ function openCountdownManageModal() {
   const goals = getCountdownGoals();
   document.getElementById("countdownGoalsEditorList").innerHTML = goals.map((g, idx) => `
     <div style="display:flex; justify-content:space-between; align-items:center; background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px; padding:8px 12px; margin-bottom:8px;">
-      <div><b>${g.title}</b><div style="font-size:0.8rem; color:#64748b;">${g.date}</div></div>
+      <div><b>${g.title}</b><div style="font-size:0.8rem; color:#64748b;">目标日期: ${g.date}</div></div>
       <button class="btn btn-danger" style="padding:4px 8px; font-size:0.75rem;" onclick="removeCountdownGoal(${idx})">删除</button>
     </div>
   `).join('');
@@ -631,11 +653,11 @@ function openCountdownManageModal() {
   document.getElementById("countdownManageModal").classList.add("active");
 }
 function closeCountdownManageModal() { document.getElementById("countdownManageModal").classList.remove("active"); renderCountdownBadges(); }
-function removeCountdownGoal(idx) { const g = getCountdownGoals(); g.splice(idx, 1); saveCountdownGoals(g); openCountdownManageModal(); }
+function removeCountdownGoal(idx) { const goals = getCountdownGoals(); goals.splice(idx, 1); saveCountdownGoals(goals); openCountdownManageModal(); }
 function addNewCountdownGoal() {
   const t = document.getElementById("newGoalTitle").value.trim(), d = document.getElementById("newGoalDate").value;
   if (!t || !d) { alert("请输入目标名称与日期！"); return; }
-  const g = getCountdownGoals(); g.push({ id: Date.now(), title: t, date: d }); saveCountdownGoals(g); openCountdownManageModal();
+  const goals = getCountdownGoals(); goals.push({ id: Date.now(), title: t, date: d }); saveCountdownGoals(goals); openCountdownManageModal();
 }
 
 // 仪表盘渲染
@@ -733,7 +755,7 @@ function toggleReadingAnswers() {
   if (el) el.style.display = (el.style.display === "none") ? "block" : "none";
 }
 
-// 原生语音朗读
+// 语音朗读
 let synth = window.speechSynthesis, isSpeaking = false;
 function toggleSpeechReading() {
   if (!synth) { alert("当前设备不支持语音朗读！"); return; }
@@ -1298,8 +1320,7 @@ async function reAnalyzeCurrentWithGemini() {
 async function analyzeThinkingWithGemini() {
   const checked = document.querySelectorAll(".vault-checkbox:checked");
   if (!checked.length) { alert("请先勾选题目！"); return; }
-  const ids = Array.from(checked).map(b => Number(b.value));
-  const all = await dbGetAll(STORE_QUESTIONS);
+  const ids = Array.from(checked).map(b => Number(b.value)), all = await dbGetAll(STORE_QUESTIONS);
   activeAnalysisQuestionId = null; document.getElementById("btnReAnalyze").style.display = "none";
   document.getElementById("extWordsPanel").style.display = "none"; document.getElementById("analysisSourceBadge").textContent = "🤖 批量分析";
   doAnalyzeThinking(all.filter(q => ids.includes(q.id)), null);
@@ -1424,48 +1445,126 @@ function initPinchZoom() {
   c.addEventListener("touchend", e => { if (e.touches.length < 2) pinchStartDist = 0; }, { passive: true });
 }
 
-let isSnippingMode = false, currentSnipTarget = null, currentSnipRect = null, isPointerDown = false, startX = 0, startY = 0, snipPageIdx = 0;
+// ⭐ 需求 2：支持四角拖拽缩放与平移的专业裁切引擎
+let isSnippingMode = false, currentSnipTarget = null, currentSnipRect = null, snipPageIdx = 0;
+let snipDragState = null; // { mode: 'draw'|'move'|'tl'|'tr'|'bl'|'br', startX, startY, origRect }
+
 function startSnipping(num, uOpt, cOpt) {
   if (!activeExam.pages || !activeExam.pages.length) { alert("未上传原卷图片！"); return; }
   isSnippingMode = true; currentSnipTarget = { num, userOpt: uOpt, correctOpt: cOpt }; currentSnipRect = null;
   document.getElementById("snipTopBanner").style.display = "flex";
-  document.getElementById("snipBannerText").textContent = `✂️ 正在框选【第 ${num} 题】：请在试卷上画框圈出题目`;
+  document.getElementById("snipBannerText").textContent = `✂️ 正在框选【第 ${num} 题】：画框后可按住四角白色圆点任意调节选框大小，或按住中间拖动`;
   document.getElementById("snipConfirmBar").style.display = "none"; document.getElementById("zoomFloatingBar").style.display = "none";
   document.querySelectorAll(".crop-overlay-canvas").forEach(canvas => {
     canvas.style.display = "block"; canvas.width = canvas.offsetWidth; canvas.height = canvas.offsetHeight;
     canvas.getContext("2d").clearRect(0, 0, canvas.width, canvas.height);
   });
 }
+
+function getSnipHandleAt(px, py, rect, threshold = 22) {
+  if (!rect) return null;
+  const { x, y, w, h } = rect;
+  if (Math.hypot(px - x, py - y) <= threshold) return 'tl';
+  if (Math.hypot(px - (x + w), py - y) <= threshold) return 'tr';
+  if (Math.hypot(px - x, py - (y + h)) <= threshold) return 'bl';
+  if (Math.hypot(px - (x + w), py - (y + h)) <= threshold) return 'br';
+  if (px >= x && px <= x + w && py >= y && py <= y + h) return 'move';
+  return null;
+}
+
+function drawSnipBoxWithHandles(canvas, rect) {
+  const ctx = canvas.getContext("2d");
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  if (!rect) return;
+  const { x, y, w, h } = rect;
+  ctx.fillStyle = "rgba(37, 99, 235, 0.22)"; ctx.fillRect(x, y, w, h);
+  ctx.strokeStyle = "#2563eb"; ctx.lineWidth = 2; ctx.setLineDash([5, 5]); ctx.strokeRect(x, y, w, h);
+
+  // 绘制四角白色可拖动手柄圆点
+  ctx.setLineDash([]);
+  const corners = [{ x, y }, { x: x + w, y }, { x, y: y + h }, { x: x + w, y: y + h }];
+  corners.forEach(pt => {
+    ctx.beginPath(); ctx.arc(pt.x, pt.y, 7, 0, Math.PI * 2);
+    ctx.fillStyle = "#ffffff"; ctx.fill();
+    ctx.strokeStyle = "#2563eb"; ctx.lineWidth = 2.5; ctx.stroke();
+  });
+}
+
 function initOverlayCanvasListeners(canvas) {
   canvas.addEventListener("pointerdown", e => {
-    if (!isSnippingMode) return; isPointerDown = true; snipPageIdx = Number(canvas.dataset.pageIdx);
-    startX = e.offsetX; startY = e.offsetY; canvas.setPointerCapture(e.pointerId);
-    document.getElementById("snipConfirmBar").style.display = "none";
-    document.querySelectorAll(".crop-overlay-canvas").forEach(c => c.getContext("2d").clearRect(0,0,c.width,c.height));
+    if (!isSnippingMode) return;
+    const px = e.offsetX, py = e.offsetY;
+    canvas.setPointerCapture(e.pointerId);
+    snipPageIdx = Number(canvas.dataset.pageIdx);
+
+    const handle = getSnipHandleAt(px, py, currentSnipRect);
+    if (handle) {
+      snipDragState = { mode: handle, startX: px, startY: py, orig: { ...currentSnipRect } };
+    } else {
+      snipDragState = { mode: 'draw', startX: px, startY: py, orig: null };
+      currentSnipRect = null;
+      document.querySelectorAll(".crop-overlay-canvas").forEach(c => c.getContext("2d").clearRect(0,0,c.width,c.height));
+      document.getElementById("snipConfirmBar").style.display = "none";
+    }
   });
+
   canvas.addEventListener("pointermove", e => {
-    if (!isPointerDown) return;
-    const rX = Math.min(startX, e.offsetX), rY = Math.min(startY, e.offsetY), rW = Math.abs(e.offsetX - startX), rH = Math.abs(e.offsetY - startY);
-    const ctx = canvas.getContext("2d"); ctx.clearRect(0,0,canvas.width,canvas.height);
-    ctx.fillStyle = "rgba(37,99,235,0.25)"; ctx.fillRect(rX, rY, rW, rH); ctx.strokeStyle = "#2563eb"; ctx.lineWidth = 2; ctx.strokeRect(rX, rY, rW, rH);
+    if (!snipDragState) return;
+    const px = e.offsetX, py = e.offsetY;
+    const { mode, startX, startY, orig } = snipDragState;
+
+    if (mode === 'draw') {
+      const rx = Math.min(startX, px), ry = Math.min(startY, py);
+      const rw = Math.abs(px - startX), rh = Math.abs(py - startY);
+      currentSnipRect = { pageIdx: snipPageIdx, x: rx, y: ry, w: rw, h: rh, canvasW: canvas.offsetWidth, canvasH: canvas.offsetHeight };
+    } else if (mode === 'move') {
+      const dx = px - startX, dy = py - startY;
+      const nx = Math.max(0, Math.min(canvas.width - orig.w, orig.x + dx));
+      const ny = Math.max(0, Math.min(canvas.height - orig.h, orig.y + dy));
+      currentSnipRect.x = nx; currentSnipRect.y = ny;
+    } else {
+      // 四角拖拽自由调节尺寸
+      let { x, y, w, h } = orig;
+      if (mode === 'tl') {
+        const nx = Math.min(px, orig.x + orig.w - 20);
+        const ny = Math.min(py, orig.y + orig.h - 20);
+        w = (orig.x + orig.w) - nx; h = (orig.y + orig.h) - ny; x = nx; y = ny;
+      } else if (mode === 'tr') {
+        w = Math.max(20, px - orig.x);
+        const ny = Math.min(py, orig.y + orig.h - 20);
+        h = (orig.y + orig.h) - ny; y = ny;
+      } else if (mode === 'bl') {
+        const nx = Math.min(px, orig.x + orig.w - 20);
+        w = (orig.x + orig.w) - nx; h = Math.max(20, py - orig.y); x = nx;
+      } else if (mode === 'br') {
+        w = Math.max(20, px - orig.x); h = Math.max(20, py - orig.y);
+      }
+      currentSnipRect.x = x; currentSnipRect.y = y; currentSnipRect.w = w; currentSnipRect.h = h;
+    }
+    drawSnipBoxWithHandles(canvas, currentSnipRect);
   });
+
   canvas.addEventListener("pointerup", e => {
-    if (!isPointerDown) return; isPointerDown = false; canvas.releasePointerCapture(e.pointerId);
-    const rX = Math.min(startX, e.offsetX), rY = Math.min(startY, e.offsetY), rW = Math.abs(e.offsetX - startX), rH = Math.abs(e.offsetY - startY);
-    if (rW > 20 && rH > 20) {
-      currentSnipRect = { pageIdx: snipPageIdx, x: rX, y: rY, w: rW, h: rH, canvasW: canvas.offsetWidth, canvasH: canvas.offsetHeight };
+    if (!snipDragState) return;
+    canvas.releasePointerCapture(e.pointerId);
+    snipDragState = null;
+    if (currentSnipRect && currentSnipRect.w > 20 && currentSnipRect.h > 20) {
+      drawSnipBoxWithHandles(canvas, currentSnipRect);
       document.getElementById("snipConfirmBar").style.display = "flex";
     }
   });
 }
+
 function exitSnippingMode() {
-  isSnippingMode = false; currentSnipTarget = null; currentSnipRect = null;
+  isSnippingMode = false; currentSnipTarget = null; currentSnipRect = null; snipDragState = null;
   document.getElementById("snipTopBanner").style.display = "none"; document.getElementById("snipConfirmBar").style.display = "none";
   document.getElementById("zoomFloatingBar").style.display = "flex";
   document.querySelectorAll(".crop-overlay-canvas").forEach(c => { c.style.display = "none"; c.getContext("2d").clearRect(0,0,c.width,c.height); });
 }
+
 function confirmSaveSnip() {
   if (!currentSnipRect || !currentSnipTarget) return;
+  const pageImgSrc = activeExam.pages[currentSnipRect.pageIdx];
   const img = new Image();
   img.onload = async () => {
     const sX = img.naturalWidth / currentSnipRect.canvasW, sY = img.naturalHeight / currentSnipRect.canvasH;
@@ -1474,18 +1573,20 @@ function confirmSaveSnip() {
     const off = document.createElement("canvas"); off.width = cW; off.height = cH;
     off.getContext("2d").drawImage(img, cX, cY, cW, cH, 0, 0, cW, cH);
     await dbAdd(STORE_QUESTIONS, {
-      subject: activeExam.subject || 'math', grade: "四上", module: "真题考点", status: "🔴 待攻克",
+      subject: activeExam.subject || 'math', grade: "四上",
+      module: (currentSnipTarget.num >= 17 ? "填空解答" : "真题考点"), status: "🔴 待攻克",
       note: `${activeExam.title} 第${currentSnipTarget.num}题`, ans: currentSnipTarget.correctOpt,
-      ai: `模考作答：错选 ${currentSnipTarget.userOpt}，正解为 ${currentSnipTarget.correctOpt}。`,
+      ai: `模考作答：${currentSnipTarget.userOpt}，正解为 ${currentSnipTarget.correctOpt}。已精准截取原题图片。`,
       img: off.toDataURL("image/jpeg", 0.9), updatedAt: new Date().toISOString()
     });
     const btn = document.getElementById(`snip-btn-${currentSnipTarget.num}`);
     if (btn) { btn.textContent = "✅ 已保存"; btn.disabled = true; }
     alert(`🎉 第 ${currentSnipTarget.num} 题已截图存入错题库！`); exitSnippingMode();
   };
-  img.src = activeExam.pages[currentSnipRect.pageIdx];
+  img.src = pageImgSrc;
 }
 
+// ⭐ 需求 1：考场解答/填空题 (17~20题) 全面增加框选保存支持
 async function startExam(examId) {
   activeExam = (await dbGetAll(STORE_EXAMS)).find(x => x.id === examId); if (!activeExam) return;
   document.getElementById("runningExamTitle").textContent = activeExam.title;
@@ -1512,8 +1613,18 @@ async function startExam(examId) {
     </div></div>
   `).join('');
 
-  document.getElementById("faqSheet").innerHTML = [17, 18, 19, 20].map(num => `
-    <div style="margin-bottom:10px;"><label style="font-size:0.8rem; font-weight:700;">第 ${num} 题解答草稿：</label><input type="text" id="faq-input-${num}" style="width:100%; margin-top:2px;"><div class="ans-reveal" id="faq-reveal-${num}"></div></div>
+  // 17~20 题填空解答草稿与保存支持
+  document.getElementById("faqSheet").innerHTML = [17, 18, 19, 20].map((num, idx) => `
+    <div style="margin-bottom:12px; background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px; padding:10px;">
+      <div style="display:flex; justify-content:space-between; align-items:center;">
+        <label style="font-size:0.82rem; font-weight:700;">第 ${num} 题解答/填空草稿：</label>
+        <button class="btn btn-outline" id="snip-btn-${num}" style="display:none; color:#2563eb; border-color:#93c5fd; padding:2px 8px; font-size:0.75rem;" onclick="startSnipping(${num}, '填空解答', '${(activeExam.faqAns && activeExam.faqAns[idx]) || ''}')">
+          ✂️ 框选保存此题
+        </button>
+      </div>
+      <input type="text" id="faq-input-${num}" style="width:100%; margin-top:4px;" placeholder="记录关键步骤或最终结果...">
+      <div class="ans-reveal" id="faq-reveal-${num}"></div>
+    </div>
   `).join('');
 
   examSecondsRemaining = activeExam.duration * 60; clearInterval(examTimer);
@@ -1545,27 +1656,50 @@ function submitRunningExam() {
       lastWrongQuestionsToSync.push({ num: i, userOpt: uOpt || "未填", correctOpt: cOpt });
     }
   }
+
+  // 展开 17~20 题答案，并激活解答题专属截题保存按钮
   [17, 18, 19, 20].forEach((num, idx) => {
     const box = document.getElementById(`faq-reveal-${num}`); box.classList.add("show");
     box.innerHTML = `<b>参考答案：</b><br>${(activeExam.faqAns && activeExam.faqAns[idx]) || '见原卷答案'}`;
+    const snipBtn = document.getElementById(`snip-btn-${num}`);
+    if (snipBtn) snipBtn.style.display = "inline-flex";
   });
+
   document.getElementById("finalScoreText").textContent = `选择题得分：${mcqScore} / 80`;
   document.getElementById("examResultPanel").style.display = "block";
 
   const m = Math.max(1, Math.round((activeExam.duration * 60 - examSecondsRemaining) / 60)); performCheckin(m, true);
   const container = document.getElementById("wrongItemsContainer");
+
+  let wrongHtml = "";
   if (!lastWrongQuestionsToSync.length) {
-    container.innerHTML = `<div style="color:#16a34a; font-weight:bold; text-align:center; padding:12px; background:#f0fdf4; border-radius:6px;">🎉 恭喜！选择题全部答对！已计入学习打卡。</div>`;
+    wrongHtml += `<div style="color:#16a34a; font-weight:bold; text-align:center; padding:10px; background:#f0fdf4; border-radius:6px; margin-bottom:8px;">🎉 选择题全部答对！已计入学习打卡。</div>`;
   } else {
-    container.innerHTML = `<div style="font-weight:bold; font-size:0.85rem; color:#b91c1c; margin-bottom:8px;">做错 ${lastWrongQuestionsToSync.length} 道选择题，请点击下方按钮在试卷上画框截图保存：</div>` +
+    wrongHtml += `<div style="font-weight:bold; font-size:0.85rem; color:#b91c1c; margin-bottom:6px;">选择题错题（点击在试卷上画框截图保存）：</div>` +
       lastWrongQuestionsToSync.map(item => `
-        <div style="display:flex; justify-content:space-between; align-items:center; background:#fff; border:1px solid #e2e8f0; border-radius:6px; padding:8px 10px; margin-bottom:6px;">
-          <span style="font-size:0.85rem;"><b>第 ${item.num} 题</b> (错选: <span style="color:#dc2626;">${item.userOpt}</span> / 正解: <span style="color:#16a34a;">${item.correctOpt}</span>)</span>
-          <button class="btn btn-primary" id="snip-btn-${item.num}" style="padding:4px 10px; font-size:0.75rem;" onclick="startSnipping(${item.num}, '${item.userOpt}', '${item.correctOpt}')">✂️ 框选保存</button>
+        <div style="display:flex; justify-content:space-between; align-items:center; background:#fff; border:1px solid #e2e8f0; border-radius:6px; padding:6px 10px; margin-bottom:5px;">
+          <span style="font-size:0.82rem;"><b>第 ${item.num} 题</b> (错选: <span style="color:#dc2626;">${item.userOpt}</span> / 正解: <span style="color:#16a34a;">${item.correctOpt}</span>)</span>
+          <button class="btn btn-primary" id="snip-btn-${item.num}" style="padding:3px 8px; font-size:0.75rem;" onclick="startSnipping(${item.num}, '${item.userOpt}', '${item.correctOpt}')">✂️ 框选保存</button>
         </div>
       `).join('');
   }
+
+  // ⭐ 成绩面板同步列出填空/解答题快捷截题入口
+  wrongHtml += `
+    <div style="margin-top:12px; border-top:1px dashed #cbd5e1; padding-top:8px;">
+      <div style="font-size:0.82rem; font-weight:700; color:#475569; margin-bottom:6px;">填空/解答大题错题收录（若做错点击直接截图）：</div>
+      <div style="display:grid; grid-template-columns: 1fr 1fr; gap:6px;">
+        ${[17, 18, 19, 20].map((num, idx) => `
+          <button class="btn btn-outline" style="justify-content:center; font-size:0.75rem; color:#2563eb;" onclick="startSnipping(${num}, '填空解答', '${(activeExam.faqAns && activeExam.faqAns[idx]) || ''}')">
+            ✂️ 框选第 ${num} 题
+          </button>
+        `).join('')}
+      </div>
+    </div>
+  `;
+  container.innerHTML = wrongHtml;
 }
+
 function exitExam() {
   if (confirm("确定退出考场吗？")) { clearInterval(examTimer); exitSnippingMode(); document.getElementById("examView").style.display = "none"; }
 }
@@ -1664,7 +1798,7 @@ function importData() {
 function openKeyModal() { document.getElementById("inpApiKey").value = localStorage.getItem("GEMINI_API_KEY") || ""; document.getElementById("keyModal").classList.add("active"); }
 function saveApiKey() { localStorage.setItem("GEMINI_API_KEY", document.getElementById("inpApiKey").value.trim()); document.getElementById("keyModal").classList.remove("active"); alert("Key 已保存！"); }
 
-// 点击空白背景自然退出弹窗
+// ⭐ 点击空白背景自然退出弹窗
 function initModalBackdropDismiss() {
   document.querySelectorAll('.modal-overlay').forEach(overlay => {
     overlay.addEventListener('click', e => { if (e.target === overlay) overlay.classList.remove('active'); });
