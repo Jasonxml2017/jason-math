@@ -73,7 +73,6 @@
   @media (max-width: 768px) { .exam-body { flex-direction: column; } .exam-left-paper, .exam-right-sheet { flex: 50; max-height: 50vh; } }
   .zoom-floating-bar { position: sticky; bottom: 12px; margin: 0 auto; width: fit-content; background: rgba(15,23,42,0.85); backdrop-filter: blur(8px); padding: 6px 12px; border-radius: 24px; display: flex; align-items: center; gap: 8px; z-index: 30; }
   
-  /* 框选与多段裁切操作条 */
   #snipTopBanner { display: none; background: #fef08a; color: #854d0e; padding: 8px 16px; font-size: 0.88rem; font-weight: bold; border-bottom: 2px solid #eab308; justify-content: space-between; align-items: center; z-index: 100; }
   #snipConfirmBar { display: none; position: sticky; bottom: 60px; margin: 0 auto; width: fit-content; background: #0f172a; color: white; padding: 8px 18px; border-radius: 30px; box-shadow: 0 4px 20px rgba(0,0,0,0.7); z-index: 120; gap: 10px; align-items: center; flex-wrap: wrap; }
   
@@ -123,7 +122,7 @@
 <header>
   <div class="brand" onclick="switchNav('dashboard')">
     <span>🍎 智学多学科管家</span>
-    <span style="font-size:0.7rem; font-weight:bold; background:#e0f2fe; color:#0369a1; padding:2px 8px; border-radius:12px;">v7.1 终极版</span>
+    <span style="font-size:0.7rem; font-weight:bold; background:#e0f2fe; color:#0369a1; padding:2px 8px; border-radius:12px;">v7.2 高效优化版</span>
   </div>
   <div class="nav-tabs">
     <div class="nav-tab active" id="tabNavDashboard" onclick="switchNav('dashboard')">🏠 首页工作台</div>
@@ -171,7 +170,7 @@
     </div>
   </div>
 
-  <div class="section-heading"><span>📚 学科专属空间</span><span style="font-size:0.82rem; color:#64748b; font-weight:normal;">点击卡片进入学科错题或真题</span></div>
+  <div class="section-heading" style="margin-bottom:12px; font-weight:bold;">📚 学科专属空间 <span style="font-size:0.82rem; color:#64748b; font-weight:normal;">点击卡片进入学科错题或真题</span></div>
   <div class="subject-grid" id="subjectGridContainer"></div>
 </div>
 
@@ -192,13 +191,13 @@
   <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px; flex-wrap:wrap; gap:8px;">
     <div>
       <h2 style="font-size:1.3rem;">🎯 错题复习总库</h2>
-      <p style="font-size:0.85rem; color:#64748b;">点击卡片上的【字或原图】直接查看原题；点击【思路】自动渲染公式与组词</p>
+      <p style="font-size:0.85rem; color:#64748b;">勾选左上角可选定错题（按勾选次序精准复习）；点击【字或原图】可编辑原题</p>
     </div>
     <div style="display:flex; gap:6px; flex-wrap:wrap;">
+      <button class="btn btn-primary" id="btnVaultReviewSelected" style="background:#7c3aed;" onclick="startSelectedVaultReview()">⚡ 复习所选题 (0)</button>
       <button class="btn btn-outline" onclick="toggleSelectAllVault()">全选/反选</button>
-      <button class="btn btn-primary" style="background:#0284c7;" onclick="analyzeThinkingWithGemini()">💡 批量分析思路</button>
-      <button class="btn btn-success" onclick="generateSimilarWithGemini()">🤖 批量出题</button>
-      <button class="btn btn-outline" style="background:#fef3c7; color:#b45309;" onclick="openVocabFullScreenView()">📖 生词好句本</button>
+      <button class="btn btn-primary" style="background:#0284c7;" onclick="analyzeThinkingWithGemini()">💡 批量思路</button>
+      <button class="btn btn-success" onclick="generateSimilarWithGemini()">🤖 批量变式题</button>
     </div>
   </div>
 
@@ -218,7 +217,7 @@
   <div class="q-grid" id="qList"></div>
 </div>
 
-<!-- 页面 4：全屏【生词好句本】独立空间 (z-index 700) -->
+<!-- 页面 4：全屏【生词好句本】独立空间 -->
 <div id="vocabFullView">
   <div style="background:white; border-bottom:1px solid var(--border); padding:12px 20px; display:flex; justify-content:space-between; align-items:center; position:sticky; top:0; z-index:50; flex-wrap:wrap; gap:8px;">
     <div style="display:flex; align-items:center; gap:12px;">
@@ -235,7 +234,7 @@
   <div class="container" style="padding-top:20px;"><div class="q-grid" id="vocabCardGrid"></div></div>
 </div>
 
-<!-- 每日一读全屏沉浸阅读器 -->
+<!-- 每日一读阅读器 -->
 <div id="dailyReadingView">
   <div class="reader-top-bar">
     <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap;">
@@ -291,10 +290,9 @@
   <div class="exam-body">
     <div class="exam-left-paper" id="paperGalleryContainer">
       <div id="paperContentWrapper" style="width:100%; margin:0 auto; display:flex; flex-direction:column; align-items:center; gap:16px;"></div>
-      <!-- ⭐ 支持多段跨页拼接与四角缩放手柄的悬浮操作条 -->
       <div id="snipConfirmBar">
         <span style="font-size:0.85rem;" id="snipPiecesLabel">已选好区域 (可拉伸四角)</span>
-        <button class="btn btn-amber" id="btnAddNextPiece" style="padding:5px 12px;" onclick="addNextCropPiece()">＋ 跨页追加(第2段)</button>
+        <button class="btn btn-amber" id="btnAddNextPiece" style="padding:5px 12px;" onclick="addNextCropPiece()">＋ 跨页追加</button>
         <button class="btn btn-success" style="padding:5px 14px;" onclick="confirmSaveSnip()">💾 保存该题</button>
         <button class="btn btn-outline" style="padding:5px 12px; color:white; background:transparent; border-color:#64748b;" onclick="exitSnippingMode()">取消</button>
       </div>
@@ -313,18 +311,22 @@
       <div id="faqSheet"></div>
 
       <div id="examResultPanel" style="display:none; margin-top:15px;">
-        <div style="background:#f0fdf4; border:1px solid #bbf7d0; padding:12px; border-radius:8px; text-align:center;"><h3 style="color:#15803d; font-size:1.2rem;" id="finalScoreText">选择题得分：0 / 80</h3></div>
+        <div style="background:#f0fdf4; border:1px solid #bbf7d0; padding:12px; border-radius:8px; text-align:center;">
+          <h3 style="color:#15803d; font-size:1.2rem;" id="finalScoreText">选择题得分：0 / 80</h3>
+          <button class="btn btn-primary" id="btnAiGradeExam" style="margin-top:8px; background:#7c3aed;" onclick="aiGradeExamFaq()">🤖 AI 智能批阅解答题与思路诊断</button>
+        </div>
+        <div id="aiExamGradeReport" style="display:none; margin-top:12px; background:#f8fafc; border:1px solid #cbd5e1; border-radius:8px; padding:12px; font-size:0.9rem; line-height:1.6;"></div>
         <div id="wrongItemsContainer" style="margin-top:12px;"></div>
       </div>
     </div>
   </div>
 </div>
 
-<!-- ================= 弹窗集合 (点击空白背景自然退出) ================= -->
+<!-- ================= 弹窗集合 ================= -->
 
 <!-- 添加生词好句弹窗 -->
 <div class="modal-overlay" id="addVocabModal">
-  <div class="modal" style="max-width:580px;" onclick="event.stopPropagation()">
+  <div class="modal" style="max-width:580px;">
     <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px;">
       <h3 style="font-size:1.15rem; color:#b45309;">＋ 添加新词到生词好句本</h3>
       <span style="font-size:0.75rem; color:#64748b;">支持手动输入或 AI 一键解析</span>
@@ -344,7 +346,7 @@
     <div class="form-group"><label>释义</label><textarea id="newVocabMeaning" style="height:60px;" placeholder="词语的通俗中文解释..."></textarea></div>
     <div class="form-group"><label>造句 / 常用例句</label><textarea id="newVocabSentence" style="height:60px;" placeholder="课标例句或生活造句..."></textarea></div>
     <div style="display:flex; justify-content:flex-end; gap:8px; margin-top:16px;">
-      <button class="btn btn-outline" onclick="document.getElementById('addVocabModal').classList.remove('active')">取消</button>
+      <button class="btn btn-outline" onclick="closeAllModals()">取消</button>
       <button class="btn btn-primary" style="background:#b45309;" onclick="saveNewVocabItem()">💾 确认添加</button>
     </div>
   </div>
@@ -352,8 +354,8 @@
 
 <!-- 倒计时管理 -->
 <div class="modal-overlay" id="countdownManageModal">
-  <div class="modal" style="max-width:520px;" onclick="event.stopPropagation()">
-    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;"><h3 style="font-size:1.15rem;">🏆 备考倒计时目标管理</h3></div>
+  <div class="modal" style="max-width:520px;">
+    <h3 style="font-size:1.15rem; margin-bottom:12px;">🏆 备考倒计时目标管理</h3>
     <div id="countdownGoalsEditorList" style="margin-bottom:14px; max-height:240px; overflow-y:auto;"></div>
     <div style="border-top:1px dashed #cbd5e1; padding-top:12px;">
       <h4 style="font-size:0.9rem; color:#475569; margin-bottom:8px;">＋ 添加新目标</h4>
@@ -364,11 +366,11 @@
   </div>
 </div>
 
-<!-- 查看原题与编辑弹窗 (数学自动隐藏拓展) -->
+<!-- 查看原题与编辑弹窗 -->
 <div class="modal-overlay" id="viewEditQuestionModal">
-  <div class="modal" style="max-width:700px;" onclick="event.stopPropagation()">
+  <div class="modal" style="max-width:700px;">
     <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
-      <h3 style="font-size:1.15rem; color:#0f172a;" id="viewModalTitle">🔍 查看原题与编辑</h3>
+      <h3 style="font-size:1.15rem; color:#0f172a;">🔍 查看原题与编辑</h3>
       <span id="viewModalSubjectBadge" style="font-size:0.75rem; padding:2px 8px; border-radius:10px; font-weight:bold;"></span>
     </div>
     <div id="viewModalPreviewContainer" style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px; padding:12px; text-align:center; margin-bottom:14px; max-height:300px; overflow:auto;"></div>
@@ -385,14 +387,14 @@
     <div class="form-group" id="groupEditQExt"><label>常用拓展（组词或例句）</label><input type="text" id="editQExt" placeholder="如：名门望族、举世闻名、莫名其妙"></div>
     <div style="display:flex; justify-content:space-between; align-items:center; margin-top:16px;">
       <button class="btn btn-danger" onclick="deleteCurrentEditingQuestion()">🗑️ 删除此题</button>
-      <div style="display:flex; gap:8px;"><button class="btn btn-outline" onclick="document.getElementById('viewEditQuestionModal').classList.remove('active')">关闭</button><button class="btn btn-primary" onclick="saveCurrentEditingQuestion()">💾 保存修改</button></div>
+      <div style="display:flex; gap:8px;"><button class="btn btn-outline" onclick="closeAllModals()">关闭</button><button class="btn btn-primary" onclick="saveCurrentEditingQuestion()">💾 保存修改</button></div>
     </div>
   </div>
 </div>
 
-<!-- 错题录入弹窗 (连续录题) -->
+<!-- 错题录入弹窗 -->
 <div class="modal-overlay" id="errorEntryModal">
-  <div class="modal" onclick="event.stopPropagation()">
+  <div class="modal">
     <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
       <h3 id="errorEntryModalTitle">录入错题</h3>
       <span style="font-size:0.75rem; color:#16a34a; font-weight:bold;" id="entrySuccessNotice"></span>
@@ -419,62 +421,62 @@
       <p style="font-size:0.75rem; color:#64748b; margin-top:4px;">拍照后，在图上用手指拖拽画框，自动裁切题目区域！</p>
     </div>
     <div style="display:flex; justify-content:space-between; align-items:center; margin-top:16px;">
-      <span style="font-size:0.75rem; color:#64748b;">提示：保存后窗口保留，方便连续录入多个错题</span>
-      <div style="display:flex; gap:8px;"><button class="btn btn-outline" onclick="document.getElementById('errorEntryModal').classList.remove('active')">完成/关闭</button><button class="btn btn-primary" onclick="saveSubjectErrorEntry()">💾 保存此题(继续录入)</button></div>
+      <span style="font-size:0.75rem; color:#64748b;">提示：保存后窗口保留，方便连续录入</span>
+      <div style="display:flex; gap:8px;"><button class="btn btn-outline" onclick="closeAllModals()">完成/关闭</button><button class="btn btn-primary" onclick="saveSubjectErrorEntry()">💾 保存此题(继续录入)</button></div>
     </div>
   </div>
 </div>
 
 <!-- 录入真题卷弹窗 -->
 <div class="modal-overlay" id="uploadExamModal">
-  <div class="modal" onclick="event.stopPropagation()">
+  <div class="modal">
     <h3 style="margin-bottom:12px;" id="modalExamTitleText">编辑试卷</h3>
     <div class="form-group"><label>试卷名称</label><input type="text" id="newExamTitle" placeholder="如：第32届 WMO 地方省测"></div>
     <div class="form-group"><label>考试限时（分钟）</label><input type="number" id="newExamDuration" value="90"></div>
     <div class="form-group"><label>上传原卷（🔥支持 PDF 文件或照片）</label><input type="file" id="newExamFiles" accept="image/*,.pdf,application/pdf" multiple onchange="handleExamFiles(this.files)"><div id="newExamPreview" style="display:flex; gap:8px; margin-top:8px; flex-wrap:wrap;"></div></div>
     <div class="form-group"><label>16道单选答案（连续填16位大写字母）</label><input type="text" id="newExamKeys" placeholder="BBADDCACBACA..." maxlength="16"></div>
     <div class="form-group"><label>解答题参考答案（分行填写）</label><textarea id="newExamFaqAns" style="height:80px;" placeholder="17. 6条; 710元..."></textarea></div>
-    <div style="display:flex; justify-content:flex-end; gap:8px;"><button class="btn btn-outline" onclick="document.getElementById('uploadExamModal').classList.remove('active')">取消</button><button class="btn btn-primary" onclick="saveNewExam()">保存</button></div>
+    <div style="display:flex; justify-content:flex-end; gap:8px;"><button class="btn btn-outline" onclick="closeAllModals()">取消</button><button class="btn btn-primary" onclick="saveNewExam()">保存</button></div>
   </div>
 </div>
 
 <!-- Gemini 深度分析展示弹窗 -->
 <div class="modal-overlay" id="analysisModal">
-  <div class="modal" style="max-width:780px;" onclick="event.stopPropagation()">
+  <div class="modal" style="max-width:780px;">
     <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;">
-      <div style="display:flex; align-items:center; gap:8px;"><h3 style="color:#0369a1;">💡 深度思路与名师导图</h3><span id="analysisSourceBadge" style="font-size:0.75rem; background:#e0f2fe; color:#0369a1; padding:2px 8px; border-radius:10px; font-weight:bold;"></span></div>
-      <div style="display:flex; gap:6px;"><button class="btn btn-outline" id="btnReAnalyze" onclick="reAnalyzeCurrentWithGemini()">🔄 重新由 AI 分析</button><button class="btn btn-outline" onclick="copyAnalysisText()">📋 复制</button><button class="btn btn-primary" onclick="printAnalysisContent()">🖨️ 打印</button></div>
+      <div style="display:flex; align-items:center; gap:8px;"><h3 style="color:#0369a1;">💡 极简核心思路与导图</h3><span id="analysisSourceBadge" style="font-size:0.75rem; background:#e0f2fe; color:#0369a1; padding:2px 8px; border-radius:10px; font-weight:bold;"></span></div>
+      <div style="display:flex; gap:6px;"><button class="btn btn-outline" id="btnReAnalyze" onclick="reAnalyzeCurrentWithGemini()">🔄 重新分析</button><button class="btn btn-outline" onclick="copyAnalysisText()">📋 复制</button><button class="btn btn-primary" onclick="printAnalysisContent()">🖨️ 打印</button></div>
     </div>
-    <div class="ext-words-box" id="extWordsPanel" style="display:none;">
-      <div class="ext-words-title"><span id="extWordsHeaderLabel">📝 常用词语拓展（3~5个常见词）</span><button class="btn btn-outline" style="padding:2px 8px; font-size:0.75rem; background:white;" onclick="saveCustomExtensionWords()">💾 保存拓展内容</button></div>
+    <div class="ext-words-box" id="extWordsPanel" style="display:none; margin-top:10px;">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;"><span id="extWordsHeaderLabel" style="font-size:0.85rem; font-weight:bold; color:#166534;">📝 常用词语拓展：</span><button class="btn btn-outline" style="padding:2px 8px; font-size:0.75rem; background:white;" onclick="saveCustomExtensionWords()">💾 保存拓展</button></div>
       <input type="text" id="inpCustomExtensionWords" placeholder="在此输入词语或例句拓展..." style="width:100%; border:1px solid #86efac; background:white; font-size:0.95rem; font-weight:600; color:#166534;">
     </div>
     <div class="analysis-output-box" id="analysisOutput">正在加载分析结果...</div>
-    <div style="display:flex; justify-content:flex-end;"><button class="btn btn-outline" onclick="document.getElementById('analysisModal').classList.remove('active')">关闭</button></div>
+    <div style="display:flex; justify-content:flex-end;"><button class="btn btn-outline" onclick="closeAllModals()">关闭</button></div>
   </div>
 </div>
 
 <!-- Gemini 相似题弹窗 -->
 <div class="modal-overlay" id="similarModal">
-  <div class="modal" style="max-width:750px;" onclick="event.stopPropagation()">
-    <div style="display:flex; justify-content:space-between; align-items:center;"><h3 style="color:#15803d;">🎯 举一反三 · 相似变式题</h3><div style="display:flex; gap:6px;"><button class="btn btn-outline" onclick="copySimilarText()">📋 复制</button><button class="btn btn-primary" onclick="printSimilarContent()">🖨️ 打印</button></div></div>
+  <div class="modal" style="max-width:750px;">
+    <div style="display:flex; justify-content:space-between; align-items:center;"><h3 style="color:#15803d;">🎯 举一反三 · 高质量变式题</h3><div style="display:flex; gap:6px;"><button class="btn btn-outline" onclick="copySimilarText()">📋 复制</button><button class="btn btn-primary" onclick="printSimilarContent()">🖨️ 打印</button></div></div>
     <div class="analysis-output-box" id="similarOutput">生成中...</div>
-    <div style="display:flex; justify-content:flex-end;"><button class="btn btn-outline" onclick="document.getElementById('similarModal').classList.remove('active')">关闭</button></div>
+    <div style="display:flex; justify-content:flex-end;"><button class="btn btn-outline" onclick="closeAllModals()">关闭</button></div>
   </div>
 </div>
 
 <!-- Key 弹窗 -->
 <div class="modal-overlay" id="keyModal">
-  <div class="modal" style="max-width:400px;" onclick="event.stopPropagation()">
+  <div class="modal" style="max-width:400px;">
     <h3>配置 Gemini API Key</h3>
     <input type="text" id="inpApiKey" placeholder="AIzaSy..." style="width:100%; margin:10px 0;">
-    <div style="display:flex; justify-content:flex-end; gap:8px;"><button class="btn btn-outline" onclick="document.getElementById('keyModal').classList.remove('active')">取消</button><button class="btn btn-primary" onclick="saveApiKey()">保存</button></div>
+    <div style="display:flex; justify-content:flex-end; gap:8px;"><button class="btn btn-outline" onclick="closeAllModals()">取消</button><button class="btn btn-primary" onclick="saveApiKey()">保存</button></div>
   </div>
 </div>
 
 <script>
-// 高可用模型轮换池与学科配置
-const GEMINI_MODELS = ["gemini-3.8-flash", "gemini-3.5-flash-lite", "gemini-2.0-flash", "gemini-1.5-flash"];
+// 高性能 Gemini 调度序列与学科配置
+const GEMINI_MODELS = ["gemini-2.5-flash", "gemini-2.0-flash", "gemini-1.5-flash"];
 const SUBJECTS = {
   math: { id: "math", name: "数学思维", icon: "📐", desc: "WMO竞赛真题、高频几何模型、行程工程与错题攻坚", color: "#2563eb", bg: "#eff6ff", modules: ["几何模型", "行程问题", "数论整除", "计数组合", "计算与数列", "典型应用题", "填空解答"] },
   chinese: { id: "chinese", name: "语文素养", icon: "📖", desc: "易错生字词打卡、阅读理解、古诗文默写与作文", color: "#be123c", bg: "#fff1f2", modules: ["字词拼音", "修改病句", "文言诗词", "阅读理解", "表达应用", "其它错题"] },
@@ -484,6 +486,42 @@ const SUBJECTS = {
 let currentPortalSubject = "math", filterSubject = "", filterModule = "", filterGrade = "", filterStatus = "";
 let db = null;
 const DB_NAME = "MathVaultDB", STORE_QUESTIONS = "questions", STORE_EXAMS = "exams", STORE_VOCAB = "vocab";
+
+// 跟踪错题复习总库的精准勾选顺序
+let vaultSelectedIdsInOrder = [];
+
+// 通用极速 Gemini 请求引擎
+async function queryGemini(prompt, images = [], maxTokens = 900) {
+  const apiKey = localStorage.getItem("GEMINI_API_KEY");
+  if (!apiKey) throw new Error("请先点击右上角【🔑 Key】配置 Gemini API Key！");
+  
+  const parts = [{ text: prompt }];
+  images.forEach(img => {
+    if (img && img.startsWith("data:image")) {
+      const mime = img.split(";")[0].split(":")[1] || "image/jpeg";
+      parts.push({ inline_data: { mime_type: mime, data: img.split(",")[1] } });
+    }
+  });
+
+  let lastErr = "";
+  for (const model of GEMINI_MODELS) {
+    try {
+      const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          contents: [{ parts }],
+          generationConfig: { maxOutputTokens: maxTokens, temperature: 0.25 }
+        })
+      });
+      if (!res.ok) { lastErr = `HTTP ${res.status}`; continue; }
+      const data = await res.json();
+      const txt = data.candidates?.[0]?.content?.parts?.[0]?.text;
+      if (txt) return txt;
+    } catch(e) { lastErr = e.message; }
+  }
+  throw new Error(lastErr || "AI 服务繁忙，请稍候再试");
+}
 
 function initDB() {
   return new Promise(resolve => {
@@ -528,7 +566,6 @@ function switchNav(v) {
   if (v === "portal") renderSubjectPortal();
 }
 
-// 在线时长自动统计
 let lastActiveTimestamp = Date.now();
 function initActiveTimeTracker() {
   const today = getTodayDateStr();
@@ -596,7 +633,6 @@ function promptEditMinutes() {
   }
 }
 
-// 倒计时管理
 function getDefaultCountdownGoals() { return [{ id: 1, title: "WMO 地方省测", date: "2026-11-29" }]; }
 function getCountdownGoals() {
   try { const s = localStorage.getItem("COUNTDOWN_GOALS"); return s ? JSON.parse(s) : getDefaultCountdownGoals(); } catch(e) { return getDefaultCountdownGoals(); }
@@ -630,7 +666,6 @@ function addNewCountdownGoal() {
   const g = getCountdownGoals(); g.push({ id: Date.now(), title: t, date: d }); saveCountdownGoals(g); openCountdownManageModal();
 }
 
-// 仪表盘渲染
 async function renderDashboard() {
   await renderCheckinStatus();
   renderCountdownBadges();
@@ -663,7 +698,7 @@ async function renderDashboard() {
 
 function openSubjectPortal(sId) { currentPortalSubject = sId; switchNav("portal"); }
 
-// 每日一读业务
+// 每日一读
 let activeReaderLang = "chinese", currentArticleData = { chinese: null, english: null };
 function openDailyReadingModal() {
   document.getElementById("dailyReadingView").style.display = "flex";
@@ -687,34 +722,25 @@ async function loadDailyReadingArticle() {
 async function refreshDailyReading() { stopSpeechReading(); await fetchAndGenerateDailyReading(); }
 
 async function fetchAndGenerateDailyReading() {
-  const apiKey = localStorage.getItem("GEMINI_API_KEY");
-  if (!apiKey) { alert("请先在右上角【🔑 Key】配置 Gemini API Key！"); openKeyModal(); return; }
   const grade = localStorage.getItem("READER_GRADE") || "四上";
   const container = document.getElementById("readingArticleContainer");
-  container.innerHTML = `<div style="text-align:center; padding:60px 0;"><h3 style="color:#059669; margin-bottom:8px;">⏳ 正在由 Gemini 定制【${grade}】中英文拓展阅读...</h3><p style="color:#78716c; font-size:0.9rem;">契合阅读理解考试难度，稍候约 8~12 秒...</p></div>`;
+  container.innerHTML = `<div style="text-align:center; padding:60px 0;"><h3 style="color:#059669; margin-bottom:8px;">⏳ 正在由 AI 定制【${grade}】中英文拓展阅读...</h3><p style="color:#78716c; font-size:0.9rem;">契合四年级阅读理解考点，约 4~6 秒...</p></div>`;
 
-  const prompt = `为小学【${grade}】编写今日阅读短文，返回JSON格式：{"chinese":"<h1>标题</h1><p>约350-450字自然科普或历史故事...</p><div class='comprehension-box'><b>💡 思考小问答：</b><br>1. 问？<br><button class='btn btn-outline' style='margin-top:8px; background:white;' onclick='toggleReadingAnswers()'>👁️ 查看参考答案</button><div id='readingAnswerDrawer' style='display:none; margin-top:8px; color:#15803d; font-weight:600;'>1. 答案...</div></div>","english":"<h1>Title</h1><p>About 130-180 words interesting story for grade 4-5...</p><div class='comprehension-box'><b>💡 Questions:</b><br>1. Question?<br><button class='btn btn-outline' style='margin-top:8px; background:white;' onclick='toggleReadingAnswers()'>👁️ View Answers</button><div id='readingAnswerDrawer' style='display:none; margin-top:8px; color:#15803d; font-weight:600;'>1. Answer...</div></div>"}`;
-  let success = null;
-  for (const m of GEMINI_MODELS) {
-    try {
-      const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${m}:generateContent?key=${apiKey}`, {
-        method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] })
-      });
-      const data = await res.json();
-      if (res.status === 200 && data.candidates && data.candidates[0].content.parts[0].text) {
-        const match = data.candidates[0].content.parts[0].text.match(/\{[\s\S]*\}/);
-        if (match) { success = JSON.parse(match[0]); break; }
-      }
-      if (res.status === 503) await sleep(1200);
-    } catch(e) { await sleep(1000); }
-  }
-  if (success && success.chinese && success.english) {
-    const today = getTodayDateStr();
-    localStorage.setItem(`DAILY_READING_CHI_${grade}_${today}`, success.chinese);
-    localStorage.setItem(`DAILY_READING_ENG_${grade}_${today}`, success.english);
-    currentArticleData = success; displayDailyArticle();
-  } else {
-    container.innerHTML = `<div style="text-align:center; padding:40px; color:#dc2626;"><h3>⚠️ 生成失败，Google 接口繁忙</h3><button class="btn btn-primary" style="margin-top:12px;" onclick="fetchAndGenerateDailyReading()">🔄 重新尝试</button></div>`;
+  const prompt = `为小学【${grade}】编写今日阅读短文，返回JSON格式：{"chinese":"<h1>标题</h1><p>约350字自然科普或历史故事...</p><div class='comprehension-box'><b>💡 思考小问答：</b><br>1. 问？<br><button class='btn btn-outline' style='margin-top:8px; background:white;' onclick='toggleReadingAnswers()'>👁️ 查看参考答案</button><div id='readingAnswerDrawer' style='display:none; margin-top:8px; color:#15803d; font-weight:600;'>1. 答案...</div></div>","english":"<h1>Title</h1><p>About 120-150 words story for grade 4...</p><div class='comprehension-box'><b>💡 Questions:</b><br>1. Question?<br><button class='btn btn-outline' style='margin-top:8px; background:white;' onclick='toggleReadingAnswers()'>👁️ View Answers</button><div id='readingAnswerDrawer' style='display:none; margin-top:8px; color:#15803d; font-weight:600;'>1. Answer...</div></div>"}`;
+  
+  try {
+    const raw = await queryGemini(prompt, [], 1500);
+    const match = raw.match(/\{[\s\S]*\}/);
+    if (match) {
+      const res = JSON.parse(match[0]);
+      const today = getTodayDateStr();
+      localStorage.setItem(`DAILY_READING_CHI_${grade}_${today}`, res.chinese);
+      localStorage.setItem(`DAILY_READING_ENG_${grade}_${today}`, res.english);
+      currentArticleData = res; displayDailyArticle();
+      return;
+    }
+  } catch(e) {
+    container.innerHTML = `<div style="text-align:center; padding:40px; color:#dc2626;"><h3>⚠️ 加载失败：${e.message}</h3><button class="btn btn-primary" style="margin-top:12px;" onclick="fetchAndGenerateDailyReading()">🔄 重新尝试</button></div>`;
   }
 }
 function displayDailyArticle() {
@@ -725,7 +751,6 @@ function toggleReadingAnswers() {
   if (el) el.style.display = (el.style.display === "none") ? "block" : "none";
 }
 
-// 语音朗读
 let synth = window.speechSynthesis, isSpeaking = false;
 function toggleSpeechReading() {
   if (!synth) { alert("当前设备不支持语音朗读！"); return; }
@@ -740,7 +765,6 @@ function toggleSpeechReading() {
 }
 function stopSpeechReading() { if (synth) synth.cancel(); isSpeaking = false; const b = document.getElementById("btnSpeechRead"); if (b) b.innerHTML = "🔊 朗读本文"; }
 
-// 双击秒藏气泡
 let currentSelectedWord = "";
 function initReaderWordLookupListener() {
   const view = document.getElementById("dailyReadingView");
@@ -771,7 +795,7 @@ async function quickCollectCurrentSelection() {
   hideQuickCollectBubble(); performCheckin(1, true); alert(`⭐ 已收藏【${currentSelectedWord}】到生词好句本！`);
 }
 
-// 生词好句全屏空间
+// 生词好句空间
 let currentVocabFilter = "";
 function openVocabFullScreenView() {
   document.getElementById("vocabFullView").style.display = "flex";
@@ -845,34 +869,22 @@ function openAddVocabModal() {
 async function fetchAiDefinitionForNewVocab() {
   const word = document.getElementById("newVocabText").value.trim();
   if (!word) { alert("请先在上方输入生词或词句！"); return; }
-  const apiKey = localStorage.getItem("GEMINI_API_KEY");
-  if (!apiKey) { alert("请先配置 Gemini API Key！"); openKeyModal(); return; }
-
   const isChi = document.getElementById("newVocabType").value === "chinese";
   const grade = document.getElementById("newVocabGrade").value;
   const prompt = isChi
-    ? `为小学【${grade}】生词【${word}】提供注音、通俗释义与1个造句例句，返回JSON：{"pinyin":"拼音","meaning":"释义","sentence":"例句"}`
-    : `为小学【${grade}】英语【${word}】提供音标、中文释义与1个例句，返回JSON：{"pinyin":"音标","meaning":"释义","sentence":"例句"}`;
+    ? `针对小学【${grade}】生字词【${word}】，提供精炼拼音、通俗释义与1个精练造句，返回JSON：{"pinyin":"拼音","meaning":"释义","sentence":"例句"}`
+    : `针对小学【${grade}】英语【${word}】，提供音标、中文释义与1个简短例句，返回JSON：{"pinyin":"音标","meaning":"释义","sentence":"例句"}`;
 
-  for (const m of GEMINI_MODELS) {
-    try {
-      const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${m}:generateContent?key=${apiKey}`, {
-        method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] })
-      });
-      const data = await res.json();
-      if (res.status === 200 && data.candidates && data.candidates[0].content.parts[0].text) {
-        const match = data.candidates[0].content.parts[0].text.match(/\{[\s\S]*\}/);
-        if (match) {
-          const p = JSON.parse(match[0]);
-          document.getElementById("newVocabPhonetic").value = p.pinyin || "";
-          document.getElementById("newVocabMeaning").value = p.meaning || "";
-          document.getElementById("newVocabSentence").value = p.sentence || "";
-          return;
-        }
-      }
-    } catch(e) {}
-  }
-  alert("AI 暂时繁忙，请手动输入。");
+  try {
+    const raw = await queryGemini(prompt, [], 400);
+    const match = raw.match(/\{[\s\S]*\}/);
+    if (match) {
+      const p = JSON.parse(match[0]);
+      document.getElementById("newVocabPhonetic").value = p.pinyin || "";
+      document.getElementById("newVocabMeaning").value = p.meaning || "";
+      document.getElementById("newVocabSentence").value = p.sentence || "";
+    }
+  } catch(e) { alert("AI 解析失败：" + e.message); }
 }
 
 async function saveNewVocabItem() {
@@ -900,36 +912,24 @@ async function deepAnalyzeVocab(id) {
 }
 
 async function autoCompleteVocabWithGemini(id) {
-  const apiKey = localStorage.getItem("GEMINI_API_KEY");
-  if (!apiKey) { alert("请先配置 Gemini API Key！"); openKeyModal(); return; }
   const v = (await dbGetAll(STORE_VOCAB)).find(x => x.id === id);
   if (!v) return;
-
   const isChi = v.type === "chinese";
   const prompt = isChi
-    ? `为生词【${v.text}】提供精准注音、释义与1个造句例句，返回JSON：{"pinyin":"拼音","meaning":"释义","sentence":"例句"}`
-    : `为单词【${v.text}】提供音标、中文释义与1个英文例句，返回JSON：{"pinyin":"音标","meaning":"释义","sentence":"例句"}`;
+    ? `为生词【${v.text}】提供拼音、精简释义与1个造句，返回JSON：{"pinyin":"拼音","meaning":"释义","sentence":"例句"}`
+    : `为单词【${v.text}】提供音标、中文释义与1个英文短例句，返回JSON：{"pinyin":"音标","meaning":"释义","sentence":"例句"}`;
 
-  for (const m of GEMINI_MODELS) {
-    try {
-      const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${m}:generateContent?key=${apiKey}`, {
-        method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] })
-      });
-      const data = await res.json();
-      if (res.status === 200 && data.candidates && data.candidates[0].content.parts[0].text) {
-        const match = data.candidates[0].content.parts[0].text.match(/\{[\s\S]*\}/);
-        if (match) {
-          const p = JSON.parse(match[0]);
-          v.phoneticOrPinyin = p.pinyin || ""; v.meaning = p.meaning || ""; v.sentence = p.sentence || "";
-          await dbAdd(STORE_VOCAB, v); performCheckin(1, true); renderVocabGrid(); alert(`🎉 已补全【${v.text}】释义！`); return;
-        }
-      }
-    } catch(e) {}
-  }
-  alert("AI 繁忙，请稍后再试。");
+  try {
+    const raw = await queryGemini(prompt, [], 400);
+    const match = raw.match(/\{[\s\S]*\}/);
+    if (match) {
+      const p = JSON.parse(match[0]);
+      v.phoneticOrPinyin = p.pinyin || ""; v.meaning = p.meaning || ""; v.sentence = p.sentence || "";
+      await dbAdd(STORE_VOCAB, v); performCheckin(1, true); renderVocabGrid(); alert(`🎉 已补全【${v.text}】释义！`);
+    }
+  } catch(e) { alert("AI 繁忙：" + e.message); }
 }
 
-// 欢快通关音效 (Web Audio)
 function playPleasantSound() {
   try {
     const ctx = new (window.AudioContext || window.webkitAudioContext)();
@@ -946,17 +946,52 @@ function playPleasantSound() {
   } catch(e) {}
 }
 
-// 今日攻坚业务
+// 错题复习总库：支持按用户“勾选顺序”精准复习
 let reviewQueue = [], reviewCurrentIdx = 0, reviewTimerInterval = null, reviewSeconds = 0, reviewKilledCount = 0;
+
+function handleVaultCheckboxChange(id, isChecked) {
+  id = Number(id);
+  if (isChecked) {
+    if (!vaultSelectedIdsInOrder.includes(id)) vaultSelectedIdsInOrder.push(id);
+  } else {
+    vaultSelectedIdsInOrder = vaultSelectedIdsInOrder.filter(x => x !== id);
+  }
+  updateVaultSelectedCountBadge();
+}
+
+function updateVaultSelectedCountBadge() {
+  const btn = document.getElementById("btnVaultReviewSelected");
+  if (btn) btn.textContent = `⚡ 复习所选题 (${vaultSelectedIdsInOrder.length})`;
+}
+
+async function startSelectedVaultReview() {
+  if (!vaultSelectedIdsInOrder.length) {
+    alert("请先勾选需要复习的错题！可按照你想复习的先后顺序依次点击勾选。");
+    return;
+  }
+  const all = await dbGetAll(STORE_QUESTIONS);
+  const qMap = new Map(all.map(q => [q.id, q]));
+  // 严格按照勾选时存入数组的先后次序重排
+  const orderedQueue = vaultSelectedIdsInOrder.map(id => qMap.get(id)).filter(Boolean);
+  
+  if (!orderedQueue.length) { alert("所选题已失效或不存在！"); return; }
+  launchReviewWithQuestions(orderedQueue);
+}
+
 async function startEbbinghausDailyReview() {
   const all = await dbGetAll(STORE_QUESTIONS);
   if (!all.length) { alert("题库暂无错题！"); return; }
   const pending = all.filter(q => q.status !== '🟢 已斩杀').sort((a,b) => (a.status==='🔴 待攻克'?-1:1));
-  reviewQueue = pending.length ? pending : [...all];
+  launchReviewWithQuestions(pending.length ? pending : [...all]);
+}
+
+function launchReviewWithQuestions(list) {
+  reviewQueue = list;
   reviewCurrentIdx = 0; reviewSeconds = 0; reviewKilledCount = 0;
   document.getElementById("smartReviewView").style.display = "flex";
   startReviewTimer(); renderCurrentReviewCard();
 }
+
 function startReviewTimer() {
   clearInterval(reviewTimerInterval);
   reviewTimerInterval = setInterval(() => {
@@ -964,6 +999,7 @@ function startReviewTimer() {
     document.getElementById("reviewTimerText").textContent = `⏱️ ${String(Math.floor(reviewSeconds/60)).padStart(2,'0')}:${String(reviewSeconds%60).padStart(2,'0')}`;
   }, 1000);
 }
+
 function renderCurrentReviewCard() {
   const total = reviewQueue.length;
   if (reviewCurrentIdx >= total) { finishSmartReview(); return; }
@@ -971,10 +1007,10 @@ function renderCurrentReviewCard() {
   document.getElementById("reviewProgressIndex").textContent = `进度: ${reviewCurrentIdx + 1} / ${total}`;
 
   let guide = (q.subject === "english")
-    ? `<div class="subject-guide-tip" style="background:#ecfdf5; color:#065f46; border:1px solid #a7f3d0;"><span style="font-size:1.2rem;">🗣️</span><div><b>【出声朗读法】</b> 把单词或例句<b>大声朗读 3 遍</b>，尝试现场用新主语造句！</div></div>`
+    ? `<div class="subject-guide-tip" style="background:#ecfdf5; color:#065f46; border:1px solid #a7f3d0;"><b>🗣️【大声朗读法】</b> 大声朗读 3 遍，尝试换词造句！</div>`
     : ((q.subject === "chinese")
-      ? `<div class="subject-guide-tip" style="background:#fff1f2; color:#9f1239; border:1px solid #fecdd3;"><span style="font-size:1.2rem;">⚡</span><div><b>【闪卡消灭法】</b> 快速口答字音与偏旁！在心里默写一遍，查看下方组词拓展。</div></div>`
-      : `<div class="subject-guide-tip" style="background:#eff6ff; color:#1e40af; border:1px solid #bfdbfe;"><span style="font-size:1.2rem;">📐</span><div><b>【遮挡演算 + 小老师讲题法】</b> 在草稿纸上重算完整步骤，并给家长讲清题眼！</div></div>`);
+      ? `<div class="subject-guide-tip" style="background:#fff1f2; color:#9f1239; border:1px solid #fecdd3;"><b>⚡【闪卡消灭法】</b> 快速口答字音与偏旁！心里默写一遍并查阅组词。</div>`
+      : `<div class="subject-guide-tip" style="background:#eff6ff; color:#1e40af; border:1px solid #bfdbfe;"><b>📐【遮挡演算】</b> 草稿纸独立演算，并能清晰说出破题第一步！</div>`);
 
   let visual = q.isWord
     ? `<div class="word-card-text" style="background:${subInfo.bg}; color:${subInfo.color}; font-size:2rem; padding:24px 10px;">${q.note}</div>`
@@ -990,23 +1026,23 @@ function renderCurrentReviewCard() {
       </div>
       ${guide} ${visual} ${ext}
       <div style="margin-top:14px;">
-        <button class="btn btn-outline" style="width:100%; justify-content:center; padding:8px;" onclick="toggleReviewAnswerVisibility()">👁️ 遮挡模式：点击核对答案与思路</button>
+        <button class="btn btn-outline" style="width:100%; justify-content:center; padding:8px;" onclick="toggleReviewAnswerVisibility()">👁️ 点击核对答案与极简思路</button>
         <div id="reviewAnswerDrawer" style="display:none; margin-top:10px; padding:12px; background:#f1f5f9; border-left:4px solid var(--primary); border-radius:6px; font-size:0.92rem;">
           <div style="font-weight:bold; color:#16a34a; margin-bottom:4px;">参考答案：${q.ans || '见思路'}</div><div id="reviewAnalysisBox"></div>
         </div>
       </div>
     </div>
     <div style="margin-top:20px; border-top:1px solid #e2e8f0; padding-top:16px;">
-      <div style="font-size:0.82rem; color:#64748b; margin-bottom:8px; text-align:center;">为本题评定状态：</div>
+      <div style="font-size:0.82rem; color:#64748b; margin-bottom:8px; text-align:center;">评定本次掌握状态：</div>
       <div style="display:grid; grid-template-columns: 1fr 1fr 1fr; gap:8px;">
         <button class="btn" style="background:#fee2e2; color:#b91c1c; justify-content:center; padding:10px;" onclick="stepReviewQuestion('🔴 待攻克')">🔴 没做对</button>
-        <button class="btn" style="background:#fef3c7; color:#b45309; justify-content:center; padding:10px;" onclick="stepReviewQuestion('🟡 巩固中')">🟡 做对了</button>
+        <button class="btn" style="background:#fef3c7; color:#b45309; justify-content:center; padding:10px;" onclick="stepReviewQuestion('🟡 巩固中')">🟡 掌握中</button>
         <button class="btn" style="background:#dcfce7; color:#15803d; justify-content:center; padding:10px; font-weight:800;" onclick="stepReviewQuestion('🟢 已斩杀')">🟢 直接斩杀!</button>
       </div>
     </div>
   `;
   if (q.savedAnalysis) renderRichContent(document.getElementById("reviewAnalysisBox"), q.savedAnalysis);
-  else document.getElementById("reviewAnalysisBox").textContent = q.ai || '暂无详细分析。';
+  else document.getElementById("reviewAnalysisBox").textContent = q.ai || '暂无保存的分析。';
 }
 function toggleReviewAnswerVisibility() {
   const d = document.getElementById("reviewAnswerDrawer"); d.style.display = (d.style.display === "none") ? "block" : "none";
@@ -1024,7 +1060,7 @@ async function stepReviewQuestion(st) {
 function finishSmartReview() {
   clearInterval(reviewTimerInterval);
   const m = Math.max(1, Math.round(reviewSeconds / 60)); performCheckin(m, true);
-  alert(`🎉 恭喜 Jason 完成今日攻坚打卡！\n\n⏱️ 本次专注时长：${m} 分钟\n🏆 成功斩杀题目：${reviewKilledCount} 道！`);
+  alert(`🎉 恭喜完成错题复习打卡！\n\n⏱️ 本次专注时长：${m} 分钟\n🏆 成功斩杀题目：${reviewKilledCount} 道！`);
   exitSmartReview();
 }
 function exitSmartReview() {
@@ -1034,7 +1070,6 @@ function exitSmartReview() {
   renderDashboard(); renderVault();
 }
 
-// 专属学科主页
 async function renderSubjectPortal() {
   const sub = SUBJECTS[currentPortalSubject] || SUBJECTS.math;
   document.getElementById("portalSubjectTitle").textContent = `${sub.icon} ${sub.name} · ${currentPortalSubject==='math'?'奥数真题与错题空间':'日常错题复习空间'}`;
@@ -1061,7 +1096,6 @@ async function renderSubjectPortal() {
   }
 }
 
-// 录入错题业务
 let activeEntryTab = "word", activeCameraCropBase64 = "";
 function openSubjectErrorEntryModal(sKey) {
   const sub = SUBJECTS[sKey] || SUBJECTS.chinese;
@@ -1140,7 +1174,6 @@ async function saveSubjectErrorEntry() {
   renderSubjectPortal(); renderDashboard();
 }
 
-// 错题总库渲染
 async function renderVault() {
   renderFilterChips();
   const all = await dbGetAll(STORE_QUESTIONS);
@@ -1151,19 +1184,26 @@ async function renderVault() {
     if (filterStatus && q.status !== filterStatus) return false;
     return true;
   });
+  
+  // 清理不存在的已选中ID
+  const curIds = new Set(all.map(q => q.id));
+  vaultSelectedIdsInOrder = vaultSelectedIdsInOrder.filter(id => curIds.has(id));
+  updateVaultSelectedCountBadge();
+
   const c = document.getElementById("qList");
   c.innerHTML = filtered.length ? filtered.map(q => renderQuestionCardHtml(q)).join('') : `<div style="grid-column:1/-1; text-align:center; padding:40px; color:#94a3b8;">没有找到符合条件的错题！</div>`;
 }
 
 function renderQuestionCardHtml(q) {
   const sub = SUBJECTS[q.subject || 'math'] || SUBJECTS.math;
-  let ext = q.customExtension ? `<div class="card-extension-badge"><b>📝 常用拓展：</b>${q.customExtension}</div>` : (q.isWord ? `<div class="card-extension-badge" style="background:#f8fafc; border-color:#e2e8f0; color:#94a3b8;">点击【思路】可自动生成组词/短句</div>` : '');
+  let ext = q.customExtension ? `<div class="card-extension-badge"><b>📝 常用拓展：</b>${q.customExtension}</div>` : '';
+  const isChecked = vaultSelectedIdsInOrder.includes(q.id);
 
   return `
     <div class="q-card">
       <div style="display:flex; justify-content:space-between; align-items:center;">
         <label style="display:flex; align-items:center; gap:6px; font-weight:700; cursor:pointer;">
-          <input type="checkbox" class="vault-checkbox" value="${q.id}">
+          <input type="checkbox" class="vault-checkbox" value="${q.id}" ${isChecked?'checked':''} onchange="handleVaultCheckboxChange(${q.id}, this.checked)">
           <span style="font-size:0.95rem; cursor:pointer;" onclick="openViewEditModal(${q.id})" title="点击查看原题">${q.note || '错题'}</span>
         </label>
         <div>
@@ -1171,7 +1211,7 @@ function renderQuestionCardHtml(q) {
           <button class="btn btn-danger" style="padding:2px 6px; font-size:0.75rem;" onclick="deleteSingleQuestion(${q.id})">删</button>
         </div>
       </div>
-      ${q.isWord ? `<div class="word-card-text" style="background:${sub.bg}; color:${sub.color};" onclick="openViewEditModal(${q.id})" title="点击查看原题">${q.note}</div>` : `<div class="q-img-wrap" onclick="openViewEditModal(${q.id})" title="点击查看原题"><img src="${q.img}"></div>`}
+      ${q.isWord ? `<div class="word-card-text" style="background:${sub.bg}; color:${sub.color};" onclick="openViewEditModal(${q.id})">${q.note}</div>` : `<div class="q-img-wrap" onclick="openViewEditModal(${q.id})"><img src="${q.img}"></div>`}
       ${ext}
       <div style="display:flex; justify-content:space-between; font-size:0.8rem; color:#64748b; margin-bottom:8px;">
         <span>${q.grade || '四上'} · <b>${q.module || '基础考点'}</b></span>
@@ -1180,7 +1220,7 @@ function renderQuestionCardHtml(q) {
       <div style="display:grid; grid-template-columns: 1fr 1.15fr 1fr; gap:6px; margin-top:auto; padding-top:8px; border-top:1px solid #e2e8f0;">
         <button class="btn btn-amber" style="justify-content:center; font-size:0.78rem;" onclick="openViewEditModal(${q.id})">🔍 原题</button>
         <button class="btn" style="justify-content:center; background:#e0f2fe; color:#0369a1; font-size:0.78rem;" onclick="analyzeSingleQuestionById(${q.id})">💡 思路${q.savedAnalysis ? '(已存)' : ''}</button>
-        <button class="btn btn-success" style="justify-content:center; font-size:0.78rem;" onclick="generateSimilarSingleById(${q.id})">🤖 出题</button>
+        <button class="btn btn-success" style="justify-content:center; font-size:0.78rem;" onclick="generateSimilarSingleById(${q.id})">🤖 变式题</button>
       </div>
     </div>
   `;
@@ -1206,7 +1246,6 @@ async function cycleQuestionStatus(id, cur) {
   await dbAdd(STORE_QUESTIONS, q); renderVault();
 }
 
-// 查看原题与编辑弹窗 (数学自动隐藏拓展)
 let viewingQuestionId = null;
 async function openViewEditModal(id) {
   const q = (await dbGetAll(STORE_QUESTIONS)).find(x => x.id === id); if (!q) return;
@@ -1222,8 +1261,6 @@ async function openViewEditModal(id) {
   document.getElementById("editQNote").value = q.note || "";
   document.getElementById("editQAns").value = q.ans || "";
   document.getElementById("editQExt").value = q.customExtension || "";
-
-  // 数学模式下自动隐藏常用拓展
   document.getElementById("groupEditQExt").style.display = ((q.subject || 'math') === 'math') ? "none" : "flex";
   document.getElementById("viewEditQuestionModal").classList.add("active");
 }
@@ -1242,24 +1279,23 @@ async function saveCurrentEditingQuestion() {
   q.note = document.getElementById("editQNote").value.trim(); q.ans = document.getElementById("editQAns").value.trim();
   q.customExtension = (newSub === 'math') ? "" : document.getElementById("editQExt").value.trim();
   q.updatedAt = new Date().toISOString();
-  await dbAdd(STORE_QUESTIONS, q); document.getElementById("viewEditQuestionModal").classList.remove("active");
+  await dbAdd(STORE_QUESTIONS, q); closeAllModals();
   renderVault(); renderDashboard();
 }
 async function deleteCurrentEditingQuestion() {
   if (viewingQuestionId && confirm("确定要删除此错题吗？")) {
     await dbDelete(STORE_QUESTIONS, viewingQuestionId);
-    document.getElementById("viewEditQuestionModal").classList.remove("active");
+    closeAllModals();
     renderVault(); renderDashboard();
   }
 }
 
-// 富文本与公式渲染
 function renderRichContent(el, text) {
   el.innerHTML = marked.parse(text || "");
   renderMathInElement(el, { delimiters: [{ left: "$$", right: "$$", display: true }, { left: "$", right: "$", display: false }, { left: "\\(", right: "\\)", display: false }, { left: "\\[", right: "\\]", display: true }], throwOnError: false });
 }
 
-// Gemini 思路分析与拓展
+// 优化：思路直奔重点、不废话
 let activeAnalysisQuestionId = null;
 async function analyzeSingleQuestionById(id) {
   const q = (await dbGetAll(STORE_QUESTIONS)).find(x => x.id === id); if (!q) return;
@@ -1267,16 +1303,16 @@ async function analyzeSingleQuestionById(id) {
   const extBox = document.getElementById("extWordsPanel");
   if (q.subject === "chinese" || q.subject === "english") {
     extBox.style.display = "block";
-    document.getElementById("extWordsHeaderLabel").textContent = (q.subject === "chinese") ? "📝 常用词语拓展（3~5个常见词）：" : "🗣️ 常用短句拓展（1~3个常用例句）：";
+    document.getElementById("extWordsHeaderLabel").textContent = (q.subject === "chinese") ? "📝 常用词语拓展：" : "🗣️ 常用短句拓展：";
     document.getElementById("inpCustomExtensionWords").value = q.customExtension || "";
   } else { extBox.style.display = "none"; }
 
   const box = document.getElementById("analysisOutput");
   if (q.savedAnalysis) {
-    document.getElementById("analysisSourceBadge").textContent = "⚡ 已加载历史保存结果 (不耗Token)";
+    document.getElementById("analysisSourceBadge").textContent = "⚡ 已加载历史保存思路";
     renderRichContent(box, q.savedAnalysis); document.getElementById("analysisModal").classList.add("active");
   } else {
-    document.getElementById("analysisSourceBadge").textContent = "🤖 正在请求 AI 实时解析";
+    document.getElementById("analysisSourceBadge").textContent = "🤖 极速分析中";
     doAnalyzeThinking([q], id);
   }
 }
@@ -1285,7 +1321,7 @@ async function saveCustomExtensionWords() {
   const q = (await dbGetAll(STORE_QUESTIONS)).find(x => x.id === activeAnalysisQuestionId);
   if (q) {
     q.customExtension = document.getElementById("inpCustomExtensionWords").value.trim();
-    await dbAdd(STORE_QUESTIONS, q); alert("🎉 拓展内容已保存并外显到卡片上！"); renderVault();
+    await dbAdd(STORE_QUESTIONS, q); alert("🎉 拓展内容已保存并外显到卡片！"); renderVault();
   }
 }
 async function reAnalyzeCurrentWithGemini() {
@@ -1294,47 +1330,37 @@ async function reAnalyzeCurrentWithGemini() {
   if (q) doAnalyzeThinking([q], q.id);
 }
 async function analyzeThinkingWithGemini() {
-  const checked = document.querySelectorAll(".vault-checkbox:checked");
-  if (!checked.length) { alert("请先勾选题目！"); return; }
-  const ids = Array.from(checked).map(b => Number(b.value)), all = await dbGetAll(STORE_QUESTIONS);
+  if (!vaultSelectedIdsInOrder.length) { alert("请先勾选需要分析的错题！"); return; }
+  const all = await dbGetAll(STORE_QUESTIONS);
   activeAnalysisQuestionId = null; document.getElementById("btnReAnalyze").style.display = "none";
-  document.getElementById("extWordsPanel").style.display = "none"; document.getElementById("analysisSourceBadge").textContent = "🤖 批量分析";
-  doAnalyzeThinking(all.filter(q => ids.includes(q.id)), null);
+  document.getElementById("extWordsPanel").style.display = "none"; document.getElementById("analysisSourceBadge").textContent = "🤖 批量核心思路";
+  const qMap = new Map(all.map(q => [q.id, q]));
+  doAnalyzeThinking(vaultSelectedIdsInOrder.map(id => qMap.get(id)).filter(Boolean), null);
 }
 
-const sleep = ms => new Promise(res => setTimeout(res, ms));
-
 async function doAnalyzeThinking(questions, singleSaveId) {
-  const apiKey = localStorage.getItem("GEMINI_API_KEY");
-  if (!apiKey) { alert("请先配置 Gemini API Key！"); openKeyModal(); return; }
   const box = document.getElementById("analysisOutput");
-  box.innerHTML = `⏳ 正在请求 Gemini 深度剖析（含高可用避峰连接），稍候约 5~8 秒...`;
+  box.innerHTML = `⏳ 正在直连极速分析引擎，稍候约 2~4 秒...`;
   document.getElementById("analysisModal").classList.add("active");
 
-  const parts = [{ text: `你是一位全科特级教师（精通小学奥数解题模型、小学语文生字词与阅读理解、英语语法与造句）。请为四年级学生提供极通俗、有启发性的【名师深度思路与解题导图】：\n1. 数学算式乘号必须用 \\times，公式使用 LaTeX 规范！\n2. 包含考点模型、思维陷阱、破题第一步、小学化图解推导、家长一句话启发话术。\n3. 若是语文生字/词语，第一行必须输出【组词拓展】：提供 3~5 个该生字常用词语或成语！若是英语，第一行必须输出【短句拓展】：提供 1~3 个常用短句！` }];
-  questions.forEach((q, idx) => {
-    parts.push({ text: `\n=== 【题目 ${idx + 1}】(学科：${(SUBJECTS[q.subject||'math']||SUBJECTS.math).name}，考点：${q.module||''}，内容：${q.note||''}，答案：${q.ans||''}) ===` });
-    if (q.img && q.img.startsWith("data:image")) parts.push({ inline_data: { mime_type: q.img.split(";")[0].split(":")[1] || "image/png", data: q.img.split(",")[1] } });
-  });
+  const prompt = `你是一位小学四年级金牌名师。请给出【极其凝练、直击要害】的思路导图（杜绝任何客套话与大段铺垫，200字内直奔核心）：
+【破题题眼】：一句话找出最关键突破口。
+【极简秒解】：核心算式/图解步骤（数学算式乘号用 \\times，公式使用 LaTeX 规范）。
+【避坑指南】：四年级学生最容易错的思维陷阱。
+(若是语文生字，给出【组词拓展】：精选3个常用词语；若是英语，给出【造句拓展】：1个常用简短例句)。
 
-  let text = "", err = "";
-  for (const m of GEMINI_MODELS) {
-    try {
-      const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${m}:generateContent?key=${apiKey}`, {
-        method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ contents: [{ parts }] })
-      });
-      const data = await res.json();
-      if (res.status === 200 && data.candidates && data.candidates[0].content.parts[0].text) { text = data.candidates[0].content.parts[0].text; break; }
-      else { err = (data.error && data.error.message) || `HTTP ${res.status}`; if (res.status === 503) await sleep(1200); }
-    } catch(e) { err = e.message; await sleep(1000); }
-  }
+待分析题目：
+${questions.map((q, i) => `【题${i+1}】学科:${q.subject||'math'}, 考点:${q.module||''}, 题目/错因:${q.note||''}, 答案:${q.ans||''}`).join('\n')}`;
 
-  if (text) {
+  const imgs = questions.map(q => q.img).filter(Boolean);
+
+  try {
+    const text = await queryGemini(prompt, imgs, 700);
     if (singleSaveId) {
       const q = (await dbGetAll(STORE_QUESTIONS)).find(x => x.id === singleSaveId);
       if (q) {
         q.savedAnalysis = text;
-        const match = text.match(/【(?:组词拓展|短句拓展)】[：:]\s*([^\n\r]+)/);
+        const match = text.match(/【(?:组词拓展|造句拓展)】[：:]\s*([^\n\r]+)/);
         if (match && match[1] && !q.customExtension) {
           q.customExtension = match[1].trim();
           document.getElementById("inpCustomExtensionWords").value = q.customExtension;
@@ -1342,9 +1368,10 @@ async function doAnalyzeThinking(questions, singleSaveId) {
         await dbAdd(STORE_QUESTIONS, q); renderVault();
       }
     }
-    performCheckin(1, true); renderRichContent(box, text);
-  } else {
-    box.innerHTML = `<div style="text-align:center; padding:20px;"><div style="color:#dc2626; font-weight:bold; margin-bottom:8px;">⚠️ Google 接口暂时繁忙（503），已自动尝试备用模型重试</div><button class="btn btn-primary" onclick="reAnalyzeCurrentWithGemini()">🔄 重新尝试</button></div>`;
+    performCheckin(1, true);
+    renderRichContent(box, text);
+  } catch(e) {
+    box.innerHTML = `<div style="color:#dc2626; padding:10px;">⚠️ 分析失败：${e.message}</div>`;
   }
 }
 
@@ -1355,38 +1382,43 @@ function printAnalysisContent() {
   w.document.close(); setTimeout(() => w.print(), 500);
 }
 
-// 相似题出题业务
+// 优化：出题变式大、避免雷同
 async function generateSimilarSingleById(id) { const q = (await dbGetAll(STORE_QUESTIONS)).find(x => x.id === id); if (q) doGenerateSimilar([q]); }
 async function generateSimilarWithGemini() {
-  const checked = document.querySelectorAll(".vault-checkbox:checked"); if (!checked.length) { alert("请先勾选题目！"); return; }
-  const ids = Array.from(checked).map(b => Number(b.value)), all = await dbGetAll(STORE_QUESTIONS);
-  doGenerateSimilar(all.filter(q => ids.includes(q.id)));
+  if (!vaultSelectedIdsInOrder.length) { alert("请先勾选需要出变式题的错题！"); return; }
+  const all = await dbGetAll(STORE_QUESTIONS);
+  const qMap = new Map(all.map(q => [q.id, q]));
+  doGenerateSimilar(vaultSelectedIdsInOrder.map(id => qMap.get(id)).filter(Boolean));
 }
 async function doGenerateSimilar(questions) {
-  const apiKey = localStorage.getItem("GEMINI_API_KEY");
-  if (!apiKey) { alert("请先配置 Gemini API Key！"); openKeyModal(); return; }
-  const box = document.getElementById("similarOutput"); box.innerHTML = `⏳ 正在请求 Gemini 智能出题（含自动避峰连接）...`;
+  const box = document.getElementById("similarOutput");
+  box.innerHTML = `⏳ 正在极速生成高质量变式题，约 3~5 秒...`;
   document.getElementById("similarModal").classList.add("active");
 
-  const parts = [{ text: `你是一位全科金牌名师。请针对选中的这 ${questions.length} 道错题，分别出一道【考点模型相同、解题逻辑一致、情境与数字不同】的高仿练习题。数学公式乘号用 \\times，排版使用 LaTeX。提供：【📝 相似变式题】、【💡 直观解法提示】、【🎯 参考答案】。` }];
-  questions.forEach((q, idx) => {
-    parts.push({ text: `\n=== 【原题 ${idx + 1}】(学科：${(SUBJECTS[q.subject||'math']||SUBJECTS.math).name}，考点：${q.module||''}，内容：${q.note||''}) ===` });
-    if (q.img && q.img.startsWith("data:image")) parts.push({ inline_data: { mime_type: q.img.split(";")[0].split(":")[1] || "image/png", data: q.img.split(",")[1] } });
-  });
+  const prompt = `你是一位小学四年级竞赛命题名师。请针对提供的题目分别出1道【高质量变式练习题】：
+【核心要求】：
+1. 考点本质与核心解题逻辑一致，但背景情境、变量条件或数字关系必须有显著变化（严禁只改几个数字的雷同题，要有新鲜感但难度契合四年级）。
+2. 数学公式严格用 LaTeX（乘号 \\times）。
+3. 结构极其紧凑明了：
+### 📝 变式题
+[清晰题干]
+### 💡 核心点拨
+[1~2句话提炼思路]
+### 🎯 简明答案
+[最简答案与步骤]
 
-  let text = "";
-  for (const m of GEMINI_MODELS) {
-    try {
-      const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${m}:generateContent?key=${apiKey}`, {
-        method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ contents: [{ parts }] })
-      });
-      const data = await res.json();
-      if (res.status === 200 && data.candidates && data.candidates[0].content.parts[0].text) { text = data.candidates[0].content.parts[0].text; break; }
-      if (res.status === 503) await sleep(1200);
-    } catch(e) { await sleep(1000); }
+原题参考：
+${questions.map((q, i) => `【题${i+1}】考点:${q.module||''}, 原题内容:${q.note||''}`).join('\n')}`;
+
+  const imgs = questions.map(q => q.img).filter(Boolean);
+
+  try {
+    const text = await queryGemini(prompt, imgs, 800);
+    performCheckin(1, true);
+    renderRichContent(box, text);
+  } catch(e) {
+    box.innerHTML = `<span style="color:#dc2626;">变式题生成失败：${e.message}</span>`;
   }
-  if (text) { performCheckin(1, true); renderRichContent(box, text); }
-  else { box.innerHTML = `<span style="color:#dc2626;">生成失败，接口繁忙，请稍等 1 分钟后重试。</span>`; }
 }
 function copySimilarText() { navigator.clipboard.writeText(document.getElementById("similarOutput").innerText).then(() => alert("已复制！")); }
 function printSimilarContent() {
@@ -1395,9 +1427,10 @@ function printSimilarContent() {
   w.document.close(); setTimeout(() => w.print(), 500);
 }
 
-// 考场缩放与框选
+// 模拟卷考场与 AI 智能批阅
 let activeExam = null, examTimer = null, examSecondsRemaining = 0, userExamAnswers = {};
 let currentZoom = 1.0, pinchStartDist = 0, pinchStartZoom = 1.0;
+
 function applyZoom(z) {
   currentZoom = Math.min(Math.max(z, 0.8), 3.5);
   const w = document.getElementById("paperContentWrapper"); if (w) w.style.width = (currentZoom * 100) + "%";
@@ -1421,21 +1454,18 @@ function initPinchZoom() {
   c.addEventListener("touchend", e => { if (e.touches.length < 2) pinchStartDist = 0; }, { passive: true });
 }
 
-// ⭐ 需求 2：支持四角调节缩放与跨页多段垂直自动拼接的专业裁切引擎
-let isSnippingMode = false, currentSnipTarget = null, currentSnipRect = null, snipPageIdx = 0;
-let snipDragState = null;
-let tempCropPiecesBase64 = []; // 暂存跨页多段截取片段
+let isSnippingMode = false, currentSnipTarget = null, currentSnipRect = null, snipPageIdx = 0, snipDragState = null;
+let tempCropPiecesBase64 = [];
 
 function startSnipping(num, uOpt, cOpt) {
   if (!activeExam.pages || !activeExam.pages.length) { alert("未上传原卷图片！"); return; }
   isSnippingMode = true; currentSnipTarget = { num, userOpt: uOpt, correctOpt: cOpt }; currentSnipRect = null;
-  tempCropPiecesBase64 = []; // 重置多段缓存
+  tempCropPiecesBase64 = [];
 
   document.getElementById("snipTopBanner").style.display = "flex";
-  document.getElementById("snipBannerText").textContent = `✂️ 正在框选【第 ${num} 题】：画框后可按住四角白色圆点拉伸大小，若题目跨页请点击【＋ 跨页追加】`;
+  document.getElementById("snipBannerText").textContent = `✂️ 框选【第 ${num} 题】：画框后可按住四角白色圆点拉伸大小，跨页点击【＋ 跨页追加】`;
   document.getElementById("snipConfirmBar").style.display = "none";
   document.getElementById("zoomFloatingBar").style.display = "none";
-  document.getElementById("snipPiecesLabel").textContent = "已选好区域 (可拉伸四角)";
 
   document.querySelectorAll(".crop-overlay-canvas").forEach(canvas => {
     canvas.style.display = "block"; canvas.width = canvas.offsetWidth; canvas.height = canvas.offsetHeight;
@@ -1462,7 +1492,6 @@ function drawSnipBoxWithHandles(canvas, rect) {
   ctx.fillStyle = "rgba(37, 99, 235, 0.22)"; ctx.fillRect(x, y, w, h);
   ctx.strokeStyle = "#2563eb"; ctx.lineWidth = 2; ctx.setLineDash([5, 5]); ctx.strokeRect(x, y, w, h);
 
-  // 绘制四角白色可拖动手柄圆点
   ctx.setLineDash([]);
   const corners = [{ x, y }, { x: x + w, y }, { x, y: y + h }, { x: x + w, y: y + h }];
   corners.forEach(pt => {
@@ -1541,7 +1570,6 @@ function exitSnippingMode() {
   document.querySelectorAll(".crop-overlay-canvas").forEach(c => { c.style.display = "none"; c.getContext("2d").clearRect(0,0,c.width,c.height); });
 }
 
-// 裁剪单个矩形区域为 Base64
 function extractSingleRectBase64(pageImgSrc, rect) {
   return new Promise(res => {
     const img = new Image();
@@ -1557,7 +1585,6 @@ function extractSingleRectBase64(pageImgSrc, rect) {
   });
 }
 
-// ⭐ 跨页追加裁切段（暂存当前第1段，随后可在下一页继续截取）
 async function addNextCropPiece() {
   if (!currentSnipRect || !currentSnipTarget) return;
   const pieceBase64 = await extractSingleRectBase64(activeExam.pages[currentSnipRect.pageIdx], currentSnipRect);
@@ -1566,11 +1593,9 @@ async function addNextCropPiece() {
   currentSnipRect = null;
   document.querySelectorAll(".crop-overlay-canvas").forEach(c => c.getContext("2d").clearRect(0,0,c.width,c.height));
   document.getElementById("snipConfirmBar").style.display = "none";
-  document.getElementById("snipPiecesLabel").textContent = `已截取 ${tempCropPiecesBase64.length} 段，请在下一页继续画框截取下半段！`;
-  alert(`✅ 已暂存第 ${tempCropPiecesBase64.length} 段！请滑动到下一页，继续拖拽框选下半部分，最后点击【保存该题】合并生成完整长图！`);
+  alert(`✅ 已暂存第 ${tempCropPiecesBase64.length} 段！请滑动到下一页框选下半部分，最后点击【保存该题】。`);
 }
 
-// 多段长图垂直无缝拼接
 async function stitchImagesVertically(base64Arr) {
   const imgs = await Promise.all(base64Arr.map(src => new Promise(res => {
     const img = new Image(); img.onload = () => res(img); img.src = src;
@@ -1588,7 +1613,6 @@ async function stitchImagesVertically(base64Arr) {
   return c.toDataURL("image/jpeg", 0.9);
 }
 
-// 确认保存（支持单段或多段长图拼接）
 async function confirmSaveSnip() {
   if (!currentSnipTarget) return;
   let finalBase64 = "";
@@ -1609,21 +1633,22 @@ async function confirmSaveSnip() {
     subject: activeExam.subject || 'math', grade: "四上",
     module: (currentSnipTarget.num >= 17 ? "填空解答" : "真题考点"), status: "🔴 待攻克",
     note: `${activeExam.title} 第${currentSnipTarget.num}题`, ans: currentSnipTarget.correctOpt,
-    ai: `模考作答：${currentSnipTarget.userOpt}，正解为 ${currentSnipTarget.correctOpt}。已精准裁切原题${tempCropPiecesBase64.length>1?'(跨页无缝长图)':''}。`,
+    ai: `模考原题截图收录。参考答案：${currentSnipTarget.correctOpt}`,
     img: finalBase64, updatedAt: new Date().toISOString()
   });
 
   const btn = document.getElementById(`snip-btn-${currentSnipTarget.num}`);
   if (btn) { btn.textContent = "✅ 已保存"; btn.disabled = true; }
-  alert(`🎉 第 ${currentSnipTarget.num} 题已${tempCropPiecesBase64.length>1?'完成跨页拼接并':''}成功存入错题库！`);
+  alert(`🎉 第 ${currentSnipTarget.num} 题已保存到错题库！`);
   exitSnippingMode();
 }
 
-// 考场业务
 async function startExam(examId) {
   activeExam = (await dbGetAll(STORE_EXAMS)).find(x => x.id === examId); if (!activeExam) return;
   document.getElementById("runningExamTitle").textContent = activeExam.title;
-  document.getElementById("examView").style.display = "flex"; document.getElementById("examResultPanel").style.display = "none";
+  document.getElementById("examView").style.display = "flex";
+  document.getElementById("examResultPanel").style.display = "none";
+  document.getElementById("aiExamGradeReport").style.display = "none";
   document.getElementById("runningSubmitBtn").style.display = "inline-flex";
   const wrapper = document.getElementById("paperContentWrapper"); resetZoomPaper();
 
@@ -1706,7 +1731,7 @@ function submitRunningExam() {
   if (!lastWrongQuestionsToSync.length) {
     wrongHtml += `<div style="color:#16a34a; font-weight:bold; text-align:center; padding:10px; background:#f0fdf4; border-radius:6px; margin-bottom:8px;">🎉 选择题全部答对！已计入学习打卡。</div>`;
   } else {
-    wrongHtml += `<div style="font-weight:bold; font-size:0.85rem; color:#b91c1c; margin-bottom:6px;">选择题错题（点击在试卷上画框截图保存）：</div>` +
+    wrongHtml += `<div style="font-weight:bold; font-size:0.85rem; color:#b91c1c; margin-bottom:6px;">选择题错题（点击在试卷上截图保存）：</div>` +
       lastWrongQuestionsToSync.map(item => `
         <div style="display:flex; justify-content:space-between; align-items:center; background:#fff; border:1px solid #e2e8f0; border-radius:6px; padding:6px 10px; margin-bottom:5px;">
           <span style="font-size:0.82rem;"><b>第 ${item.num} 题</b> (错选: <span style="color:#dc2626;">${item.userOpt}</span> / 正解: <span style="color:#16a34a;">${item.correctOpt}</span>)</span>
@@ -1717,7 +1742,7 @@ function submitRunningExam() {
 
   wrongHtml += `
     <div style="margin-top:12px; border-top:1px dashed #cbd5e1; padding-top:8px;">
-      <div style="font-size:0.82rem; font-weight:700; color:#475569; margin-bottom:6px;">填空/解答大题错题收录（若做错点击直接截图）：</div>
+      <div style="font-size:0.82rem; font-weight:700; color:#475569; margin-bottom:6px;">填空/解答大题错题收录：</div>
       <div style="display:grid; grid-template-columns: 1fr 1fr; gap:6px;">
         ${[17, 18, 19, 20].map((num, idx) => `
           <button class="btn btn-outline" style="justify-content:center; font-size:0.75rem; color:#2563eb;" onclick="startSnipping(${num}, '填空解答', '${(activeExam.faqAns && activeExam.faqAns[idx]) || ''}')">
@@ -1730,11 +1755,40 @@ function submitRunningExam() {
   container.innerHTML = wrongHtml;
 }
 
+// 模拟卷解答题 AI 智能评分与错题重点剖析
+async function aiGradeExamFaq() {
+  const reportBox = document.getElementById("aiExamGradeReport");
+  reportBox.style.display = "block";
+  reportBox.innerHTML = `⏳ 正在由 AI 智能比对解答题作答草稿与参考答案，极速批改中...`;
+
+  const faqData = [17, 18, 19, 20].map((num, idx) => {
+    const inputVal = (document.getElementById(`faq-input-${num}`)?.value || "").trim();
+    const refAns = (activeExam.faqAns && activeExam.faqAns[idx]) || "暂无";
+    return `【第${num}题】学生草稿/最终答案: "${inputVal || '未作答'}" | 官方参考答案: "${refAns}"`;
+  }).join('\n');
+
+  const prompt = `你是一位小学四年级竞赛特级阅卷专家。请对学生在 17~20 题填空解答题的作答进行【智能评分与超精简诊断】：
+【试卷名称】：${activeExam.title}
+【作答与参考答案】：
+${faqData}
+
+【输出要求（务必精炼直切要害，杜绝套话）】：
+1. 给出解答题预估得分（每题满分5分，共20分）及总评。
+2. 针对失分或做错的题目，输出【失分原因】（指出哪一步算错或遗漏）+【秒懂正确思路】（限2句话讲透核心算式与逻辑）。
+3. 格式规范，使用 Markdown 格式。`;
+
+  try {
+    const gradeResult = await queryGemini(prompt, [], 900);
+    renderRichContent(reportBox, gradeResult);
+  } catch(e) {
+    reportBox.innerHTML = `<span style="color:#dc2626;">批改失败：${e.message}</span>`;
+  }
+}
+
 function exitExam() {
   if (confirm("确定退出考场吗？")) { clearInterval(examTimer); exitSnippingMode(); document.getElementById("examView").style.display = "none"; }
 }
 
-// 试卷上传
 let editingExamId = null, tempNewExamPages = [];
 function openUploadExamModal() {
   editingExamId = null; document.getElementById("modalExamTitleText").textContent = "录入新试卷";
@@ -1786,23 +1840,30 @@ async function saveNewExam() {
     pages: tempNewExamPages
   };
   if (editingExamId) item.id = editingExamId;
-  await dbAdd(STORE_EXAMS, item); document.getElementById("uploadExamModal").classList.remove("active");
+  await dbAdd(STORE_EXAMS, item); closeAllModals();
   renderSubjectPortal(); alert("保存成功！");
 }
 async function deleteExam(id) {
   if (confirm("确定要删除这套试卷吗？")) { await dbDelete(STORE_EXAMS, id); renderSubjectPortal(); }
 }
 async function deleteSingleQuestion(id) {
-  if (confirm("确定要删除此错题吗？")) { await dbDelete(STORE_QUESTIONS, id); renderVault(); renderDashboard(); }
+  if (confirm("确定要删除此错题吗？")) {
+    await dbDelete(STORE_QUESTIONS, id);
+    vaultSelectedIdsInOrder = vaultSelectedIdsInOrder.filter(x => x !== id);
+    renderVault(); renderDashboard();
+  }
 }
 function toggleSelectAllVault() {
-  const boxes = document.querySelectorAll(".vault-checkbox"), anyU = Array.from(boxes).some(b => !b.checked);
-  boxes.forEach(b => b.checked = anyU);
+  const boxes = document.querySelectorAll(".vault-checkbox");
+  const anyUnchecked = Array.from(boxes).some(b => !b.checked);
+  boxes.forEach(b => {
+    b.checked = anyUnchecked;
+    handleVaultCheckboxChange(b.value, anyUnchecked);
+  });
 }
 
-// 备份恢复
 async function exportData() {
-  const blob = new Blob([JSON.stringify({ version: 7, questions: await dbGetAll(STORE_QUESTIONS), exams: await dbGetAll(STORE_EXAMS), vocab: await dbGetAll(STORE_VOCAB) }, null, 2)], { type: "application/json" });
+  const blob = new Blob([JSON.stringify({ version: 7.2, questions: await dbGetAll(STORE_QUESTIONS), exams: await dbGetAll(STORE_EXAMS), vocab: await dbGetAll(STORE_VOCAB) }, null, 2)], { type: "application/json" });
   const a = document.createElement("a"); a.href = URL.createObjectURL(blob);
   a.download = `智学多学科备份_${new Date().getMonth()+1}月${new Date().getDate()}日.json`; a.click();
 }
@@ -1826,9 +1887,9 @@ function importData() {
 }
 
 function openKeyModal() { document.getElementById("inpApiKey").value = localStorage.getItem("GEMINI_API_KEY") || ""; document.getElementById("keyModal").classList.add("active"); }
-function saveApiKey() { localStorage.setItem("GEMINI_API_KEY", document.getElementById("inpApiKey").value.trim()); document.getElementById("keyModal").classList.remove("active"); alert("Key 已保存！"); }
+function saveApiKey() { localStorage.setItem("GEMINI_API_KEY", document.getElementById("inpApiKey").value.trim()); closeAllModals(); alert("Key 已保存！"); }
+function closeAllModals() { document.querySelectorAll(".modal-overlay").forEach(m => m.classList.remove("active")); }
 
-// 点击空白背景自然退出弹窗
 function initModalBackdropDismiss() {
   document.querySelectorAll('.modal-overlay').forEach(overlay => {
     overlay.addEventListener('click', e => { if (e.target === overlay) overlay.classList.remove('active'); });
