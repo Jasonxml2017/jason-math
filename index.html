@@ -63,7 +63,7 @@
   .word-card-text { font-size: 1.5rem; font-weight: 800; text-align: center; padding: 18px 10px; border-radius: 8px; margin: 8px 0 4px; letter-spacing: 1px; cursor: pointer; }
   .card-extension-badge { background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 8px; padding: 8px 12px; font-size: 0.88rem; color: #166534; margin: 6px 0 10px; line-height: 1.45; }
 
-  /* 考场全屏双屏视图 */
+  /* 考场全屏视图 */
   #examView { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: #0f172a; z-index: 500; flex-direction: column; }
   .exam-header { background: #1e293b; color: white; padding: 10px 18px; display: flex; justify-content: space-between; align-items: center; }
   .exam-body { flex: 1; display: flex; overflow: hidden; }
@@ -100,7 +100,7 @@
   .modal-subtab { flex: 1; text-align: center; padding: 6px; font-size: 0.85rem; font-weight: 700; cursor: pointer; border-radius: 6px; color: #64748b; }
   .modal-subtab.active { background: white; color: var(--primary); }
 
-  /* 沉浸全屏模块 */
+  /* 沉浸模块 */
   #smartReviewView { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: #0f172a; z-index: 600; flex-direction: column; color: white; }
   .review-top-bar { background: #1e293b; padding: 12px 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #334155; }
   .review-content-area { flex: 1; overflow-y: auto; padding: 20px; display: flex; justify-content: center; }
@@ -122,7 +122,7 @@
 <header>
   <div class="brand" onclick="switchNav('dashboard')">
     <span>🍎 智学多学科管家</span>
-    <span style="font-size:0.7rem; font-weight:bold; background:#e0f2fe; color:#0369a1; padding:2px 8px; border-radius:12px;">v7.3 终极纯净版</span>
+    <span style="font-size:0.7rem; font-weight:bold; background:#e0f2fe; color:#0369a1; padding:2px 8px; border-radius:12px;">v7.5 稳定极速版</span>
   </div>
   <div class="nav-tabs">
     <div class="nav-tab active" id="tabNavDashboard" onclick="switchNav('dashboard')">🏠 首页工作台</div>
@@ -191,7 +191,7 @@
   <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px; flex-wrap:wrap; gap:8px;">
     <div>
       <h2 style="font-size:1.3rem;">🎯 错题复习总库</h2>
-      <p style="font-size:0.85rem; color:#64748b;">勾选左上角可选定错题（按勾选次序精准复习，<b>复习完自动清空勾选</b>）；点击【字或原图】可编辑原题</p>
+      <p style="font-size:0.85rem; color:#64748b;">按勾选次序精准复习（复习完自动清空勾选）；默认不显示已斩杀题卡</p>
     </div>
     <div style="display:flex; gap:6px; flex-wrap:wrap;">
       <button class="btn btn-primary" id="btnVaultReviewSelected" style="background:#7c3aed;" onclick="startSelectedVaultReview()">⚡ 复习所选题 (0)</button>
@@ -205,13 +205,18 @@
     <div class="filter-row"><span style="font-size:0.82rem; font-weight:700; min-width:48px;">学科：</span><div id="filterSubjectChips" style="display:flex; gap:6px; flex-wrap:wrap;"></div></div>
     <div class="filter-row"><span style="font-size:0.82rem; font-weight:700; min-width:48px;">模块：</span><div id="filterModuleChips" style="display:flex; gap:6px; flex-wrap:wrap;"></div></div>
     <div class="filter-row"><span style="font-size:0.82rem; font-weight:700; min-width:48px;">年级：</span><div id="filterGradeChips" style="display:flex; gap:6px; flex-wrap:wrap;"></div></div>
-    <div class="filter-row"><span style="font-size:0.82rem; font-weight:700; min-width:48px;">状态：</span>
-      <div id="filterStatusChips" style="display:flex; gap:6px; flex-wrap:wrap;">
+    <div class="filter-row">
+      <span style="font-size:0.82rem; font-weight:700; min-width:48px;">状态：</span>
+      <div id="filterStatusChips" style="display:flex; gap:6px; flex-wrap:wrap; align-items:center;">
         <span class="filter-chip active" onclick="setFilterStatus('')">全部状态</span>
         <span class="filter-chip" onclick="setFilterStatus('🔴 待攻克')">🔴 待攻克</span>
         <span class="filter-chip" onclick="setFilterStatus('🟡 巩固中')">🟡 巩固中</span>
         <span class="filter-chip" onclick="setFilterStatus('🟢 已斩杀')">🟢 已斩杀</span>
       </div>
+      <!-- 需求3：默认不显示已斩杀题卡，勾选后才显示 -->
+      <label style="margin-left:auto; display:inline-flex; align-items:center; gap:5px; font-size:0.82rem; font-weight:700; cursor:pointer; color:#166534; background:#f0fdf4; border:1px solid #bbf7d0; padding:4px 10px; border-radius:16px;">
+        <input type="checkbox" id="chkShowKilledVault" onchange="toggleShowKilledVault(this.checked)"> 显示已斩杀题卡
+      </label>
     </div>
   </div>
   <div class="q-grid" id="qList"></div>
@@ -310,10 +315,11 @@
       <h4 style="font-size:0.9rem; margin:15px 0 10px;">二、解答题答题草稿 (17~20题)</h4>
       <div id="faqSheet"></div>
 
+      <!-- 需求2：交卷后由 Gemini 对全卷包括选择题、解答题、填空题的整体智能评分与诊断 -->
       <div id="examResultPanel" style="display:none; margin-top:15px;">
         <div style="background:#f0fdf4; border:1px solid #bbf7d0; padding:12px; border-radius:8px; text-align:center;">
           <h3 style="color:#15803d; font-size:1.2rem;" id="finalScoreText">选择题得分：0 / 80</h3>
-          <button class="btn btn-primary" id="btnAiGradeExam" style="margin-top:8px; background:#7c3aed;" onclick="aiGradeExamFaq()">🤖 AI 智能批阅解答题与思路诊断</button>
+          <button class="btn btn-primary" id="btnAiGradeExam" style="margin-top:8px; background:#7c3aed; font-size:0.85rem;" onclick="aiGradeExamFull()">🤖 AI 全卷整体评分与全科错题深度诊断</button>
         </div>
         <div id="aiExamGradeReport" style="display:none; margin-top:12px; background:#f8fafc; border:1px solid #cbd5e1; border-radius:8px; padding:12px; font-size:0.9rem; line-height:1.6;"></div>
         <div id="wrongItemsContainer" style="margin-top:12px;"></div>
@@ -418,7 +424,7 @@
       <div id="cropWorkspace" style="display:none; position:relative; max-height:280px; overflow:auto; background:#334155; border-radius:8px; padding:10px; text-align:center;">
         <div style="position:relative; display:inline-block;"><img id="cropTargetImg" style="max-width:100%; display:block; user-select:none;"><canvas id="cropModalCanvas" style="position:absolute; top:0; left:0; width:100%; height:100%; touch-action:none; cursor:crosshair;"></canvas></div>
       </div>
-      <p style="font-size:0.75rem; color:#64748b; margin-top:4px;">拍照后，在图上用手指拖拽画框，自动裁切题目区域！</p>
+      <p style="font-size:0.75rem; color:#64748b; margin-top:4px;">拍照后，在图上拖拽画框，自动裁切题目区域！</p>
     </div>
     <div style="display:flex; justify-content:space-between; align-items:center; margin-top:16px;">
       <span style="font-size:0.75rem; color:#64748b;">提示：保存后窗口保留，方便连续录入</span>
@@ -475,7 +481,18 @@
 </div>
 
 <script>
-const GEMINI_MODELS = ["gemini-2.5-flash", "gemini-2.0-flash", "gemini-1.5-flash"];
+// 需求 1：优先选用官方高可用 Flash 模型调度链，消除 404
+const GEMINI_MODELS = [
+  "gemini-3.8-flash",
+  "gemini-3.7-flash",
+  "gemini-3.6-flash",
+  "gemini-3.5-flash-lite",
+  "gemini-2.5-flash",
+  "gemini-2.0-flash",
+  "gemini-1.5-flash",
+  "gemini-1.5-flash-latest"
+];
+
 const SUBJECTS = {
   math: { id: "math", name: "数学思维", icon: "📐", desc: "WMO竞赛真题、高频几何模型、行程工程与错题攻坚", color: "#2563eb", bg: "#eff6ff", modules: ["几何模型", "行程问题", "数论整除", "计数组合", "计算与数列", "典型应用题", "填空解答"] },
   chinese: { id: "chinese", name: "语文素养", icon: "📖", desc: "易错生字词打卡、阅读理解、古诗文默写与作文", color: "#be123c", bg: "#fff1f2", modules: ["字词拼音", "修改病句", "文言诗词", "阅读理解", "表达应用", "其它错题"] },
@@ -483,14 +500,14 @@ const SUBJECTS = {
 };
 
 let currentPortalSubject = "math", filterSubject = "", filterModule = "", filterGrade = "", filterStatus = "";
+let showKilledInVault = false; // 需求3：默认不显示已斩杀错题
 let db = null;
 const DB_NAME = "MathVaultDB", STORE_QUESTIONS = "questions", STORE_EXAMS = "exams", STORE_VOCAB = "vocab";
 
-// 跟踪错题复习总库的精准勾选顺序
-let vaultSelectedIdsInOrder = [];
+let vaultSelectedIdsInOrder = []; // 选定题目复习顺序
 
-// 通用极速 Gemini 请求引擎
-async function queryGemini(prompt, images = [], maxTokens = 900) {
+// 需求1：高可用、自动多级静默降级、成功记忆模型的请求总引擎
+async function queryGemini(prompt, images = [], maxTokens = 1000) {
   const apiKey = localStorage.getItem("GEMINI_API_KEY");
   if (!apiKey) throw new Error("请先点击右上角【🔑 Key】配置 Gemini API Key！");
   
@@ -502,24 +519,38 @@ async function queryGemini(prompt, images = [], maxTokens = 900) {
     }
   });
 
+  // 优先提取并置顶上次成功记忆的模型
+  const cachedModel = localStorage.getItem("WORKING_GEMINI_MODEL");
+  const modelQueue = cachedModel 
+    ? [cachedModel, ...GEMINI_MODELS.filter(m => m !== cachedModel)]
+    : [...GEMINI_MODELS];
+
   let lastErr = "";
-  for (const model of GEMINI_MODELS) {
+  for (const model of modelQueue) {
     try {
       const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           contents: [{ parts }],
-          generationConfig: { maxOutputTokens: maxTokens, temperature: 0.25 }
+          generationConfig: { maxOutputTokens: maxTokens, temperature: 0.3 }
         })
       });
-      if (!res.ok) { lastErr = `HTTP ${res.status}`; continue; }
+      if (!res.ok) {
+        lastErr = `HTTP ${res.status}`;
+        continue; // 遇 404、503、400 自动秒级静默切换下一模型
+      }
       const data = await res.json();
       const txt = data.candidates?.[0]?.content?.parts?.[0]?.text;
-      if (txt) return txt;
-    } catch(e) { lastErr = e.message; }
+      if (txt) {
+        localStorage.setItem("WORKING_GEMINI_MODEL", model); // 成功持久化记忆
+        return txt;
+      }
+    } catch(e) {
+      lastErr = e.message;
+    }
   }
-  throw new Error(lastErr || "AI 服务繁忙，请稍候再试");
+  throw new Error(lastErr || "AI 接口无响应，请核对 API Key 是否正确");
 }
 
 function initDB() {
@@ -723,7 +754,7 @@ async function refreshDailyReading() { stopSpeechReading(); await fetchAndGenera
 async function fetchAndGenerateDailyReading() {
   const grade = localStorage.getItem("READER_GRADE") || "四上";
   const container = document.getElementById("readingArticleContainer");
-  container.innerHTML = `<div style="text-align:center; padding:60px 0;"><h3 style="color:#059669; margin-bottom:8px;">⏳ 正在由 AI 定制【${grade}】中英文拓展阅读...</h3><p style="color:#78716c; font-size:0.9rem;">契合四年级阅读理解考点，约 4~6 秒...</p></div>`;
+  container.innerHTML = `<div style="text-align:center; padding:60px 0;"><h3 style="color:#059669; margin-bottom:8px;">⏳ 正在由 AI 定制【${grade}】中英文拓展阅读...</h3><p style="color:#78716c; font-size:0.9rem;">契合四年级阅读理解考点，约 3~5 秒...</p></div>`;
 
   const prompt = `为小学【${grade}】编写今日阅读短文，返回JSON格式：{"chinese":"<h1>标题</h1><p>约350字自然科普或历史故事...</p><div class='comprehension-box'><b>💡 思考小问答：</b><br>1. 问？<br><button class='btn btn-outline' style='margin-top:8px; background:white;' onclick='toggleReadingAnswers()'>👁️ 查看参考答案</button><div id='readingAnswerDrawer' style='display:none; margin-top:8px; color:#15803d; font-weight:600;'>1. 答案...</div></div>","english":"<h1>Title</h1><p>About 120-150 words story for grade 4...</p><div class='comprehension-box'><b>💡 Questions:</b><br>1. Question?<br><button class='btn btn-outline' style='margin-top:8px; background:white;' onclick='toggleReadingAnswers()'>👁️ View Answers</button><div id='readingAnswerDrawer' style='display:none; margin-top:8px; color:#15803d; font-weight:600;'>1. Answer...</div></div>"}`;
   
@@ -945,7 +976,7 @@ function playPleasantSound() {
   } catch(e) {}
 }
 
-// 错题复习总库：支持按用户“勾选顺序”精准复习，并在结束后自动取消勾选
+// 错题复习总库：按勾选次序复习
 let reviewQueue = [], reviewCurrentIdx = 0, reviewTimerInterval = null, reviewSeconds = 0, reviewKilledCount = 0;
 
 function handleVaultCheckboxChange(id, isChecked) {
@@ -971,7 +1002,6 @@ async function startSelectedVaultReview() {
   const all = await dbGetAll(STORE_QUESTIONS);
   const qMap = new Map(all.map(q => [q.id, q]));
   const orderedQueue = vaultSelectedIdsInOrder.map(id => qMap.get(id)).filter(Boolean);
-  
   if (!orderedQueue.length) { alert("所选题已失效或不存在！"); return; }
   launchReviewWithQuestions(orderedQueue);
 }
@@ -1056,29 +1086,21 @@ async function stepReviewQuestion(st) {
   reviewCurrentIdx++; renderCurrentReviewCard();
 }
 
-// 核心优化点：复习正常全部完成，清理勾选队列并刷新勾选框
 function finishSmartReview() {
   clearInterval(reviewTimerInterval);
   const m = Math.max(1, Math.round(reviewSeconds / 60)); performCheckin(m, true);
   alert(`🎉 恭喜完成错题复习打卡！\n\n⏱️ 本次专注时长：${m} 分钟\n🏆 成功斩杀题目：${reviewKilledCount} 道！`);
-  
-  // 自动取消所有已勾选状态
   vaultSelectedIdsInOrder = [];
   updateVaultSelectedCountBadge();
-  
   exitSmartReview();
 }
 
-// 核心优化点：中途退出复习，同样安全重置勾选队列并刷新页面
 function exitSmartReview() {
   clearInterval(reviewTimerInterval);
   if (reviewSeconds > 30) performCheckin(Math.max(1, Math.round(reviewSeconds / 60)), true);
   document.getElementById("smartReviewView").style.display = "none";
-  
-  // 确保退出时复选框全清空
   vaultSelectedIdsInOrder = [];
   updateVaultSelectedCountBadge();
-
   renderDashboard(); 
   renderVault();
 }
@@ -1187,10 +1209,13 @@ async function saveSubjectErrorEntry() {
   renderSubjectPortal(); renderDashboard();
 }
 
+// 需求 3：错题总库过滤，默认不显示已斩杀错题
 async function renderVault() {
   renderFilterChips();
   const all = await dbGetAll(STORE_QUESTIONS);
   const filtered = all.filter(q => {
+    // 若未勾选“显示已斩杀”，且当前不是特定筛选“已斩杀”，则默认屏蔽
+    if (!showKilledInVault && q.status === '🟢 已斩杀' && filterStatus !== '🟢 已斩杀') return false;
     if (filterSubject && (q.subject || 'math') !== filterSubject) return false;
     if (filterModule && q.module !== filterModule) return false;
     if (filterGrade && q.grade !== filterGrade) return false;
@@ -1198,13 +1223,17 @@ async function renderVault() {
     return true;
   });
   
-  // 清理不存在的已选中ID
   const curIds = new Set(all.map(q => q.id));
   vaultSelectedIdsInOrder = vaultSelectedIdsInOrder.filter(id => curIds.has(id));
   updateVaultSelectedCountBadge();
 
   const c = document.getElementById("qList");
   c.innerHTML = filtered.length ? filtered.map(q => renderQuestionCardHtml(q)).join('') : `<div style="grid-column:1/-1; text-align:center; padding:40px; color:#94a3b8;">没有找到符合条件的错题！</div>`;
+}
+
+function toggleShowKilledVault(checked) {
+  showKilledInVault = checked;
+  renderVault();
 }
 
 function renderQuestionCardHtml(q) {
@@ -1250,6 +1279,10 @@ function setFilterModule(m) { filterModule = m; renderVault(); }
 function setFilterGrade(g) { filterGrade = g; renderVault(); }
 function setFilterStatus(st) {
   filterStatus = st;
+  if (st === '🟢 已斩杀') {
+    showKilledInVault = true;
+    document.getElementById("chkShowKilledVault").checked = true;
+  }
   document.querySelectorAll("#filterStatusChips .filter-chip").forEach(c => c.classList.toggle("active", c.textContent.includes(st) || (st==='' && c.textContent==='全部状态')));
   renderVault();
 }
@@ -1308,6 +1341,7 @@ function renderRichContent(el, text) {
   renderMathInElement(el, { delimiters: [{ left: "$$", right: "$$", display: true }, { left: "$", right: "$", display: false }, { left: "\\(", right: "\\)", display: false }, { left: "\\[", right: "\\]", display: true }], throwOnError: false });
 }
 
+// 极简直观的名师思路分析
 let activeAnalysisQuestionId = null;
 async function analyzeSingleQuestionById(id) {
   const q = (await dbGetAll(STORE_QUESTIONS)).find(x => x.id === id); if (!q) return;
@@ -1355,19 +1389,19 @@ async function doAnalyzeThinking(questions, singleSaveId) {
   box.innerHTML = `⏳ 正在直连极速分析引擎，稍候约 2~4 秒...`;
   document.getElementById("analysisModal").classList.add("active");
 
-  const prompt = `你是一位小学四年级金牌名师。请给出【极其凝练、直击要害】的思路导图（杜绝任何客套话与大段铺垫，200字内直奔核心）：
+  const prompt = `你是一位小学四年级竞赛名师。请给出【极度凝练、直击破题要害】的思路导图（拒绝客套话与大段铺垫，200字内）：
 【破题题眼】：一句话找出最关键突破口。
-【极简秒解】：核心算式/图解步骤（数学算式乘号用 \\times，公式使用 LaTeX 规范）。
-【避坑指南】：四年级学生最容易错的思维陷阱。
-(若是语文生字，给出【组词拓展】：精选3个常用词语；若是英语，给出【造句拓展】：1个常用简短例句)。
+【极简步骤】：核心算式/推导（乘号必须用 \\times，公式用规范 LaTeX）。
+【避坑指南】：四年级学生最容易栽跟头的思维陷阱。
+(语文生字附带【组词拓展】3个；英语附带【造句拓展】1个短句)。
 
-待分析题目：
-${questions.map((q, i) => `【题${i+1}】学科:${q.subject||'math'}, 考点:${q.module||''}, 题目/错因:${q.note||''}, 答案:${q.ans||''}`).join('\n')}`;
+待分析错题：
+${questions.map((q, i) => `【题${i+1}】学科:${q.subject||'math'}, 考点:${q.module||''}, 内容:${q.note||''}, 答案:${q.ans||''}`).join('\n')}`;
 
   const imgs = questions.map(q => q.img).filter(Boolean);
 
   try {
-    const text = await queryGemini(prompt, imgs, 700);
+    const text = await queryGemini(prompt, imgs, 800);
     if (singleSaveId) {
       const q = (await dbGetAll(STORE_QUESTIONS)).find(x => x.id === singleSaveId);
       if (q) {
@@ -1394,6 +1428,7 @@ function printAnalysisContent() {
   w.document.close(); setTimeout(() => w.print(), 500);
 }
 
+// 变式题生成业务
 async function generateSimilarSingleById(id) { const q = (await dbGetAll(STORE_QUESTIONS)).find(x => x.id === id); if (q) doGenerateSimilar([q]); }
 async function generateSimilarWithGemini() {
   if (!vaultSelectedIdsInOrder.length) { alert("请先勾选需要出变式题的错题！"); return; }
@@ -1401,36 +1436,38 @@ async function generateSimilarWithGemini() {
   const qMap = new Map(all.map(q => [q.id, q]));
   doGenerateSimilar(vaultSelectedIdsInOrder.map(id => qMap.get(id)).filter(Boolean));
 }
+
 async function doGenerateSimilar(questions) {
   const box = document.getElementById("similarOutput");
-  box.innerHTML = `⏳ 正在极速生成高质量变式题，约 3~5 秒...`;
+  box.innerHTML = `⏳ 正在由最新 Flash 引擎生成高质量变式题，约 3~5 秒...`;
   document.getElementById("similarModal").classList.add("active");
 
-  const prompt = `你是一位小学四年级竞赛命题名师。请针对提供的题目分别出1道【高质量变式练习题】：
-【核心要求】：
-1. 考点本质与核心解题逻辑一致，但背景情境、变量条件或数字关系必须有显著变化（严禁只改几个数字的雷同题，要有新鲜感但难度契合四年级）。
-2. 数学公式严格用 LaTeX（乘号 \\times）。
-3. 结构极其紧凑明了：
+  const prompt = `你是一位小学四年级竞赛命题名师。请针对提供的题目分别出1道【高质量变式题】：
+【核心标准】：
+1. 核心数学考点与思维模型一致，但情境、条件或数字关系必须有显著变化（禁止只改数字的雷同题）。
+2. 数学公式使用 LaTeX，乘号严格使用 \\times。
+3. 结构紧凑清晰：
 ### 📝 变式题
 [清晰题干]
 ### 💡 核心点拨
 [1~2句话提炼思路]
-### 🎯 简明答案
-[最简答案与步骤]
+### 🎯 参考答案与步骤
+[简明答案与步骤]
 
 原题参考：
-${questions.map((q, i) => `【题${i+1}】考点:${q.module||''}, 原题内容:${q.note||''}`).join('\n')}`;
+${questions.map((q, i) => `【题${i+1}】考点:${q.module||''}, 原题:${q.note||''}`).join('\n')}`;
 
   const imgs = questions.map(q => q.img).filter(Boolean);
 
   try {
-    const text = await queryGemini(prompt, imgs, 800);
+    const text = await queryGemini(prompt, imgs, 900);
     performCheckin(1, true);
     renderRichContent(box, text);
   } catch(e) {
     box.innerHTML = `<span style="color:#dc2626;">变式题生成失败：${e.message}</span>`;
   }
 }
+
 function copySimilarText() { navigator.clipboard.writeText(document.getElementById("similarOutput").innerText).then(() => alert("已复制！")); }
 function printSimilarContent() {
   const w = window.open('','','width=800,height=600');
@@ -1438,7 +1475,7 @@ function printSimilarContent() {
   w.document.close(); setTimeout(() => w.print(), 500);
 }
 
-// 模拟卷考场与 AI 智能批阅
+// 模拟卷考场与全卷 AI 整体评分
 let activeExam = null, examTimer = null, examSecondsRemaining = 0, userExamAnswers = {};
 let currentZoom = 1.0, pinchStartDist = 0, pinchStartZoom = 1.0;
 
@@ -1766,32 +1803,47 @@ function submitRunningExam() {
   container.innerHTML = wrongHtml;
 }
 
-async function aiGradeExamFaq() {
+// 需求 2：AI 对选择题、填空题、解答题的全卷整体评分与全科错题诊断
+async function aiGradeExamFull() {
   const reportBox = document.getElementById("aiExamGradeReport");
   reportBox.style.display = "block";
-  reportBox.innerHTML = `⏳ 正在由 AI 智能比对解答题作答草稿与参考答案，极速批改中...`;
+  reportBox.innerHTML = `⏳ 正在请求 Gemini 对全卷（选择题 + 解答草稿）整体阅卷评分并分析错题，稍候 3~5 秒...`;
+
+  const mcqSummary = lastWrongQuestionsToSync.length === 0
+    ? "选择题 1~16 题全部正确（满分80分）。"
+    : `选择题做错 ${lastWrongQuestionsToSync.length} 题：\n` + lastWrongQuestionsToSync.map(w => `- 第 ${w.num} 题：学生错选 ${w.userOpt}，官方标准答案为 ${w.correctOpt}`).join('\n');
 
   const faqData = [17, 18, 19, 20].map((num, idx) => {
     const inputVal = (document.getElementById(`faq-input-${num}`)?.value || "").trim();
     const refAns = (activeExam.faqAns && activeExam.faqAns[idx]) || "暂无";
-    return `【第${num}题】学生草稿/最终答案: "${inputVal || '未作答'}" | 官方参考答案: "${refAns}"`;
+    return `【第${num}题】学生解答草稿: "${inputVal || '未作答'}" | 官方参考答案: "${refAns}"`;
   }).join('\n');
 
-  const prompt = `你是一位小学四年级竞赛特级阅卷专家。请对学生在 17~20 题填空解答题的作答进行【智能评分与超精简诊断】：
-【试卷名称】：${activeExam.title}
-【作答与参考答案】：
+  const prompt = `你是一位小学四年级竞赛特级阅卷专家。请对学生在【${activeExam.title}】的整份答卷进行【智能综合评分与全卷错题诊断】：
+【试卷作答详情】：
+一、单选题（1~16题，每题5分，满分80分）：
+${mcqSummary}
+
+二、解答/填空题（17~20题，每题5分，满分20分）：
 ${faqData}
 
-【输出要求（务必精炼直切要害，杜绝套话）】：
-1. 给出解答题预估得分（每题满分5分，共20分）及总评。
-2. 针对失分或做错的题目，输出【失分原因】（指出哪一步算错或遗漏）+【秒懂正确思路】（限2句话讲透核心算式与逻辑）。
-3. 格式规范，使用 Markdown 格式。`;
+【输出规范（言简意赅，直击要害）】：
+### 🏆 整体评分与段位表现
+- 选择题得分：[分数]/80
+- 解答题得分：[估分]/20
+- 全卷预估总分：[总分]/100（简评四年级学生目前知识掌握薄弱板块）
+
+### 💡 全卷错题精准速析（包含做错的选择题与失分的解答题）
+对每一道失分题，用极度凝练的话术输出：
+- **【题号/考点】**：
+- **【失分病根】**：一语指出孩子为什么会错（如计算马虎、遗漏分类、未掌握对应模型）。
+- **【秒懂思路】**：1~2句话讲透最简破题关键算式（公式用 LaTeX，乘号用 \\times）。`;
 
   try {
-    const gradeResult = await queryGemini(prompt, [], 900);
+    const gradeResult = await queryGemini(prompt, [], 1100);
     renderRichContent(reportBox, gradeResult);
   } catch(e) {
-    reportBox.innerHTML = `<span style="color:#dc2626;">批改失败：${e.message}</span>`;
+    reportBox.innerHTML = `<span style="color:#dc2626;">全卷批阅诊断失败：${e.message}</span>`;
   }
 }
 
@@ -1873,7 +1925,7 @@ function toggleSelectAllVault() {
 }
 
 async function exportData() {
-  const blob = new Blob([JSON.stringify({ version: 7.3, questions: await dbGetAll(STORE_QUESTIONS), exams: await dbGetAll(STORE_EXAMS), vocab: await dbGetAll(STORE_VOCAB) }, null, 2)], { type: "application/json" });
+  const blob = new Blob([JSON.stringify({ version: 7.5, questions: await dbGetAll(STORE_QUESTIONS), exams: await dbGetAll(STORE_EXAMS), vocab: await dbGetAll(STORE_VOCAB) }, null, 2)], { type: "application/json" });
   const a = document.createElement("a"); a.href = URL.createObjectURL(blob);
   a.download = `智学多学科备份_${new Date().getMonth()+1}月${new Date().getDate()}日.json`; a.click();
 }
