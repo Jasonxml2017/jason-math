@@ -122,7 +122,7 @@
 <header>
   <div class="brand" onclick="switchNav('dashboard')">
     <span>🍎 智学多学科管家</span>
-    <span style="font-size:0.7rem; font-weight:bold; background:#e0f2fe; color:#0369a1; padding:2px 8px; border-radius:12px;">v7.2 高效优化版</span>
+    <span style="font-size:0.7rem; font-weight:bold; background:#e0f2fe; color:#0369a1; padding:2px 8px; border-radius:12px;">v7.3 终极纯净版</span>
   </div>
   <div class="nav-tabs">
     <div class="nav-tab active" id="tabNavDashboard" onclick="switchNav('dashboard')">🏠 首页工作台</div>
@@ -191,7 +191,7 @@
   <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px; flex-wrap:wrap; gap:8px;">
     <div>
       <h2 style="font-size:1.3rem;">🎯 错题复习总库</h2>
-      <p style="font-size:0.85rem; color:#64748b;">勾选左上角可选定错题（按勾选次序精准复习）；点击【字或原图】可编辑原题</p>
+      <p style="font-size:0.85rem; color:#64748b;">勾选左上角可选定错题（按勾选次序精准复习，<b>复习完自动清空勾选</b>）；点击【字或原图】可编辑原题</p>
     </div>
     <div style="display:flex; gap:6px; flex-wrap:wrap;">
       <button class="btn btn-primary" id="btnVaultReviewSelected" style="background:#7c3aed;" onclick="startSelectedVaultReview()">⚡ 复习所选题 (0)</button>
@@ -475,7 +475,6 @@
 </div>
 
 <script>
-// 高性能 Gemini 调度序列与学科配置
 const GEMINI_MODELS = ["gemini-2.5-flash", "gemini-2.0-flash", "gemini-1.5-flash"];
 const SUBJECTS = {
   math: { id: "math", name: "数学思维", icon: "📐", desc: "WMO竞赛真题、高频几何模型、行程工程与错题攻坚", color: "#2563eb", bg: "#eff6ff", modules: ["几何模型", "行程问题", "数论整除", "计数组合", "计算与数列", "典型应用题", "填空解答"] },
@@ -946,7 +945,7 @@ function playPleasantSound() {
   } catch(e) {}
 }
 
-// 错题复习总库：支持按用户“勾选顺序”精准复习
+// 错题复习总库：支持按用户“勾选顺序”精准复习，并在结束后自动取消勾选
 let reviewQueue = [], reviewCurrentIdx = 0, reviewTimerInterval = null, reviewSeconds = 0, reviewKilledCount = 0;
 
 function handleVaultCheckboxChange(id, isChecked) {
@@ -971,7 +970,6 @@ async function startSelectedVaultReview() {
   }
   const all = await dbGetAll(STORE_QUESTIONS);
   const qMap = new Map(all.map(q => [q.id, q]));
-  // 严格按照勾选时存入数组的先后次序重排
   const orderedQueue = vaultSelectedIdsInOrder.map(id => qMap.get(id)).filter(Boolean);
   
   if (!orderedQueue.length) { alert("所选题已失效或不存在！"); return; }
@@ -1057,17 +1055,32 @@ async function stepReviewQuestion(st) {
   }
   reviewCurrentIdx++; renderCurrentReviewCard();
 }
+
+// 核心优化点：复习正常全部完成，清理勾选队列并刷新勾选框
 function finishSmartReview() {
   clearInterval(reviewTimerInterval);
   const m = Math.max(1, Math.round(reviewSeconds / 60)); performCheckin(m, true);
   alert(`🎉 恭喜完成错题复习打卡！\n\n⏱️ 本次专注时长：${m} 分钟\n🏆 成功斩杀题目：${reviewKilledCount} 道！`);
+  
+  // 自动取消所有已勾选状态
+  vaultSelectedIdsInOrder = [];
+  updateVaultSelectedCountBadge();
+  
   exitSmartReview();
 }
+
+// 核心优化点：中途退出复习，同样安全重置勾选队列并刷新页面
 function exitSmartReview() {
   clearInterval(reviewTimerInterval);
   if (reviewSeconds > 30) performCheckin(Math.max(1, Math.round(reviewSeconds / 60)), true);
   document.getElementById("smartReviewView").style.display = "none";
-  renderDashboard(); renderVault();
+  
+  // 确保退出时复选框全清空
+  vaultSelectedIdsInOrder = [];
+  updateVaultSelectedCountBadge();
+
+  renderDashboard(); 
+  renderVault();
 }
 
 async function renderSubjectPortal() {
@@ -1295,7 +1308,6 @@ function renderRichContent(el, text) {
   renderMathInElement(el, { delimiters: [{ left: "$$", right: "$$", display: true }, { left: "$", right: "$", display: false }, { left: "\\(", right: "\\)", display: false }, { left: "\\[", right: "\\]", display: true }], throwOnError: false });
 }
 
-// 优化：思路直奔重点、不废话
 let activeAnalysisQuestionId = null;
 async function analyzeSingleQuestionById(id) {
   const q = (await dbGetAll(STORE_QUESTIONS)).find(x => x.id === id); if (!q) return;
@@ -1382,7 +1394,6 @@ function printAnalysisContent() {
   w.document.close(); setTimeout(() => w.print(), 500);
 }
 
-// 优化：出题变式大、避免雷同
 async function generateSimilarSingleById(id) { const q = (await dbGetAll(STORE_QUESTIONS)).find(x => x.id === id); if (q) doGenerateSimilar([q]); }
 async function generateSimilarWithGemini() {
   if (!vaultSelectedIdsInOrder.length) { alert("请先勾选需要出变式题的错题！"); return; }
@@ -1755,7 +1766,6 @@ function submitRunningExam() {
   container.innerHTML = wrongHtml;
 }
 
-// 模拟卷解答题 AI 智能评分与错题重点剖析
 async function aiGradeExamFaq() {
   const reportBox = document.getElementById("aiExamGradeReport");
   reportBox.style.display = "block";
@@ -1863,7 +1873,7 @@ function toggleSelectAllVault() {
 }
 
 async function exportData() {
-  const blob = new Blob([JSON.stringify({ version: 7.2, questions: await dbGetAll(STORE_QUESTIONS), exams: await dbGetAll(STORE_EXAMS), vocab: await dbGetAll(STORE_VOCAB) }, null, 2)], { type: "application/json" });
+  const blob = new Blob([JSON.stringify({ version: 7.3, questions: await dbGetAll(STORE_QUESTIONS), exams: await dbGetAll(STORE_EXAMS), vocab: await dbGetAll(STORE_VOCAB) }, null, 2)], { type: "application/json" });
   const a = document.createElement("a"); a.href = URL.createObjectURL(blob);
   a.download = `智学多学科备份_${new Date().getMonth()+1}月${new Date().getDate()}日.json`; a.click();
 }
