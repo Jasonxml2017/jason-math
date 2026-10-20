@@ -93,14 +93,14 @@
   .ans-reveal { margin-top: 10px; padding: 10px; background: #f1f5f9; border-left: 4px solid var(--primary); border-radius: 4px; display: none; font-size: 0.85rem; }
   .ans-reveal.show { display: block; }
 
-  /* 富文本内容展示容器 */
+  /* 彻底修复：高保真数学排版与自适应滚动容器 */
   .analysis-output-box {
     background: #f8fafc;
     border: 1px solid var(--border);
     border-radius: 10px;
     padding: 16px 20px;
     font-size: 0.95rem;
-    line-height: 1.75;
+    line-height: 1.8;
     max-height: 65vh;
     overflow-y: auto;
     margin: 12px 0;
@@ -111,7 +111,8 @@
   .analysis-output-box h1, .analysis-output-box h2, .analysis-output-box h3 { margin: 12px 0 6px; color: #0f172a; }
   .analysis-output-box ul, .analysis-output-box ol { padding-left: 20px; margin: 6px 0; }
   .analysis-output-box p { margin-bottom: 8px; }
-  .analysis-output-box .katex-display { margin: 10px 0; overflow-x: auto; overflow-y: hidden; padding: 4px 0; }
+  .analysis-output-box .katex { font-size: 1.05em; line-height: 1.2; }
+  .analysis-output-box .katex-display { margin: 12px 0; overflow-x: auto; overflow-y: hidden; padding: 4px 0; }
 
   .ext-words-box { background: #f0fdf4; border: 1.5px solid #86efac; border-radius: 10px; padding: 12px 14px; margin-bottom: 12px; }
   .modal-subtabs { display: flex; background: #e2e8f0; padding: 3px; border-radius: 8px; margin-bottom: 14px; }
@@ -140,7 +141,7 @@
 <header>
   <div class="brand" onclick="switchNav('dashboard')">
     <span>🍎 智学多学科管家</span>
-    <span style="font-size:0.7rem; font-weight:bold; background:#e0f2fe; color:#0369a1; padding:2px 8px; border-radius:12px;">v7.6 极速排版优化版</span>
+    <span style="font-size:0.7rem; font-weight:bold; background:#e0f2fe; color:#0369a1; padding:2px 8px; border-radius:12px;">v7.8 完美排版版</span>
   </div>
   <div class="nav-tabs">
     <div class="nav-tab active" id="tabNavDashboard" onclick="switchNav('dashboard')">🏠 首页工作台</div>
@@ -332,13 +333,11 @@
       <h4 style="font-size:0.9rem; margin:15px 0 10px;">二、解答题答题草稿 (17~20题)</h4>
       <div id="faqSheet"></div>
 
-      <!-- 全卷 AI 整体评分与错题深度诊断区 -->
       <div id="examResultPanel" style="display:none; margin-top:15px;">
         <div style="background:#f0fdf4; border:1px solid #bbf7d0; padding:12px; border-radius:8px; text-align:center;">
           <h3 style="color:#15803d; font-size:1.2rem;" id="finalScoreText">选择题得分：0 / 80</h3>
           <button class="btn btn-primary" id="btnAiGradeExam" style="margin-top:8px; background:#7c3aed; font-size:0.85rem;" onclick="aiGradeExamFull()">🤖 AI 全卷整体评分与全科错题深度诊断</button>
         </div>
-        <!-- 优化：容器增加高度自适应、滚动条与换行保障 -->
         <div id="aiExamGradeReport" style="display:none; margin-top:12px; background:#f8fafc; border:1.5px solid #cbd5e1; border-radius:10px; padding:16px; font-size:0.92rem; line-height:1.75; max-height:65vh; overflow-y:auto; word-break:break-word; white-space:normal;"></div>
         <div id="wrongItemsContainer" style="margin-top:12px;"></div>
       </div>
@@ -348,7 +347,6 @@
 
 <!-- ================= 弹窗集合 ================= -->
 
-<!-- 添加生词好句弹窗 -->
 <div class="modal-overlay" id="addVocabModal">
   <div class="modal" style="max-width:580px;">
     <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px;">
@@ -376,7 +374,6 @@
   </div>
 </div>
 
-<!-- 倒计时管理 -->
 <div class="modal-overlay" id="countdownManageModal">
   <div class="modal" style="max-width:520px;">
     <h3 style="font-size:1.15rem; margin-bottom:12px;">🏆 备考倒计时目标管理</h3>
@@ -390,7 +387,6 @@
   </div>
 </div>
 
-<!-- 查看原题与编辑弹窗 -->
 <div class="modal-overlay" id="viewEditQuestionModal">
   <div class="modal" style="max-width:700px;">
     <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
@@ -416,7 +412,6 @@
   </div>
 </div>
 
-<!-- 错题录入弹窗 -->
 <div class="modal-overlay" id="errorEntryModal">
   <div class="modal">
     <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
@@ -451,7 +446,6 @@
   </div>
 </div>
 
-<!-- 录入真题卷弹窗 -->
 <div class="modal-overlay" id="uploadExamModal">
   <div class="modal">
     <h3 style="margin-bottom:12px;" id="modalExamTitleText">编辑试卷</h3>
@@ -464,7 +458,6 @@
   </div>
 </div>
 
-<!-- Gemini 深度分析展示弹窗 -->
 <div class="modal-overlay" id="analysisModal">
   <div class="modal" style="max-width:780px;">
     <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;">
@@ -480,17 +473,14 @@
   </div>
 </div>
 
-<!-- Gemini 变式题弹窗 -->
 <div class="modal-overlay" id="similarModal">
   <div class="modal" style="max-width:780px;">
     <div style="display:flex; justify-content:space-between; align-items:center;"><h3 style="color:#15803d;">🎯 举一反三 · 高质量变式题</h3><div style="display:flex; gap:6px;"><button class="btn btn-outline" onclick="copySimilarText()">📋 复制</button><button class="btn btn-primary" onclick="printSimilarContent()">🖨️ 打印</button></div></div>
-    <!-- 优化：容器增加高度自适应与滚动条支持 -->
     <div class="analysis-output-box" id="similarOutput">生成中...</div>
     <div style="display:flex; justify-content:flex-end;"><button class="btn btn-outline" onclick="closeAllModals()">关闭</button></div>
   </div>
 </div>
 
-<!-- Key 弹窗 -->
 <div class="modal-overlay" id="keyModal">
   <div class="modal" style="max-width:400px;">
     <h3>配置 Gemini API Key</h3>
@@ -500,16 +490,12 @@
 </div>
 
 <script>
-// 高可用 Flash 调度链
 const GEMINI_MODELS = [
-  "gemini-3.8-flash",
-  "gemini-3.7-flash",
-  "gemini-3.6-flash",
-  "gemini-3.5-flash-lite",
   "gemini-2.5-flash",
   "gemini-2.0-flash",
   "gemini-1.5-flash",
-  "gemini-1.5-flash-latest"
+  "gemini-3.8-flash",
+  "gemini-3.5-flash-lite"
 ];
 
 const SUBJECTS = {
@@ -524,7 +510,7 @@ let db = null;
 const DB_NAME = "MathVaultDB", STORE_QUESTIONS = "questions", STORE_EXAMS = "exams", STORE_VOCAB = "vocab";
 let vaultSelectedIdsInOrder = [];
 
-// 优化 1：通用请求管道，Token 扩容至 4096 防止截断
+// 通用模型轮询管道，Token 设定为 4096 避免截断
 async function queryGemini(prompt, images = [], maxTokens = 4096) {
   const apiKey = localStorage.getItem("GEMINI_API_KEY");
   if (!apiKey) throw new Error("请先点击右上角【🔑 Key】配置 Gemini API Key！");
@@ -570,66 +556,70 @@ async function queryGemini(prompt, images = [], maxTokens = 4096) {
   throw new Error(lastErr || "AI 接口无响应，请核对 API Key 是否正确");
 }
 
-// 优化 2：公式隔离保护 + KaTeX 矢量排版引擎
+// ⭐ 核心优化：彻底解决 MATH_INLINE 泄露问题！
+// 采用 HTML 语义容器隔离法，禁止 Markdown 转义数学公式字符，并直接用 KaTeX 原生渲染
 function renderRichContent(el, text) {
   if (!el) return;
   if (!text) { el.innerHTML = ""; return; }
 
-  const mathMap = [];
-  let placeholderIdx = 0;
+  // 1. 公式文本预清洗：修补常见失真（如未闭合的公式、Unicode乘除号）
+  let cleanText = text
+    .replace(/×/g, " \\times ")
+    .replace(/÷/g, " \\div ")
+    .replace(/·/g, " \\cdot ");
 
-  // 1. 预先保护 LaTeX 块级公式与行内公式，防止 Markdown 解析器转义下划线与乘除号
-  let protectedText = text
-    .replace(/\$\$([\s\S]*?)\$\$/g, (_, math) => {
-      const ph = `__MATH_BLOCK_${placeholderIdx++}__`;
-      mathMap.push({ ph, math, display: true });
-      return ph;
-    })
-    .replace(/\\\[([\s\S]*?)\\\]/g, (_, math) => {
-      const ph = `__MATH_BLOCK_${placeholderIdx++}__`;
-      mathMap.push({ ph, math, display: true });
-      return ph;
-    })
-    .replace(/\\\(([\s\S]*?)\\\)/g, (_, math) => {
-      const ph = `__MATH_INLINE_${placeholderIdx++}__`;
-      mathMap.push({ ph, math, display: false });
-      return ph;
-    })
-    .replace(/\$([^\$\n\r]+?)\$/g, (_, math) => {
-      const ph = `__MATH_INLINE_${placeholderIdx++}__`;
-      mathMap.push({ ph, math, display: false });
-      return ph;
-    });
+  // 2. 将数学公式打包成受保护的 HTML 自定义标签（Markdown 绝不会将其解析为粗体/斜体）
+  const formulas = [];
+  
+  // 提取 $$...$$ 与 \[...\] 块级公式
+  cleanText = cleanText.replace(/(\$\$[\s\S]*?\$\$|\\\[[\s\S]*?\\\])/g, match => {
+    const isBracket = match.startsWith("\\[");
+    const inner = isBracket ? match.slice(2, -2) : match.slice(2, -2);
+    const id = formulas.length;
+    formulas.push({ latex: inner.trim(), display: true });
+    return `<katex-token data-idx="${id}" data-type="block"></katex-token>`;
+  });
 
-  // 2. 将安全文本交由 marked 转换为 HTML
+  // 提取 $...$ 与 \(...\) 行内公式
+  cleanText = cleanText.replace(/(\$[^\$\n\r]+?\$|\\\([\s\S]*?\\\))/g, match => {
+    const isParen = match.startsWith("\\(");
+    const inner = isParen ? match.slice(2, -2) : match.slice(1, -1);
+    const id = formulas.length;
+    formulas.push({ latex: inner.trim(), display: false });
+    return `<katex-token data-idx="${id}" data-type="inline"></katex-token>`;
+  });
+
+  // 3. 将安全保护后的文本交付 Markdown 渲染
   let html = "";
   try {
-    html = marked.parse(protectedText, { breaks: true, gfm: true });
+    html = marked.parse(cleanText, { breaks: true, gfm: true });
   } catch(e) {
-    html = protectedText.replace(/\n/g, "<br>");
+    html = cleanText.replace(/\n/g, "<br>");
   }
 
-  // 3. 将占位符替换为由 KaTeX 原生渲染的精美矢量数学符号
-  mathMap.forEach(item => {
-    let cleanMath = item.math.trim();
-    cleanMath = cleanMath.replace(/×/g, " \\times ").replace(/÷/g, " \\div ");
-    let renderedMath = "";
+  // 4. 将 <katex-token> 标签直接渲染为真实的 KaTeX 矢量排版数学元素
+  el.innerHTML = html;
+
+  el.querySelectorAll("katex-token").forEach(token => {
+    const idx = parseInt(token.getAttribute("data-idx"), 10);
+    const item = formulas[idx];
+    if (!item) return;
+
+    const span = document.createElement("span");
     try {
       if (window.katex) {
-        renderedMath = window.katex.renderToString(cleanMath, {
+        katex.render(item.latex, span, {
           displayMode: item.display,
           throwOnError: false
         });
       } else {
-        renderedMath = item.display ? `$$${cleanMath}$$` : `$${cleanMath}$`;
+        span.textContent = item.display ? `$$${item.latex}$$` : `$${item.latex}$`;
       }
     } catch(err) {
-      renderedMath = item.display ? `$$${cleanMath}$$` : `$${cleanMath}$`;
+      span.textContent = item.latex;
     }
-    html = html.split(item.ph).join(renderedMath);
+    token.replaceWith(span);
   });
-
-  el.innerHTML = html;
 }
 
 function initDB() {
@@ -904,7 +894,7 @@ async function quickCollectCurrentSelection() {
   hideQuickCollectBubble(); performCheckin(1, true); alert(`⭐ 已收藏【${currentSelectedWord}】到生词好句本！`);
 }
 
-// 生词好句空间
+// 生词本功能
 let currentVocabFilter = "";
 function openVocabFullScreenView() {
   document.getElementById("vocabFullView").style.display = "flex";
@@ -1462,7 +1452,7 @@ async function doAnalyzeThinking(questions, singleSaveId) {
   document.getElementById("analysisModal").classList.add("active");
 
   const prompt = `你是一位小学四年级竞赛名师。请给出【极度凝练、直击破题要害】的思路导图（拒绝客套话，250字内）：
-【数学公式规范】：必须使用 LaTeX 格式（行内用 $...$，独立行用 $$...$$），乘号使用 \\times，除号使用 \\div。
+【数学公式规范】：必须使用标准 LaTeX（行内公式用 $...$，独立行用 $$...$$），乘号用 \\times，除号用 \\div。每个公式开头和结尾的 $ 必须严格成对出现！
 【破题题眼】：一句话找出最关键突破口。
 【极简步骤】：核心算式与推导。
 【避坑指南】：四年级学生最容易栽跟头的思维陷阱。
@@ -1517,9 +1507,9 @@ async function doGenerateSimilar(questions) {
 
   const prompt = `你是一位小学四年级数学竞赛命题名师。请针对提供的题目分别出一道【高质量变式题】：
 【排版与公式格式硬性要求】：
-1. 所有数学算式、未知数、数字运算必须使用 LaTeX 格式，行内公式写在 $...$ 中，独立行大公式写在 $$...$$ 中！
-2. 乘号严禁用字母 x 或 *，必须写 \\times；除号严禁写 /，必须写 \\div！
-3. 内容完整详细，包含完整题干、点拨与详细解答步骤，不要简略截断！
+1. 涉及数学数字运算、未知数、变量名、两位数加横线等，必须严格使用标准的 LaTeX，行内必须使用单个美元符完整包裹（如 $x$、$\\overline{ab}$、$3 \\times 4 = 12$），独立行算式写在 $$...$$ 中！必须保证公式成对闭合！
+2. 乘号严禁直接写英文字母 x 或 *，必须写 \\times；除号必须写 \\div！
+3. 题目与步骤必须完整输出，不要截断。
 4. 考点思维模型保持一致，情境或数字逻辑必须有深度变化，不做简单的换数练习。
 
 【格式模板】：
@@ -1553,7 +1543,7 @@ function printSimilarContent() {
   w.document.close(); setTimeout(() => w.print(), 500);
 }
 
-// 模拟卷考场与全卷 AI 整体评分
+// 考场业务
 let activeExam = null, examTimer = null, examSecondsRemaining = 0, userExamAnswers = {};
 let currentZoom = 1.0, pinchStartDist = 0, pinchStartZoom = 1.0;
 
@@ -1881,7 +1871,6 @@ function submitRunningExam() {
   container.innerHTML = wrongHtml;
 }
 
-// 全卷智能综合评分与全科错题诊断
 async function aiGradeExamFull() {
   const reportBox = document.getElementById("aiExamGradeReport");
   reportBox.style.display = "block";
@@ -1900,7 +1889,7 @@ async function aiGradeExamFull() {
 
   const prompt = `你是一位小学四年级数学竞赛特级阅卷专家。请对学生在【${activeExam.title}】的整份试卷进行【智能综合评分与全卷错题诊断】：
 【排版格式硬性要求】：
-1. 涉及的所有算式、数字关系必须严格使用 LaTeX（行内公式用 $...$，独立行用 $$...$$），乘号严禁用 x，必须用 \\times，除号用 \\div！
+1. 涉及的所有算式、数字关系必须严格使用 LaTeX（行内公式用 $...$，独立行用 $$...$$），乘号严禁用 x，必须用 \\times，除号用 \\div！所有公式符号必须成对闭合！
 2. 给出客观严谨的分数评定，并对所有做错的题进行通俗有启发性的诊断分析。
 
 【试卷作答详情】：
@@ -1920,7 +1909,7 @@ ${faqData}
 ### 💡 全卷错题精准速析（包含所有失分题）
 逐一梳理做错的选择题与失分的解答题：
 - **【题号/考点】**：
-- **【失分病根】**：一语指出孩子为什么会错（如计算马虎、遗漏分类、未掌握对应模型）。
+- **【失分病根】**：一语指出孩子为什么会错。
 - **【秒懂思路】**：1~2句话讲透最简破题关键算式与步骤。`;
 
   try {
@@ -2010,7 +1999,7 @@ function toggleSelectAllVault() {
 }
 
 async function exportData() {
-  const blob = new Blob([JSON.stringify({ version: 7.6, questions: await dbGetAll(STORE_QUESTIONS), exams: await dbGetAll(STORE_EXAMS), vocab: await dbGetAll(STORE_VOCAB) }, null, 2)], { type: "application/json" });
+  const blob = new Blob([JSON.stringify({ version: 7.8, questions: await dbGetAll(STORE_QUESTIONS), exams: await dbGetAll(STORE_EXAMS), vocab: await dbGetAll(STORE_VOCAB) }, null, 2)], { type: "application/json" });
   const a = document.createElement("a"); a.href = URL.createObjectURL(blob);
   a.download = `智学多学科备份_${new Date().getMonth()+1}月${new Date().getDate()}日.json`; a.click();
 }
