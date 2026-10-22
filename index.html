@@ -93,7 +93,7 @@
   .ans-reveal { margin-top: 10px; padding: 10px; background: #f1f5f9; border-left: 4px solid var(--primary); border-radius: 4px; display: none; font-size: 0.85rem; }
   .ans-reveal.show { display: block; }
 
-  /* 彻底修复：高保真数学排版与自适应滚动容器 */
+  /* 高保真数学排版与自适应滚动容器 */
   .analysis-output-box {
     background: #f8fafc;
     border: 1px solid var(--border);
@@ -141,7 +141,7 @@
 <header>
   <div class="brand" onclick="switchNav('dashboard')">
     <span>🍎 智学多学科管家</span>
-    <span style="font-size:0.7rem; font-weight:bold; background:#e0f2fe; color:#0369a1; padding:2px 8px; border-radius:12px;">v7.8 完美排版版</span>
+    <span style="font-size:0.7rem; font-weight:bold; background:#e0f2fe; color:#0369a1; padding:2px 8px; border-radius:12px;">v7.9 分级灵感版</span>
   </div>
   <div class="nav-tabs">
     <div class="nav-tab active" id="tabNavDashboard" onclick="switchNav('dashboard')">🏠 首页工作台</div>
@@ -257,7 +257,7 @@
   <div class="container" style="padding-top:20px;"><div class="q-grid" id="vocabCardGrid"></div></div>
 </div>
 
-<!-- 每日一读阅读器 -->
+<!-- 每日一读阅读器（优化：随机主题 + 分级字数/词数控制） -->
 <div id="dailyReadingView">
   <div class="reader-top-bar">
     <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap;">
@@ -267,14 +267,28 @@
         <span class="modal-subtab" id="tabReaderEnglish" onclick="switchReaderLanguage('english')" style="padding:4px 10px;">🇬🇧 英文</span>
       </div>
       <select id="readerGradeSelect" onchange="onReaderGradeChanged()" style="padding:4px 8px; border-radius:6px; font-size:0.82rem; background:white; border:1px solid #d6cebf;">
-        <option value="四上">四年级上册</option><option value="四下">四年级下册</option>
-        <option value="五上">五年级上册</option><option value="五下">五年级下册</option>
-        <option value="六上">六年级上册</option><option value="六下">六年级下册</option>
+        <optgroup label="小学低段 (150-250字 / 50-100词)">
+          <option value="三年级">三年级</option>
+          <option value="二年级">一~二年级</option>
+        </optgroup>
+        <optgroup label="小学高段 (300-500字 / 120-200词)">
+          <option value="四上" selected>四年级上册</option>
+          <option value="四下">四年级下册</option>
+          <option value="五上">五年级上册</option>
+          <option value="五下">五年级下册</option>
+          <option value="六上">六年级上册</option>
+          <option value="六下">六年级下册</option>
+        </optgroup>
+        <optgroup label="初中及以上 (600-800字 / 200-350词)">
+          <option value="七年级">七年级 (初一)</option>
+          <option value="八年级">八年级 (初二)</option>
+          <option value="九年级">九年级 (初三)</option>
+        </optgroup>
       </select>
     </div>
     <div style="display:flex; align-items:center; gap:8px;">
       <button class="btn btn-outline" id="btnSpeechRead" style="background:white;" onclick="toggleSpeechReading()">🔊 朗读本文</button>
-      <button class="btn btn-outline" style="background:white;" onclick="refreshDailyReading()">🔄 换一篇</button>
+      <button class="btn btn-outline" style="background:white;" onclick="refreshDailyReading()">🔄 换一篇 (随机新主题)</button>
       <button class="btn btn-outline" style="background:#fef3c7; color:#b45309;" onclick="openVocabFullScreenView()">📖 生词好句</button>
       <button class="btn btn-outline" style="background:white;" onclick="closeDailyReadingModal()">退出阅读</button>
     </div>
@@ -498,6 +512,13 @@ const GEMINI_MODELS = [
   "gemini-3.5-flash-lite"
 ];
 
+// ⭐ 每日一读精选主题池：涵盖多元知识与人文素养
+const READING_THEMES = [
+  "自然科学", "历史文明", "地理探索", "经典寓言", "科学技术", "人文艺术", "日常心理",
+  "浩瀚太空与天文探索", "深海秘境与极地探险", "奇趣动植物的生存智慧", "改变世界的伟大发明",
+  "传统文化与非遗手艺", "世界奇妙地理景观", "生活中的积极心理与社交智慧"
+];
+
 const SUBJECTS = {
   math: { id: "math", name: "数学思维", icon: "📐", desc: "WMO竞赛真题、高频几何模型、行程工程与错题攻坚", color: "#2563eb", bg: "#eff6ff", modules: ["几何模型", "行程问题", "数论整除", "计数组合", "计算与数列", "典型应用题", "填空解答"] },
   chinese: { id: "chinese", name: "语文素养", icon: "📖", desc: "易错生字词打卡、阅读理解、古诗文默写与作文", color: "#be123c", bg: "#fff1f2", modules: ["字词拼音", "修改病句", "文言诗词", "阅读理解", "表达应用", "其它错题"] },
@@ -510,8 +531,8 @@ let db = null;
 const DB_NAME = "MathVaultDB", STORE_QUESTIONS = "questions", STORE_EXAMS = "exams", STORE_VOCAB = "vocab";
 let vaultSelectedIdsInOrder = [];
 
-// 通用模型轮询管道，Token 设定为 4096 避免截断
-async function queryGemini(prompt, images = [], maxTokens = 4096) {
+// 模型轮询管道，支持传入 temperature（阅读生成使用更高创造力）
+async function queryGemini(prompt, images = [], maxTokens = 4096, temperature = 0.25) {
   const apiKey = localStorage.getItem("GEMINI_API_KEY");
   if (!apiKey) throw new Error("请先点击右上角【🔑 Key】配置 Gemini API Key！");
   
@@ -536,7 +557,7 @@ async function queryGemini(prompt, images = [], maxTokens = 4096) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           contents: [{ parts }],
-          generationConfig: { maxOutputTokens: maxTokens, temperature: 0.25 }
+          generationConfig: { maxOutputTokens: maxTokens, temperature }
         })
       });
       if (!res.ok) {
@@ -556,22 +577,17 @@ async function queryGemini(prompt, images = [], maxTokens = 4096) {
   throw new Error(lastErr || "AI 接口无响应，请核对 API Key 是否正确");
 }
 
-// ⭐ 核心优化：彻底解决 MATH_INLINE 泄露问题！
-// 采用 HTML 语义容器隔离法，禁止 Markdown 转义数学公式字符，并直接用 KaTeX 原生渲染
+// 高保真 KaTeX + Markdown 隔离渲染引擎
 function renderRichContent(el, text) {
   if (!el) return;
   if (!text) { el.innerHTML = ""; return; }
 
-  // 1. 公式文本预清洗：修补常见失真（如未闭合的公式、Unicode乘除号）
   let cleanText = text
     .replace(/×/g, " \\times ")
     .replace(/÷/g, " \\div ")
     .replace(/·/g, " \\cdot ");
 
-  // 2. 将数学公式打包成受保护的 HTML 自定义标签（Markdown 绝不会将其解析为粗体/斜体）
   const formulas = [];
-  
-  // 提取 $$...$$ 与 \[...\] 块级公式
   cleanText = cleanText.replace(/(\$\$[\s\S]*?\$\$|\\\[[\s\S]*?\\\])/g, match => {
     const isBracket = match.startsWith("\\[");
     const inner = isBracket ? match.slice(2, -2) : match.slice(2, -2);
@@ -580,7 +596,6 @@ function renderRichContent(el, text) {
     return `<katex-token data-idx="${id}" data-type="block"></katex-token>`;
   });
 
-  // 提取 $...$ 与 \(...\) 行内公式
   cleanText = cleanText.replace(/(\$[^\$\n\r]+?\$|\\\([\s\S]*?\\\))/g, match => {
     const isParen = match.startsWith("\\(");
     const inner = isParen ? match.slice(2, -2) : match.slice(1, -1);
@@ -589,7 +604,6 @@ function renderRichContent(el, text) {
     return `<katex-token data-idx="${id}" data-type="inline"></katex-token>`;
   });
 
-  // 3. 将安全保护后的文本交付 Markdown 渲染
   let html = "";
   try {
     html = marked.parse(cleanText, { breaks: true, gfm: true });
@@ -597,7 +611,6 @@ function renderRichContent(el, text) {
     html = cleanText.replace(/\n/g, "<br>");
   }
 
-  // 4. 将 <katex-token> 标签直接渲染为真实的 KaTeX 矢量排版数学元素
   el.innerHTML = html;
 
   el.querySelectorAll("katex-token").forEach(token => {
@@ -797,12 +810,47 @@ async function renderDashboard() {
 
 function openSubjectPortal(sId) { currentPortalSubject = sId; switchNav("portal"); }
 
-// 每日一读
+// ⭐ 每日一读模块升级：分级阅读标准与字数精细配置
+function getGradeBandConfig(gradeStr) {
+  if (/一|二|三/.test(gradeStr)) {
+    return {
+      band: "小学低段",
+      chiWords: "150-250字",
+      engWords: "50-100词",
+      razLevel: "RAZ-A~F (基础启蒙，高频常见词，句式简短生动)",
+      chineseReq: "符合小学低段语文课标标准，字词难度适中，多用韵律感强的生动短句，情节有趣生动。",
+      englishReq: "纯正地道的简短英语，以基础高频词汇(Sight Words)为主，重复句式强化语感。"
+    };
+  } else if (/初|七|八|九/.test(gradeStr)) {
+    return {
+      band: "初中及以上",
+      chiWords: "600-800字",
+      engWords: "200-350词",
+      razLevel: "RAZ-N~S (初中进阶分级，逻辑紧密，含复合句式与学科拓展词汇)",
+      chineseReq: "符合初中现代文阅读理解考标，立意深刻，文笔流畅，具有思辨性与人文情怀，杜绝说教。",
+      englishReq: "符合中考及初中分级阅读要求，地道自然，包含从句与逻辑连接词，展现文化与科学深度。"
+    };
+  } else {
+    // 默认高段（四至六年级）
+    return {
+      band: "小学高段",
+      chiWords: "300-500字",
+      engWords: "120-200词",
+      razLevel: "RAZ-G~M (小学高段中阶，丰富动词形容词与经典复合句)",
+      chineseReq: "符合四年级~六年级语文阅读理解考纲，字词适度拓展，句式富于起伏和节奏感，文学性与知识性兼备。",
+      englishReq: "符合小学高年级英语分级阅读标准，地道自然，兼具叙事性与科普细节，避免机械语法堆砌。"
+    };
+  }
+}
+
 let activeReaderLang = "chinese", currentArticleData = { chinese: null, english: null };
+
 function openDailyReadingModal() {
   document.getElementById("dailyReadingView").style.display = "flex";
   document.getElementById("readerGradeSelect").value = localStorage.getItem("READER_GRADE") || "四上";
-  loadDailyReadingArticle(); initReaderWordLookupListener(); performCheckin(1, true);
+  loadDailyReadingArticle(); 
+  initReaderWordLookupListener(); 
+  performCheckin(1, true);
 }
 function closeDailyReadingModal() { stopSpeechReading(); document.getElementById("dailyReadingView").style.display = "none"; hideQuickCollectBubble(); }
 function switchReaderLanguage(lang) {
@@ -811,40 +859,103 @@ function switchReaderLanguage(lang) {
   document.getElementById("tabReaderEnglish").classList.toggle("active", lang === 'english');
   displayDailyArticle();
 }
-function onReaderGradeChanged() { localStorage.setItem("READER_GRADE", document.getElementById("readerGradeSelect").value); refreshDailyReading(); }
+function onReaderGradeChanged() { 
+  localStorage.setItem("READER_GRADE", document.getElementById("readerGradeSelect").value); 
+  refreshDailyReading(); 
+}
+
 async function loadDailyReadingArticle() {
   const today = getTodayDateStr(), g = localStorage.getItem("READER_GRADE") || "四上";
-  const cChi = localStorage.getItem(`DAILY_READING_CHI_${g}_${today}`), cEng = localStorage.getItem(`DAILY_READING_ENG_${g}_${today}`);
-  if (cChi && cEng) { currentArticleData.chinese = cChi; currentArticleData.english = cEng; displayDailyArticle(); }
-  else { await fetchAndGenerateDailyReading(); }
+  const cChi = localStorage.getItem(`DAILY_READING_CHI_${g}_${today}`);
+  const cEng = localStorage.getItem(`DAILY_READING_ENG_${g}_${today}`);
+  if (cChi && cEng) { 
+    currentArticleData.chinese = cChi; 
+    currentArticleData.english = cEng; 
+    displayDailyArticle(); 
+  } else { 
+    await fetchAndGenerateDailyReading(false); 
+  }
 }
-async function refreshDailyReading() { stopSpeechReading(); await fetchAndGenerateDailyReading(); }
 
-async function fetchAndGenerateDailyReading() {
+async function refreshDailyReading() { 
+  stopSpeechReading(); 
+  await fetchAndGenerateDailyReading(true); 
+}
+
+// ⭐ 随机主题生成算法与独立高创意参数
+async function fetchAndGenerateDailyReading(forceNew = false) {
   const grade = localStorage.getItem("READER_GRADE") || "四上";
+  const cfg = getGradeBandConfig(grade);
   const container = document.getElementById("readingArticleContainer");
-  container.innerHTML = `<div style="text-align:center; padding:60px 0;"><h3 style="color:#059669; margin-bottom:8px;">⏳ 正在由 AI 定制【${grade}】中英文拓展阅读...</h3><p style="color:#78716c; font-size:0.9rem;">契合四年级阅读理解考点，约 3~5 秒...</p></div>`;
 
-  const prompt = `为小学【${grade}】编写今日阅读短文，返回JSON格式：{"chinese":"<h1>标题</h1><p>约350字自然科普或历史故事...</p><div class='comprehension-box'><b>💡 思考小问答：</b><br>1. 问？<br><button class='btn btn-outline' style='margin-top:8px; background:white;' onclick='toggleReadingAnswers()'>👁️ 查看参考答案</button><div id='readingAnswerDrawer' style='display:none; margin-top:8px; color:#15803d; font-weight:600;'>1. 答案...</div></div>","english":"<h1>Title</h1><p>About 120-150 words story for grade 4...</p><div class='comprehension-box'><b>💡 Questions:</b><br>1. Question?<br><button class='btn btn-outline' style='margin-top:8px; background:white;' onclick='toggleReadingAnswers()'>👁️ View Answers</button><div id='readingAnswerDrawer' style='display:none; margin-top:8px; color:#15803d; font-weight:600;'>1. Answer...</div></div>"}`;
-  
+  // 随机从主题库抽选 1 个主题
+  const randomTheme = READING_THEMES[Math.floor(Math.random() * READING_THEMES.length)];
+
+  container.innerHTML = `
+    <div style="text-align:center; padding:60px 0;">
+      <h3 style="color:#059669; margin-bottom:8px;">⏳ 正在由 AI 定制【${grade} · ${cfg.band}】双语拓展阅读...</h3>
+      <div style="display:inline-block; background:#fef3c7; color:#b45309; padding:4px 12px; border-radius:14px; font-weight:bold; font-size:0.88rem; margin-top:6px;">
+        🎲 随机精选主题：${randomTheme}
+      </div>
+      <p style="color:#78716c; font-size:0.85rem; margin-top:10px;">字数严格适配：中文${cfg.chiWords} / 英文${cfg.engWords}，稍候 3~5 秒...</p>
+    </div>
+  `;
+
+  const prompt = `你是一位精通分级阅读的特级语文与英语双语教育名师。请为【${grade}】（学段定位：${cfg.band}）定制今天的每日双语阅读短文。
+本次指定探究主题：【${randomTheme}】。
+
+要求严格遵守：
+1. 中文短文（1篇）：
+   - 探究主题：围绕“${randomTheme}”（立意积极，兼具知识性与趣旨，避免枯燥说教与千篇一律）。
+   - 难度与句式：${cfg.chineseReq}
+   - 字数严格控制在：${cfg.chiWords}（严禁过短或过长）。
+   - 包含2道启发式思考理解小问答及参考答案。
+
+2. 英文短文（1篇）：
+   - 探究主题：围绕“${randomTheme}”（可选取有趣的文化、自然科普或探险故事切入）。
+   - 难度与分级：对应 ${cfg.razLevel}。${cfg.englishReq}
+   - 词数严格控制在：${cfg.engWords}。
+   - 包含2道英文小问题(Comprehension Questions)及参考答案。
+
+请直接返回纯 JSON 格式（不要包含任何 markdown 代码块符号如 \`\`\`json，直接以大括号开头）：
+{
+  "theme": "${randomTheme}",
+  "chinese": "<h1>标题</h1><div style='margin-bottom:12px; display:flex; gap:6px; flex-wrap:wrap;'><span style='background:#fef3c7;color:#b45309;padding:2px 8px;border-radius:10px;font-size:0.8rem;font-weight:bold;'>🏷️ 主题：${randomTheme}</span> <span style='background:#ecfdf5;color:#065f46;padding:2px 8px;border-radius:10px;font-size:0.8rem;'>${cfg.band}（字数规范：${cfg.chiWords}）</span></div><p>短文第一段...</p><p>短文第二段...</p><div class='comprehension-box'><b>💡 思考小问答：</b><br>1. 问？<br>2. 问？<br><button class='btn btn-outline' style='margin-top:8px; background:white;' onclick='toggleReadingAnswers()'>👁️ 查看参考答案</button><div id='readingAnswerDrawer' style='display:none; margin-top:8px; color:#15803d; font-weight:600;'>1. 答案一...<br>2. 答案二...</div></div>",
+  "english": "<h1>Title</h1><div style='margin-bottom:12px; display:flex; gap:6px; flex-wrap:wrap;'><span style='background:#fef3c7;color:#b45309;padding:2px 8px;border-radius:10px;font-size:0.8rem;font-weight:bold;'>🏷️ Theme: ${randomTheme}</span> <span style='background:#ecfdf5;color:#065f46;padding:2px 8px;border-radius:10px;font-size:0.8rem;'>${cfg.band} (${cfg.engWords})</span></div><p>Paragraph 1...</p><p>Paragraph 2...</p><div class='comprehension-box'><b>💡 Comprehension Questions:</b><br>1. Question 1?<br>2. Question 2?<br><button class='btn btn-outline' style='margin-top:8px; background:white;' onclick='toggleReadingAnswers()'>👁️ View Answers</button><div id='readingAnswerDrawer' style='display:none; margin-top:8px; color:#15803d; font-weight:600;'>1. Answer 1...<br>2. Answer 2...</div></div>"
+}`;
+
   try {
-    const raw = await queryGemini(prompt, [], 2500);
-    const match = raw.match(/\{[\s\S]*\}/);
+    // 采用 0.85 高创造力参数，彻底杜绝内容千篇一律
+    const raw = await queryGemini(prompt, [], 3500, 0.85);
+    const cleaned = raw.replace(/^```json\s*/i, '').replace(/```\s*$/i, '');
+    const match = cleaned.match(/\{[\s\S]*\}/);
     if (match) {
       const res = JSON.parse(match[0]);
       const today = getTodayDateStr();
       localStorage.setItem(`DAILY_READING_CHI_${grade}_${today}`, res.chinese);
       localStorage.setItem(`DAILY_READING_ENG_${grade}_${today}`, res.english);
-      currentArticleData = res; displayDailyArticle();
+      currentArticleData = res; 
+      displayDailyArticle();
       return;
     }
+    throw new Error("返回格式未被识别");
   } catch(e) {
-    container.innerHTML = `<div style="text-align:center; padding:40px; color:#dc2626;"><h3>⚠️ 加载失败：${e.message}</h3><button class="btn btn-primary" style="margin-top:12px;" onclick="fetchAndGenerateDailyReading()">🔄 重新尝试</button></div>`;
+    container.innerHTML = `
+      <div style="text-align:center; padding:40px; color:#dc2626;">
+        <h3>⚠️ 加载失败：${e.message}</h3>
+        <p style="color:#64748b; font-size:0.85rem; margin-top:6px;">请检查网络或在右上角【🔑 Key】配置有效的 Gemini Key</p>
+        <button class="btn btn-primary" style="margin-top:12px;" onclick="refreshDailyReading()">🔄 重新尝试</button>
+      </div>
+    `;
   }
 }
+
 function displayDailyArticle() {
-  document.getElementById("readingArticleContainer").innerHTML = (activeReaderLang === 'chinese' ? currentArticleData.chinese : currentArticleData.english) || `<div style="text-align:center; padding:40px;">暂无内容，请点击换一篇。</div>`;
+  document.getElementById("readingArticleContainer").innerHTML = 
+    (activeReaderLang === 'chinese' ? currentArticleData.chinese : currentArticleData.english) || 
+    `<div style="text-align:center; padding:40px;">暂无内容，请点击换一篇。</div>`;
 }
+
 function toggleReadingAnswers() {
   const el = document.getElementById("readingAnswerDrawer");
   if (el) el.style.display = (el.style.display === "none") ? "block" : "none";
@@ -1464,7 +1575,7 @@ ${questions.map((q, i) => `【题${i+1}】学科:${q.subject||'math'}, 考点:${
   const imgs = questions.map(q => q.img).filter(Boolean);
 
   try {
-    const text = await queryGemini(prompt, imgs, 2500);
+    const text = await queryGemini(prompt, imgs, 2500, 0.25);
     if (singleSaveId) {
       const q = (await dbGetAll(STORE_QUESTIONS)).find(x => x.id === singleSaveId);
       if (q) {
@@ -1528,7 +1639,7 @@ ${questions.map((q, i) => `【题${i+1}】考点:${q.module||''}, 原题:${q.not
   const imgs = questions.map(q => q.img).filter(Boolean);
 
   try {
-    const text = await queryGemini(prompt, imgs, 3500);
+    const text = await queryGemini(prompt, imgs, 3500, 0.3);
     performCheckin(1, true);
     renderRichContent(box, text);
   } catch(e) {
@@ -1543,7 +1654,7 @@ function printSimilarContent() {
   w.document.close(); setTimeout(() => w.print(), 500);
 }
 
-// 考场业务
+// 考场缩放与框选
 let activeExam = null, examTimer = null, examSecondsRemaining = 0, userExamAnswers = {};
 let currentZoom = 1.0, pinchStartDist = 0, pinchStartZoom = 1.0;
 
@@ -1913,7 +2024,7 @@ ${faqData}
 - **【秒懂思路】**：1~2句话讲透最简破题关键算式与步骤。`;
 
   try {
-    const gradeResult = await queryGemini(prompt, [], 3500);
+    const gradeResult = await queryGemini(prompt, [], 3500, 0.25);
     renderRichContent(reportBox, gradeResult);
     reportBox.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
   } catch(e) {
@@ -1999,7 +2110,7 @@ function toggleSelectAllVault() {
 }
 
 async function exportData() {
-  const blob = new Blob([JSON.stringify({ version: 7.8, questions: await dbGetAll(STORE_QUESTIONS), exams: await dbGetAll(STORE_EXAMS), vocab: await dbGetAll(STORE_VOCAB) }, null, 2)], { type: "application/json" });
+  const blob = new Blob([JSON.stringify({ version: 7.9, questions: await dbGetAll(STORE_QUESTIONS), exams: await dbGetAll(STORE_EXAMS), vocab: await dbGetAll(STORE_VOCAB) }, null, 2)], { type: "application/json" });
   const a = document.createElement("a"); a.href = URL.createObjectURL(blob);
   a.download = `智学多学科备份_${new Date().getMonth()+1}月${new Date().getDate()}日.json`; a.click();
 }
