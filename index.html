@@ -130,9 +130,14 @@
   .reader-top-bar { background: #f5efe6; border-bottom: 1px solid #e7dfd5; padding: 10px 18px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px; }
   .reader-content-body { flex: 1; overflow-y: auto; padding: 30px 20px; display: flex; justify-content: center; }
   .reader-paper { width: 100%; max-width: 760px; font-size: 1.15rem; line-height: 1.9; color: #292524; }
-  .comprehension-box { background: #f5efe6; border-left: 4px solid #d97706; padding: 16px; border-radius: 8px; margin-top: 24px; font-size: 0.95rem; }
-  #quickCollectBubble { display: none; position: fixed; background: #0f172a; color: white; padding: 6px 14px; border-radius: 20px; box-shadow: 0 6px 20px rgba(0,0,0,0.35); z-index: 999; font-size: 0.82rem; font-weight: 700; cursor: pointer; border: 1px solid rgba(255,255,255,0.25); }
   
+  /* 每日阅读核心卡片设计 */
+  .comprehension-box { background: #f5efe6; border-left: 4px solid #d97706; padding: 16px; border-radius: 8px; margin-top: 24px; font-size: 0.95rem; }
+  .english-keywords-panel { background: #f0fdf4; border: 1.5px solid #86efac; border-radius: 10px; padding: 14px; margin-top: 20px; }
+  .vocab-chips-list { display: flex; flex-direction: column; gap: 8px; margin-top: 8px; }
+  .vocab-chip-item { background: white; border: 1px solid #bbf7d0; border-radius: 8px; padding: 8px 12px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 6px; }
+
+  #quickCollectBubble { display: none; position: fixed; background: #0f172a; color: white; padding: 6px 14px; border-radius: 20px; box-shadow: 0 6px 20px rgba(0,0,0,0.35); z-index: 999; font-size: 0.82rem; font-weight: 700; cursor: pointer; border: 1px solid rgba(255,255,255,0.25); }
   #vocabFullView { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: var(--bg); z-index: 700; flex-direction: column; overflow-y: auto; }
 </style>
 </head>
@@ -141,7 +146,7 @@
 <header>
   <div class="brand" onclick="switchNav('dashboard')">
     <span>🍎 智学多学科管家</span>
-    <span style="font-size:0.7rem; font-weight:bold; background:#e0f2fe; color:#0369a1; padding:2px 8px; border-radius:12px;">v7.9 分级灵感版</span>
+    <span style="font-size:0.7rem; font-weight:bold; background:#e0f2fe; color:#0369a1; padding:2px 8px; border-radius:12px;">v8.0 名家精读版</span>
   </div>
   <div class="nav-tabs">
     <div class="nav-tab active" id="tabNavDashboard" onclick="switchNav('dashboard')">🏠 首页工作台</div>
@@ -175,7 +180,7 @@
   <div class="hero-vault-card">
     <div>
       <span style="font-size:0.85rem; text-transform:uppercase; letter-spacing:1px; opacity:0.9;">Ebbinghaus Daily Review & Reading</span>
-      <h3 style="font-size:1.5rem; margin:4px 0 8px;">🎯 全科错题复习与阅读中枢</h3>
+      <h3 style="font-size:1.5rem; margin:4px 0 8px;">🎯 全科错题复习与名家阅读中枢</h3>
       <div class="hero-vault-stats" id="dashboardVaultStats">
         <span class="stat-pill">📐 数学: 0 题待攻克</span>
         <span class="stat-pill">📖 语文: 0 题</span>
@@ -257,38 +262,22 @@
   <div class="container" style="padding-top:20px;"><div class="q-grid" id="vocabCardGrid"></div></div>
 </div>
 
-<!-- 每日一读阅读器（优化：随机主题 + 分级字数/词数控制） -->
+<!-- 每日一读阅读器（⭐ 升级：中英文模式切换 + 蓝思控词 + 名家精读） -->
 <div id="dailyReadingView">
   <div class="reader-top-bar">
-    <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap;">
+    <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
       <span style="font-size:1.05rem; font-weight:800; color:#065f46;">📖 每日一读</span>
       <div style="display:flex; background:#e7dfd5; padding:2px; border-radius:8px;">
-        <span class="modal-subtab active" id="tabReaderChinese" onclick="switchReaderLanguage('chinese')" style="padding:4px 10px;">🇨🇳 中文</span>
-        <span class="modal-subtab" id="tabReaderEnglish" onclick="switchReaderLanguage('english')" style="padding:4px 10px;">🇬🇧 英文</span>
+        <span class="modal-subtab active" id="tabReaderChinese" onclick="switchReaderLanguage('chinese')" style="padding:4px 10px;">🇨🇳 中文名家精读</span>
+        <span class="modal-subtab" id="tabReaderEnglish" onclick="switchReaderLanguage('english')" style="padding:4px 10px;">🇬🇧 英文分级探险</span>
       </div>
-      <select id="readerGradeSelect" onchange="onReaderGradeChanged()" style="padding:4px 8px; border-radius:6px; font-size:0.82rem; background:white; border:1px solid #d6cebf;">
-        <optgroup label="小学低段 (150-250字 / 50-100词)">
-          <option value="三年级">三年级</option>
-          <option value="二年级">一~二年级</option>
-        </optgroup>
-        <optgroup label="小学高段 (300-500字 / 120-200词)">
-          <option value="四上" selected>四年级上册</option>
-          <option value="四下">四年级下册</option>
-          <option value="五上">五年级上册</option>
-          <option value="五下">五年级下册</option>
-          <option value="六上">六年级上册</option>
-          <option value="六下">六年级下册</option>
-        </optgroup>
-        <optgroup label="初中及以上 (600-800字 / 200-350词)">
-          <option value="七年级">七年级 (初一)</option>
-          <option value="八年级">八年级 (初二)</option>
-          <option value="九年级">九年级 (初三)</option>
-        </optgroup>
+      <!-- 动态模式/文库切换 -->
+      <select id="readerModeSelect" onchange="onReaderModeChanged()" style="padding:4px 8px; border-radius:6px; font-size:0.82rem; background:white; border:1px solid #d6cebf; font-weight:bold; color:#0f172a;">
       </select>
     </div>
     <div style="display:flex; align-items:center; gap:8px;">
       <button class="btn btn-outline" id="btnSpeechRead" style="background:white;" onclick="toggleSpeechReading()">🔊 朗读本文</button>
-      <button class="btn btn-outline" style="background:white;" onclick="refreshDailyReading()">🔄 换一篇 (随机新主题)</button>
+      <button class="btn btn-outline" style="background:white;" onclick="refreshDailyReading()">🔄 换一篇 (换新题材)</button>
       <button class="btn btn-outline" style="background:#fef3c7; color:#b45309;" onclick="openVocabFullScreenView()">📖 生词好句</button>
       <button class="btn btn-outline" style="background:white;" onclick="closeDailyReadingModal()">退出阅读</button>
     </div>
@@ -512,11 +501,17 @@ const GEMINI_MODELS = [
   "gemini-3.5-flash-lite"
 ];
 
-// ⭐ 每日一读精选主题池：涵盖多元知识与人文素养
-const READING_THEMES = [
-  "自然科学", "历史文明", "地理探索", "经典寓言", "科学技术", "人文艺术", "日常心理",
-  "浩瀚太空与天文探索", "深海秘境与极地探险", "奇趣动植物的生存智慧", "改变世界的伟大发明",
-  "传统文化与非遗手艺", "世界奇妙地理景观", "生活中的积极心理与社交智慧"
+// ⭐ 中文人类名家文库池与英文定制探险库
+const CHINESE_MASTER_THEMES = [
+  { id: "nature_life", name: "🌿 名家草木与生活散文", masters: "汪曾祺、丰子恺、宗璞、老舍、朱自清", desc: "侧重感官体验（草木清香、四季声响、人间食趣），文笔生动温暖，充满诗意与生活美学" },
+  { id: "history_legend", name: "📜 人文典故与神话传奇", masters: "《史记》微缩传奇、传统历史智慧人物与中外经典寓言", desc: "注重情节张力与智谋启发，人物形象跃然纸上，文辞精炼传神" },
+  { id: "science_lit", name: "🐞 经典文学级自然科普", masters: "法布尔《昆虫记》译笔、比安基《森林报》文学视角", desc: "以拟人和第一视角的优美文学笔触观察微观昆虫与自然奇境，充满童趣与探索敬畏" }
+];
+
+const ENGLISH_MODES = [
+  { id: "adventure", name: "🧭 趣味探险故事", promptDesc: "an engaging, exciting mystery/adventure story (e.g. secret map, jungle expedition, missing compass)" },
+  { id: "encyclopedia", name: "🔬 百科趣味发现", promptDesc: "a fascinating real-world discovery or nature science story (e.g. how bees communicate, deep ocean glow, volcanic islands)" },
+  { id: "detective", name: "🔍 数学与逻辑神探", promptDesc: "Detective Jason solving a mini case using logic reasoning, math clues, or pattern finding" }
 ];
 
 const SUBJECTS = {
@@ -810,64 +805,71 @@ async function renderDashboard() {
 
 function openSubjectPortal(sId) { currentPortalSubject = sId; switchNav("portal"); }
 
-// ⭐ 每日一读模块升级：分级阅读标准与字数精细配置
-function getGradeBandConfig(gradeStr) {
-  if (/一|二|三/.test(gradeStr)) {
-    return {
-      band: "小学低段",
-      chiWords: "150-250字",
-      engWords: "50-100词",
-      razLevel: "RAZ-A~F (基础启蒙，高频常见词，句式简短生动)",
-      chineseReq: "符合小学低段语文课标标准，字词难度适中，多用韵律感强的生动短句，情节有趣生动。",
-      englishReq: "纯正地道的简短英语，以基础高频词汇(Sight Words)为主，重复句式强化语感。"
-    };
-  } else if (/初|七|八|九/.test(gradeStr)) {
-    return {
-      band: "初中及以上",
-      chiWords: "600-800字",
-      engWords: "200-350词",
-      razLevel: "RAZ-N~S (初中进阶分级，逻辑紧密，含复合句式与学科拓展词汇)",
-      chineseReq: "符合初中现代文阅读理解考标，立意深刻，文笔流畅，具有思辨性与人文情怀，杜绝说教。",
-      englishReq: "符合中考及初中分级阅读要求，地道自然，包含从句与逻辑连接词，展现文化与科学深度。"
-    };
+// ==========================================
+// ⭐ 每日一读模块：名家精读 + 蓝思控词探险
+// ==========================================
+
+let activeReaderLang = "chinese";
+let currentArticleData = { chinese: null, english: null };
+let currentEnglishKeywordsCache = [];
+
+function updateReaderModeSelectUI() {
+  const select = document.getElementById("readerModeSelect");
+  if (activeReaderLang === "chinese") {
+    select.innerHTML = `
+      <option value="random">🎲 随机名家文萃轮换</option>
+      <option value="nature_life">🌿 名家生活草木散文 (汪曾祺/丰子恺)</option>
+      <option value="history_legend">📜 文史典故传奇 (《史记》/人物智慧)</option>
+      <option value="science_lit">🐞 文学级自然科普 (《昆虫记》/《森林报》)</option>
+    `;
+    select.value = localStorage.getItem("READER_CHI_THEME_ID") || "random";
   } else {
-    // 默认高段（四至六年级）
-    return {
-      band: "小学高段",
-      chiWords: "300-500字",
-      engWords: "120-200词",
-      razLevel: "RAZ-G~M (小学高段中阶，丰富动词形容词与经典复合句)",
-      chineseReq: "符合四年级~六年级语文阅读理解考纲，字词适度拓展，句式富于起伏和节奏感，文学性与知识性兼备。",
-      englishReq: "符合小学高年级英语分级阅读标准，地道自然，兼具叙事性与科普细节，避免机械语法堆砌。"
-    };
+    select.innerHTML = `
+      <option value="adventure">🧭 趣味探险故事 (Adventure)</option>
+      <option value="encyclopedia">🔬 百科发现探奇 (Science & Nature)</option>
+      <option value="detective">🔍 数学/逻辑神探 (Detective Jason)</option>
+    `;
+    select.value = localStorage.getItem("READER_ENG_MODE_ID") || "adventure";
   }
 }
 
-let activeReaderLang = "chinese", currentArticleData = { chinese: null, english: null };
+function onReaderModeChanged() {
+  const val = document.getElementById("readerModeSelect").value;
+  if (activeReaderLang === "chinese") {
+    localStorage.setItem("READER_CHI_THEME_ID", val);
+  } else {
+    localStorage.setItem("READER_ENG_MODE_ID", val);
+  }
+  refreshDailyReading();
+}
 
 function openDailyReadingModal() {
   document.getElementById("dailyReadingView").style.display = "flex";
-  document.getElementById("readerGradeSelect").value = localStorage.getItem("READER_GRADE") || "四上";
+  updateReaderModeSelectUI();
   loadDailyReadingArticle(); 
   initReaderWordLookupListener(); 
   performCheckin(1, true);
 }
-function closeDailyReadingModal() { stopSpeechReading(); document.getElementById("dailyReadingView").style.display = "none"; hideQuickCollectBubble(); }
+
+function closeDailyReadingModal() { 
+  stopSpeechReading(); 
+  document.getElementById("dailyReadingView").style.display = "none"; 
+  hideQuickCollectBubble(); 
+}
+
 function switchReaderLanguage(lang) {
-  stopSpeechReading(); activeReaderLang = lang;
+  stopSpeechReading(); 
+  activeReaderLang = lang;
   document.getElementById("tabReaderChinese").classList.toggle("active", lang === 'chinese');
   document.getElementById("tabReaderEnglish").classList.toggle("active", lang === 'english');
+  updateReaderModeSelectUI();
   displayDailyArticle();
-}
-function onReaderGradeChanged() { 
-  localStorage.setItem("READER_GRADE", document.getElementById("readerGradeSelect").value); 
-  refreshDailyReading(); 
 }
 
 async function loadDailyReadingArticle() {
-  const today = getTodayDateStr(), g = localStorage.getItem("READER_GRADE") || "四上";
-  const cChi = localStorage.getItem(`DAILY_READING_CHI_${g}_${today}`);
-  const cEng = localStorage.getItem(`DAILY_READING_ENG_${g}_${today}`);
+  const today = getTodayDateStr();
+  const cChi = localStorage.getItem(`DAILY_READING_CHI_V8_${today}`);
+  const cEng = localStorage.getItem(`DAILY_READING_ENG_V8_${today}`);
   if (cChi && cEng) { 
     currentArticleData.chinese = cChi; 
     currentArticleData.english = cEng; 
@@ -882,71 +884,149 @@ async function refreshDailyReading() {
   await fetchAndGenerateDailyReading(true); 
 }
 
-// ⭐ 随机主题生成算法与独立高创意参数
+// 核心生成：特级助教名家润色 + 蓝思控词 + 旧词复现
 async function fetchAndGenerateDailyReading(forceNew = false) {
-  const grade = localStorage.getItem("READER_GRADE") || "四上";
-  const cfg = getGradeBandConfig(grade);
   const container = document.getElementById("readingArticleContainer");
+  const chiThemeId = localStorage.getItem("READER_CHI_THEME_ID") || "random";
+  const engModeId = localStorage.getItem("READER_ENG_MODE_ID") || "adventure";
 
-  // 随机从主题库抽选 1 个主题
-  const randomTheme = READING_THEMES[Math.floor(Math.random() * READING_THEMES.length)];
+  let selChiTheme = (chiThemeId === "random")
+    ? CHINESE_MASTER_THEMES[Math.floor(Math.random() * CHINESE_MASTER_THEMES.length)]
+    : CHINESE_MASTER_THEMES.find(t => t.id === chiThemeId) || CHINESE_MASTER_THEMES[0];
+
+  let selEngMode = ENGLISH_MODES.find(m => m.id === engModeId) || ENGLISH_MODES[0];
+
+  // 从本地生词本抽取一个已学单词，完成“旧词复现”
+  let recycledWord = "";
+  try {
+    const vocabList = await dbGetAll(STORE_VOCAB);
+    const engVocabs = vocabList.filter(v => v.type === "english");
+    if (engVocabs.length > 0) {
+      recycledWord = engVocabs[Math.floor(Math.random() * engVocabs.length)].text;
+    }
+  } catch(e) {}
 
   container.innerHTML = `
-    <div style="text-align:center; padding:60px 0;">
-      <h3 style="color:#059669; margin-bottom:8px;">⏳ 正在由 AI 定制【${grade} · ${cfg.band}】双语拓展阅读...</h3>
-      <div style="display:inline-block; background:#fef3c7; color:#b45309; padding:4px 12px; border-radius:14px; font-weight:bold; font-size:0.88rem; margin-top:6px;">
-        🎲 随机精选主题：${randomTheme}
+    <div style="text-align:center; padding:50px 0;">
+      <h3 style="color:#059669; margin-bottom:8px;">⏳ 正在为您定制今日双语深度阅读...</h3>
+      <div style="display:inline-flex; gap:8px; flex-wrap:wrap; justify-content:center; margin-top:6px;">
+        <span style="background:#fef3c7; color:#b45309; padding:4px 12px; border-radius:14px; font-weight:bold; font-size:0.85rem;">
+          ${selChiTheme.name}
+        </span>
+        <span style="background:#ecfdf5; color:#065f46; padding:4px 12px; border-radius:14px; font-weight:bold; font-size:0.85rem;">
+          ${selEngMode.name} (Lexile 350L~480L)
+        </span>
       </div>
-      <p style="color:#78716c; font-size:0.85rem; margin-top:10px;">字数严格适配：中文${cfg.chiWords} / 英文${cfg.engWords}，稍候 3~5 秒...</p>
+      <p style="color:#78716c; font-size:0.85rem; margin-top:10px;">
+        ${recycledWord ? `🌟 已触发旧词复现机制："${recycledWord}" · ` : ''}控词不超纲，名家有温度，稍候 3~5 秒...
+      </p>
     </div>
   `;
 
-  const prompt = `你是一位精通分级阅读的特级语文与英语双语教育名师。请为【${grade}】（学段定位：${cfg.band}）定制今天的每日双语阅读短文。
-本次指定探究主题：【${randomTheme}】。
+  const prompt = `你是一位小学四年级双语特级名师。请为四年级学生 Jason 定制今日的精读文章，严格执行以下教研标准：
 
-要求严格遵守：
-1. 中文短文（1篇）：
-   - 探究主题：围绕“${randomTheme}”（立意积极，兼具知识性与趣旨，避免枯燥说教与千篇一律）。
-   - 难度与句式：${cfg.chineseReq}
-   - 字数严格控制在：${cfg.chiWords}（严禁过短或过长）。
-   - 包含2道启发式思考理解小问答及参考答案。
+【一、中文名家精读（拒绝生硬说明文，注重文学气韵与修辞积累）：】
+1. 文风来源：精选【${selChiTheme.masters}】等人类文学巨匠的风格题材，属于【${selChiTheme.name}】（${selChiTheme.desc}）。
+2. 特级助教润色：在保留名家原作的感官细腻感、真挚情感与文气留白的前提下，进行符合四年级认知水平的适度降维润色，字数 350~450 字。
+3. 结构栏目包含：
+   - 【✨ 语感与修辞点睛】：具体摘抄文中 1 处生动的比喻、拟人或精妙动词，用一两句话剖析其美感。
+   - 【💎 佳词积累】：提炼 2~3 个适合四年级写作积累的高级成语或四字雅词，附带通俗释义。
+   - 【💡 思考小问答】：1~2 道探究式思考题及参考答案。
 
-2. 英文短文（1篇）：
-   - 探究主题：围绕“${randomTheme}”（可选取有趣的文化、自然科普或探险故事切入）。
-   - 难度与分级：对应 ${cfg.razLevel}。${cfg.englishReq}
-   - 词数严格控制在：${cfg.engWords}。
-   - 包含2道英文小问题(Comprehension Questions)及参考答案。
+【二、英文分级阅读（严格控词，消除挫败感，建立阅读自信）：】
+1. 蓝思值死命令：强制限制在 Lexile 350L ~ 480L（美小3~4年级分级标准，核心词以高频基础词为主）。
+2. 句式与篇幅：全文 120~160 词。句式以简单句为主，从句严禁超过一层（禁止长难句）。
+3. 题材模式：【${selEngMode.name}】，${selEngMode.promptDesc}。
+${recycledWord ? `4. 🌟【旧词复现】：请将 Jason 之前背过的单词 "${recycledWord}" 自然融入情节中，加深记忆。` : ''}
+5. 【严格 3 个重点词】：全文只允许且必须重点挑出 3 个适合四年级进阶的 Key Words（在正文中用 **word** 加粗标出）。
+6. Comprehension Questions：2 道简明选择题或问答题及答案。
 
-请直接返回纯 JSON 格式（不要包含任何 markdown 代码块符号如 \`\`\`json，直接以大括号开头）：
+请返回纯 JSON 格式（不要包含任何 markdown 代码块标记）：
 {
-  "theme": "${randomTheme}",
-  "chinese": "<h1>标题</h1><div style='margin-bottom:12px; display:flex; gap:6px; flex-wrap:wrap;'><span style='background:#fef3c7;color:#b45309;padding:2px 8px;border-radius:10px;font-size:0.8rem;font-weight:bold;'>🏷️ 主题：${randomTheme}</span> <span style='background:#ecfdf5;color:#065f46;padding:2px 8px;border-radius:10px;font-size:0.8rem;'>${cfg.band}（字数规范：${cfg.chiWords}）</span></div><p>短文第一段...</p><p>短文第二段...</p><div class='comprehension-box'><b>💡 思考小问答：</b><br>1. 问？<br>2. 问？<br><button class='btn btn-outline' style='margin-top:8px; background:white;' onclick='toggleReadingAnswers()'>👁️ 查看参考答案</button><div id='readingAnswerDrawer' style='display:none; margin-top:8px; color:#15803d; font-weight:600;'>1. 答案一...<br>2. 答案二...</div></div>",
-  "english": "<h1>Title</h1><div style='margin-bottom:12px; display:flex; gap:6px; flex-wrap:wrap;'><span style='background:#fef3c7;color:#b45309;padding:2px 8px;border-radius:10px;font-size:0.8rem;font-weight:bold;'>🏷️ Theme: ${randomTheme}</span> <span style='background:#ecfdf5;color:#065f46;padding:2px 8px;border-radius:10px;font-size:0.8rem;'>${cfg.band} (${cfg.engWords})</span></div><p>Paragraph 1...</p><p>Paragraph 2...</p><div class='comprehension-box'><b>💡 Comprehension Questions:</b><br>1. Question 1?<br>2. Question 2?<br><button class='btn btn-outline' style='margin-top:8px; background:white;' onclick='toggleReadingAnswers()'>👁️ View Answers</button><div id='readingAnswerDrawer' style='display:none; margin-top:8px; color:#15803d; font-weight:600;'>1. Answer 1...<br>2. Answer 2...</div></div>"
+  "chinese": "<h1>文章标题</h1><div style='margin-bottom:10px;'><span style='background:#fef3c7;color:#b45309;padding:2px 8px;border-radius:10px;font-size:0.8rem;font-weight:bold;'>🌿 题材：${selChiTheme.name}</span></div><p>段落1...</p><p>段落2...</p><p>段落3...</p><div class='comprehension-box'><b>✨ 语感与修辞点睛：</b><br>...<br><br><b>💎 佳词积累：</b><br>...<br><br><b>💡 思考小问答：</b><br>1. 问？<br><button class='btn btn-outline' style='margin-top:8px; background:white;' onclick='toggleReadingAnswers()'>👁️ 查看参考答案</button><div id='readingAnswerDrawer' style='display:none; margin-top:8px; color:#15803d; font-weight:600;'>答案...</div></div>",
+  "englishHtml": "<h1>Story Title</h1><div style='margin-bottom:10px;'><span style='background:#ecfdf5;color:#065f46;padding:2px 8px;border-radius:10px;font-size:0.8rem;font-weight:bold;'>${selEngMode.name} (Lexile ~420L)</span></div><p>Paragraph 1...</p><p>Paragraph 2...</p>",
+  "keywords": [
+    {"word": "word1", "phonetic": "/.../", "meaning": "中文简释"},
+    {"word": "word2", "phonetic": "/.../", "meaning": "中文简释"},
+    {"word": "word3", "phonetic": "/.../", "meaning": "中文简释"}
+  ],
+  "englishQuestions": "<b>💡 Comprehension Questions:</b><br>1. Question 1?<br>2. Question 2?<br><button class='btn btn-outline' style='margin-top:8px; background:white;' onclick='toggleReadingAnswers()'>👁️ View Answers</button><div id='readingAnswerDrawer' style='display:none; margin-top:8px; color:#15803d; font-weight:600;'>Answer 1...<br>Answer 2...</div>"
 }`;
 
   try {
-    // 采用 0.85 高创造力参数，彻底杜绝内容千篇一律
     const raw = await queryGemini(prompt, [], 3500, 0.85);
     const cleaned = raw.replace(/^```json\s*/i, '').replace(/```\s*$/i, '');
     const match = cleaned.match(/\{[\s\S]*\}/);
     if (match) {
       const res = JSON.parse(match[0]);
+      currentEnglishKeywordsCache = res.keywords || [];
+
+      // 组装英文完整视图：含 3 个词汇卡与一键直存按钮
+      const keywordsHtml = `
+        <div class="english-keywords-panel">
+          <div style="font-weight:bold; color:#166534; font-size:0.92rem; margin-bottom:8px;">
+            🔑 今日精选重点词 (全篇仅 3 词，点击直接加入生词本)：
+          </div>
+          <div class="vocab-chips-list">
+            ${currentEnglishKeywordsCache.map((k, idx) => `
+              <div class="vocab-chip-item">
+                <div>
+                  <b style="font-size:1.05rem; color:#0f172a;">${k.word}</b> 
+                  <span style="font-size:0.82rem; color:#64748b; margin-left:6px;">${k.phonetic || ''}</span>
+                  <div style="font-size:0.85rem; color:#334155; margin-top:2px;">${k.meaning}</div>
+                </div>
+                <button class="btn btn-outline" style="border-color:#86efac; color:#15803d; font-size:0.75rem;" onclick="saveEnglishKeywordDirect(${idx}, this)">
+                  ＋ 加入生词本
+                </button>
+              </div>
+            `).join('')}
+          </div>
+        </div>
+        <div class="comprehension-box" style="background:#eff6ff; border-left:4px solid #2563eb; margin-top:16px;">
+          ${res.englishQuestions || ''}
+        </div>
+      `;
+
+      const fullEnglish = (res.englishHtml || '') + keywordsHtml;
       const today = getTodayDateStr();
-      localStorage.setItem(`DAILY_READING_CHI_${grade}_${today}`, res.chinese);
-      localStorage.setItem(`DAILY_READING_ENG_${grade}_${today}`, res.english);
-      currentArticleData = res; 
+      localStorage.setItem(`DAILY_READING_CHI_V8_${today}`, res.chinese);
+      localStorage.setItem(`DAILY_READING_ENG_V8_${today}`, fullEnglish);
+      currentArticleData = { chinese: res.chinese, english: fullEnglish };
       displayDailyArticle();
       return;
     }
-    throw new Error("返回格式未被识别");
+    throw new Error("格式解析不匹配");
   } catch(e) {
     container.innerHTML = `
       <div style="text-align:center; padding:40px; color:#dc2626;">
-        <h3>⚠️ 加载失败：${e.message}</h3>
-        <p style="color:#64748b; font-size:0.85rem; margin-top:6px;">请检查网络或在右上角【🔑 Key】配置有效的 Gemini Key</p>
+        <h3>⚠️ 生成失败：${e.message}</h3>
         <button class="btn btn-primary" style="margin-top:12px;" onclick="refreshDailyReading()">🔄 重新尝试</button>
       </div>
     `;
+  }
+}
+
+// 一键直接存入生词本并更新按钮状态
+async function saveEnglishKeywordDirect(idx, btn) {
+  const item = currentEnglishKeywordsCache[idx];
+  if (!item) return;
+  await dbAdd(STORE_VOCAB, {
+    text: item.word,
+    type: "english",
+    phoneticOrPinyin: item.phonetic || "",
+    meaning: item.meaning || "来自每日一读精选核心词",
+    sentence: "",
+    grade: localStorage.getItem("READER_GRADE") || "四上",
+    status: "🔴 待记住",
+    createdAt: new Date().toISOString()
+  });
+  performCheckin(1, true);
+  if (btn) {
+    btn.textContent = "✅ 已加入生词本";
+    btn.disabled = true;
+    btn.style.background = "#dcfce7";
+    btn.style.color = "#15803d";
+    btn.style.borderColor = "#86efac";
   }
 }
 
@@ -1920,7 +2000,7 @@ async function startExam(examId) {
 }
 function pickBubble(num, opt) {
   userExamAnswers[num] = opt;
-  ['A','B','C','D'].forEach(o => document.getElementById(`b-${num}-${o}`).classList.remove("selected"));
+  ['A','B','C','D'].forEach(o => document.getElementById(`b-${num}-${opt}`).classList.remove("selected"));
   document.getElementById(`b-${num}-${opt}`).classList.add("selected");
 }
 
@@ -2110,7 +2190,7 @@ function toggleSelectAllVault() {
 }
 
 async function exportData() {
-  const blob = new Blob([JSON.stringify({ version: 7.9, questions: await dbGetAll(STORE_QUESTIONS), exams: await dbGetAll(STORE_EXAMS), vocab: await dbGetAll(STORE_VOCAB) }, null, 2)], { type: "application/json" });
+  const blob = new Blob([JSON.stringify({ version: 8.0, questions: await dbGetAll(STORE_QUESTIONS), exams: await dbGetAll(STORE_EXAMS), vocab: await dbGetAll(STORE_VOCAB) }, null, 2)], { type: "application/json" });
   const a = document.createElement("a"); a.href = URL.createObjectURL(blob);
   a.download = `智学多学科备份_${new Date().getMonth()+1}月${new Date().getDate()}日.json`; a.click();
 }
