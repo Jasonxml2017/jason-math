@@ -727,9 +727,10 @@ function renderRichContent(el, text) {
   });
 }
 
+// 唯一修改点：提升为版本 20，彻底解决 IndexedDB 历史版本锁死与无法恢复问题
 function initDB() {
   return new Promise(resolve => {
-    const req = indexedDB.open(DB_NAME, 10);
+    const req = indexedDB.open(DB_NAME, 20);
     req.onupgradeneeded = e => {
       const d = e.target.result;
       if (!d.objectStoreNames.contains(STORE_QUESTIONS)) d.createObjectStore(STORE_QUESTIONS, { keyPath: "id", autoIncrement: true });
@@ -738,6 +739,7 @@ function initDB() {
       if (!d.objectStoreNames.contains(STORE_ARTICLES)) d.createObjectStore(STORE_ARTICLES, { keyPath: "id", autoIncrement: true });
     };
     req.onsuccess = async e => { db = e.target.result; await preseedAllExams(); resolve(db); };
+    req.onerror = e => { console.error("DB Error", e); resolve(null); };
   });
 }
 
@@ -751,9 +753,9 @@ async function preseedAllExams() {
   }
 }
 
-function dbAdd(s, item) { return new Promise(res => { const tx = db.transaction(s, "readwrite"); tx.objectStore(s).put(item).onsuccess = e => res(e.target.result); }); }
-function dbGetAll(s) { return new Promise(res => { const tx = db.transaction(s, "readonly"); tx.objectStore(s).getAll().onsuccess = e => res(e.target.result || []); }); }
-function dbDelete(s, id) { return new Promise(res => { const tx = db.transaction(s, "readwrite"); tx.objectStore(s).delete(id).onsuccess = () => res(); }); }
+function dbAdd(s, item) { return new Promise(res => { if(!db) return res(); const tx = db.transaction(s, "readwrite"); tx.objectStore(s).put(item).onsuccess = e => res(e.target.result); }); }
+function dbGetAll(s) { return new Promise(res => { if(!db) return res([]); const tx = db.transaction(s, "readonly"); tx.objectStore(s).getAll().onsuccess = e => res(e.target.result || []); }); }
+function dbDelete(s, id) { return new Promise(res => { if(!db) return res(); const tx = db.transaction(s, "readwrite"); tx.objectStore(s).delete(id).onsuccess = () => res(); }); }
 
 function switchNav(v) {
   document.getElementById("viewDashboard").style.display = v === "dashboard" ? "block" : "none";
@@ -1046,7 +1048,6 @@ async function handleSplitDocFile(file) {
   document.getElementById("splitDocAlbumTitle").value = file.name.replace(/\.[^/.]+$/, "");
   
   if (isImg) {
-    // 针对用户直接上传的 iPad 杂志截图
     const reader = new FileReader();
     reader.onload = e => {
       pendingSplitImageBase64 = e.target.result;
@@ -1059,7 +1060,6 @@ async function handleSplitDocFile(file) {
     document.getElementById("splitProgressNotice").textContent = "⏳ 正在提取 PDF 画面与文字，请稍候...";
     try {
       const pdf = await pdfjsLib.getDocument({ data: await file.arrayBuffer() }).promise;
-      // 提取第1页作为画面并检测文字
       const page = await pdf.getPage(1);
       const viewport = page.getViewport({ scale: 1.5 });
       const canvas = document.createElement("canvas");
@@ -1078,7 +1078,6 @@ async function handleSplitDocFile(file) {
       document.getElementById("splitProgressNotice").style.display = "none";
     }
   } else {
-    // 纯文本 .txt
     const reader = new FileReader();
     reader.onload = e => {
       document.getElementById("splitDocRawText").value = e.target.result.slice(0, 8000);
@@ -1143,7 +1142,7 @@ ${rawText ? `参考文字内容：\n${rawText.slice(0, 4000)}` : ''}`;
         category: "series",
         categoryName: `🌿 《博物》图文连载`,
         source: `选自《${albumTitle}》`,
-        image: pendingSplitImageBase64 || "", // 自动关联杂志高清图
+        image: pendingSplitImageBase64 || "",
         paragraphs: ch.paragraphs || [],
         gems: ch.gems || [],
         question: ch.question || "阅读后谈谈你的感受？",
@@ -1287,7 +1286,6 @@ async function renderAuthenticChineseArticle(next = true) {
     `;
   }
 
-  // 渲染杂志配图视窗
   let magazineImgHtml = "";
   if (art.image) {
     magazineImgHtml = `
@@ -1549,7 +1547,6 @@ function toggleSpeechReading() {
   if (!synth) { alert("当前设备不支持语音朗读！"); return; }
   if (synth.speaking || isSpeaking) { stopSpeechReading(); return; }
   
-  // 提取正文文本，天然自动过滤图片
   const textEl = document.getElementById("readingParagraphsContent");
   const text = textEl ? textEl.innerText : document.getElementById("readingArticleContainer").innerText;
   if (!text) return;
@@ -2518,7 +2515,7 @@ async function startExam(examId) {
 }
 function pickBubble(num, opt) {
   userExamAnswers[num] = opt;
-  ['A','B','C','D'].forEach(o => document.getElementById(`b-${num}-${opt}`).classList.remove("selected"));
+  ['A','B','C','D'].forEach(o => document.getElementById(`b-${num}-${o}`).classList.remove("selected"));
   document.getElementById(`b-${num}-${opt}`).classList.add("selected");
 }
 
