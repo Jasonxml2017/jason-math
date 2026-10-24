@@ -86,7 +86,7 @@
   /* 弹窗与通用容器 */
   .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); display: none; align-items: center; justify-content: center; z-index: 1000; padding: 16px; }
   .modal-overlay.active { display: flex; }
-  .modal { background: white; width: 100%; max-width: 680px; max-height: 90vh; border-radius: 16px; padding: 22px; overflow-y: auto; }
+  .modal { background: white; width: 100%; max-width: 680px; max-height: 92vh; border-radius: 16px; padding: 22px; overflow-y: auto; }
   .form-group { display: flex; flex-direction: column; gap: 4px; margin-bottom: 12px; }
   .form-group label { font-size: 0.85rem; font-weight: 600; color: #475569; }
   input[type="text"], input[type="number"], input[type="date"], select, textarea { padding: 8px 12px; border: 1px solid var(--border); border-radius: 8px; font-family: inherit; font-size: 0.9rem; }
@@ -102,8 +102,6 @@
   .analysis-output-box h1, .analysis-output-box h2, .analysis-output-box h3 { margin: 12px 0 6px; color: #0f172a; }
   .analysis-output-box ul, .analysis-output-box ol { padding-left: 20px; margin: 6px 0; }
   .analysis-output-box p { margin-bottom: 8px; }
-  .analysis-output-box .katex { font-size: 1.05em; line-height: 1.2; }
-  .analysis-output-box .katex-display { margin: 12px 0; overflow-x: auto; overflow-y: hidden; padding: 4px 0; }
 
   .ext-words-box { background: #f0fdf4; border: 1.5px solid #86efac; border-radius: 10px; padding: 12px 14px; margin-bottom: 12px; }
   .modal-subtabs { display: flex; background: #e2e8f0; padding: 3px; border-radius: 8px; margin-bottom: 14px; }
@@ -123,6 +121,10 @@
   .reader-content-body { flex: 1; overflow-y: auto; padding: 25px 20px; display: flex; justify-content: center; }
   .reader-paper { width: 100%; max-width: 760px; font-size: 1.15rem; line-height: 1.95; color: #292524; }
   
+  .series-progress-bar-wrap { background: #e7dfd5; border-radius: 10px; height: 8px; overflow: hidden; margin-top: 6px; }
+  .series-progress-fill { background: #15803d; height: 100%; transition: width 0.3s; }
+  .series-card-banner { background: #f0fdf4; border: 1.5px solid #86efac; border-radius: 10px; padding: 10px 14px; margin-bottom: 16px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px; }
+
   .comprehension-box { background: #f5efe6; border-left: 4px solid #d97706; padding: 16px; border-radius: 8px; margin-top: 24px; font-size: 0.95rem; }
   .english-keywords-panel { background: #f0fdf4; border: 1.5px solid #86efac; border-radius: 12px; padding: 16px; margin-top: 22px; }
   .vocab-chips-list { display: flex; flex-direction: column; gap: 10px; margin-top: 10px; }
@@ -130,6 +132,17 @@
 
   #quickCollectBubble { display: none; position: fixed; background: #0f172a; color: white; padding: 6px 14px; border-radius: 20px; box-shadow: 0 6px 20px rgba(0,0,0,0.35); z-index: 999; font-size: 0.82rem; font-weight: 700; cursor: pointer; border: 1px solid rgba(255,255,255,0.25); }
   #vocabFullView { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: var(--bg); z-index: 700; flex-direction: column; overflow-y: auto; }
+
+  /* iPad 照片全景交互裁剪视窗 */
+  #cropWorkspace {
+    display: none; position: relative; background: #1e293b; border-radius: 10px;
+    max-height: 52vh; min-height: 240px; overflow: auto; text-align: center;
+    border: 2px solid #3b82f6; user-select: none; touch-action: none;
+  }
+  .crop-zoom-bar {
+    display: flex; justify-content: center; align-items: center; gap: 8px;
+    background: #0f172a; padding: 6px 12px; border-radius: 8px; margin-bottom: 8px;
+  }
 </style>
 </head>
 <body>
@@ -137,7 +150,7 @@
 <header>
   <div class="brand" onclick="switchNav('dashboard')">
     <span>🍎 智学多学科管家</span>
-    <span style="font-size:0.7rem; font-weight:bold; background:#e0f2fe; color:#0369a1; padding:2px 8px; border-radius:12px;">v8.2 真名篇无机感版</span>
+    <span style="font-size:0.7rem; font-weight:bold; background:#e0f2fe; color:#0369a1; padding:2px 8px; border-radius:12px;">v8.5 文件夹&长文分辑版</span>
   </div>
   <div class="nav-tabs">
     <div class="nav-tab active" id="tabNavDashboard" onclick="switchNav('dashboard')">🏠 首页工作台</div>
@@ -206,7 +219,7 @@
   <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px; flex-wrap:wrap; gap:8px;">
     <div>
       <h2 style="font-size:1.3rem;">🎯 错题复习总库</h2>
-      <p style="font-size:0.85rem; color:#64748b;">按勾选次序精准复习（复习完自动清空勾选）；默认隐藏已斩杀题卡</p>
+      <p style="font-size:0.85rem; color:#64748b;">按勾选次序精准复习（复习完自动清空勾选）；支持按文件夹分类筛查</p>
     </div>
     <div style="display:flex; gap:6px; flex-wrap:wrap;">
       <button class="btn btn-primary" id="btnVaultReviewSelected" style="background:#7c3aed;" onclick="startSelectedVaultReview()">⚡ 复习所选题 (0)</button>
@@ -217,11 +230,12 @@
   </div>
 
   <div class="vault-filter-panel">
-    <div class="filter-row"><span style="font-size:0.82rem; font-weight:700; min-width:48px;">学科：</span><div id="filterSubjectChips" style="display:flex; gap:6px; flex-wrap:wrap;"></div></div>
-    <div class="filter-row"><span style="font-size:0.82rem; font-weight:700; min-width:48px;">模块：</span><div id="filterModuleChips" style="display:flex; gap:6px; flex-wrap:wrap;"></div></div>
-    <div class="filter-row"><span style="font-size:0.82rem; font-weight:700; min-width:48px;">年级：</span><div id="filterGradeChips" style="display:flex; gap:6px; flex-wrap:wrap;"></div></div>
+    <div class="filter-row"><span style="font-size:0.82rem; font-weight:700; min-width:55px;">学科：</span><div id="filterSubjectChips" style="display:flex; gap:6px; flex-wrap:wrap;"></div></div>
+    <div class="filter-row"><span style="font-size:0.82rem; font-weight:700; min-width:55px;">📁 文件夹：</span><div id="filterFolderChips" style="display:flex; gap:6px; flex-wrap:wrap;"></div></div>
+    <div class="filter-row"><span style="font-size:0.82rem; font-weight:700; min-width:55px;">模块：</span><div id="filterModuleChips" style="display:flex; gap:6px; flex-wrap:wrap;"></div></div>
+    <div class="filter-row"><span style="font-size:0.82rem; font-weight:700; min-width:55px;">年级：</span><div id="filterGradeChips" style="display:flex; gap:6px; flex-wrap:wrap;"></div></div>
     <div class="filter-row">
-      <span style="font-size:0.82rem; font-weight:700; min-width:48px;">状态：</span>
+      <span style="font-size:0.82rem; font-weight:700; min-width:55px;">状态：</span>
       <div id="filterStatusChips" style="display:flex; gap:6px; flex-wrap:wrap; align-items:center;">
         <span class="filter-chip active" onclick="setFilterStatus('')">全部状态</span>
         <span class="filter-chip" onclick="setFilterStatus('🔴 待攻克')">🔴 待攻克</span>
@@ -262,18 +276,22 @@
         <span class="modal-subtab active" id="tabReaderChinese" onclick="switchReaderLanguage('chinese')" style="padding:4px 10px;">🇨🇳 中文真实名篇</span>
         <span class="modal-subtab" id="tabReaderEnglish" onclick="switchReaderLanguage('english')" style="padding:4px 10px;">🇬🇧 英文分级探险</span>
       </div>
-      <!-- 动态题材选择器 -->
       <select id="readerModeSelect" onchange="onReaderModeChanged()" style="padding:4px 8px; border-radius:6px; font-size:0.82rem; background:white; border:1px solid #d6cebf; font-weight:bold; color:#0f172a;">
       </select>
     </div>
-    <div style="display:flex; align-items:center; gap:8px;">
+    <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
+      <button class="btn btn-primary" style="background:#059669;" onclick="openSplitDocModal()">📂 导入整本/长文分辑</button>
+      <button class="btn btn-outline" style="background:white;" onclick="openArticleManageModal()">🗂️ 文库管理</button>
       <button class="btn btn-outline" id="btnSpeechRead" style="background:white;" onclick="toggleSpeechReading()">🔊 朗读本文</button>
       <button class="btn btn-outline" style="background:white;" onclick="refreshDailyReading()">🔄 换一篇</button>
-      <button class="btn btn-outline" style="background:#fef3c7; color:#b45309;" onclick="openVocabFullScreenView()">📖 生词好句</button>
       <button class="btn btn-outline" style="background:white;" onclick="closeDailyReadingModal()">退出阅读</button>
     </div>
   </div>
-  <div class="reader-content-body"><div class="reader-paper" id="readingArticleContainer"><div style="text-align:center; padding:60px 0; color:#78716c;">正在载入精选篇目...</div></div></div>
+  <div class="reader-content-body">
+    <div class="reader-paper" id="readingArticleContainer">
+      <div style="text-align:center; padding:60px 0; color:#78716c;">正在载入精选篇目...</div>
+    </div>
+  </div>
 </div>
 
 <div id="quickCollectBubble" onclick="quickCollectCurrentSelection()">⭐ 收藏此词句</div>
@@ -341,6 +359,45 @@
 
 <!-- ================= 弹窗集合 ================= -->
 
+<!-- 长篇文档拆解为每日短文连载弹窗 -->
+<div class="modal-overlay" id="splitDocModal">
+  <div class="modal" style="max-width:720px;">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+      <h3 style="font-size:1.15rem; color:#059669;">📚 上传文档自动拆分为“每日一篇”连载</h3>
+      <span style="font-size:0.75rem; color:#64748b;">支持 .txt, .pdf 或直接粘贴长文</span>
+    </div>
+    <div style="display:grid; grid-template-columns: 2fr 1fr; gap:10px; margin-bottom:10px;">
+      <div class="form-group"><label>专栏/书籍名称</label><input type="text" id="splitDocAlbumTitle" placeholder="如：《少年时》第48期·深海探秘"></div>
+      <div class="form-group"><label>预计拆分篇数</label><select id="splitDocTargetParts"><option value="3">拆分为 3 篇</option><option value="5" selected>拆分为 5 篇</option><option value="8">拆分为 8 篇</option><option value="12">拆分为 12 篇</option></select></div>
+    </div>
+    <div class="form-group">
+      <label>选择文件上传（.txt 或 .pdf 电子书）</label>
+      <input type="file" id="splitFileInput" accept=".txt,.pdf" onchange="handleSplitDocFile(this.files[0])">
+    </div>
+    <div class="form-group">
+      <label>文档内容预览 / 或直接在此粘贴长文全文：</label>
+      <textarea id="splitDocRawText" style="height:150px;" placeholder="在此粘贴《少年时》或文学作品的长篇文章内容..."></textarea>
+    </div>
+    <div id="splitProgressNotice" style="display:none; color:#059669; font-size:0.85rem; font-weight:bold; margin-bottom:10px;">⏳ 正在调用 AI 智能拆解并提炼每日佳词...请稍候</div>
+    <div style="display:flex; justify-content:flex-end; gap:8px;">
+      <button class="btn btn-outline" onclick="closeAllModals()">取消</button>
+      <button class="btn btn-primary" id="btnStartSplitDoc" style="background:#059669;" onclick="startSplitDocumentToSeries()">🚀 开始智能切分并入库</button>
+    </div>
+  </div>
+</div>
+
+<!-- 文库管理弹窗 -->
+<div class="modal-overlay" id="articleManageModal">
+  <div class="modal" style="max-width:720px;">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+      <h3 style="font-size:1.15rem; color:#0f172a;">🗂️ 课外名篇与长文连载管理</h3>
+      <button class="btn btn-primary" style="background:#059669; padding:4px 10px; font-size:0.78rem;" onclick="openSplitDocModal()">＋ 导入新连载</button>
+    </div>
+    <div id="articleManageList" style="max-height:60vh; overflow-y:auto; display:flex; flex-direction:column; gap:8px;"></div>
+    <div style="display:flex; justify-content:flex-end; margin-top:14px;"><button class="btn btn-outline" onclick="closeAllModals()">关闭</button></div>
+  </div>
+</div>
+
 <div class="modal-overlay" id="addVocabModal">
   <div class="modal" style="max-width:580px;">
     <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px;">
@@ -393,9 +450,10 @@
       <div class="form-group"><label>所属年级</label><select id="editQGrade"><option value="四上">四年级上册</option><option value="四下">四年级下册</option><option value="五上">五年级上册</option><option value="五下">五年级下册</option><option value="六上">六年级上册</option><option value="六下">六年级下册</option></select></div>
     </div>
     <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin-bottom:12px;">
-      <div class="form-group"><label>分类模块</label><select id="editQModule"></select></div>
-      <div class="form-group"><label>掌握状态</label><select id="editQStatus"><option value="🔴 待攻克">🔴 待攻克</option><option value="🟡 巩固中">🟡 巩固中</option><option value="🟢 已斩杀">🟢 已斩杀</option></select></div>
+      <div class="form-group"><label>分类文件夹</label><input type="text" id="editQFolder" placeholder="如：善思单词"></div>
+      <div class="form-group"><label>考点模块</label><select id="editQModule"></select></div>
     </div>
+    <div class="form-group"><label>掌握状态</label><select id="editQStatus"><option value="🔴 待攻克">🔴 待攻克</option><option value="🟡 巩固中">🟡 巩固中</option><option value="🟢 已斩杀">🟢 已斩杀</option></select></div>
     <div class="form-group"><label>题目备注 / 错字 / 标题</label><input type="text" id="editQNote"></div>
     <div class="form-group"><label>参考答案 / 纠错释义</label><input type="text" id="editQAns"></div>
     <div class="form-group" id="groupEditQExt"><label>常用拓展（组词或例句）</label><input type="text" id="editQExt" placeholder="如：名门望族、举世闻名、莫名其妙"></div>
@@ -406,6 +464,7 @@
   </div>
 </div>
 
+<!-- 错题录入弹窗（优化 iPad 全局自适应裁剪） -->
 <div class="modal-overlay" id="errorEntryModal">
   <div class="modal">
     <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
@@ -418,23 +477,45 @@
     </div>
     <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin-bottom:12px;">
       <div class="form-group"><label>所属年级</label><select id="inpEntryGrade"><option value="四上">四年级上册</option><option value="四下">四年级下册</option><option value="五上">五年级上册</option><option value="五下">五年级下册</option><option value="六上">六年级上册</option><option value="六下">六年级下册</option></select></div>
-      <div class="form-group"><label>分类标签</label><select id="inpEntryModule"></select></div>
+      <div class="form-group">
+        <label>📁 分类文件夹（如：善思单词）</label>
+        <div style="display:flex; gap:4px;">
+          <select id="inpEntryFolder" onchange="onFolderSelectChanged(this)" style="flex:1;"></select>
+          <button type="button" class="btn btn-outline" style="padding:2px 8px;" onclick="promptNewFolder()">＋新建</button>
+        </div>
+      </div>
     </div>
+    <div class="form-group"><label>考点标签</label><select id="inpEntryModule"></select></div>
+    
     <div id="panelEntryWord">
       <div class="form-group"><label id="lblWordTitle">输入错字 / 听写词语 / 拼音</label><input type="text" id="inpWordText" placeholder="" style="font-size:1.1rem; font-weight:bold;"></div>
     </div>
+    
     <div id="panelEntryPhoto" style="display:none;">
       <div style="border:2px dashed #93c5fd; padding:15px; text-align:center; border-radius:8px; margin-bottom:10px; cursor:pointer;" onclick="document.getElementById('cameraPhotoFile').click()">
-        <div id="cameraPhotoText">📸 点击调起 iPad 相机拍照 / 从相册选择试卷</div>
+        <div id="cameraPhotoText">📸 点击调起 iPad 相机拍照 / 从相册选择</div>
         <input type="file" id="cameraPhotoFile" accept="image/*" capture="environment" style="display:none;" onchange="handleCameraCropFile(this.files[0])">
       </div>
-      <div id="cropWorkspace" style="display:none; position:relative; max-height:280px; overflow:auto; background:#334155; border-radius:8px; padding:10px; text-align:center;">
-        <div style="position:relative; display:inline-block;"><img id="cropTargetImg" style="max-width:100%; display:block; user-select:none;"><canvas id="cropModalCanvas" style="position:absolute; top:0; left:0; width:100%; height:100%; touch-action:none; cursor:crosshair;"></canvas></div>
+      
+      <!-- 视窗与全景缩放控制条 -->
+      <div class="crop-zoom-bar" id="cropZoomControls" style="display:none;">
+        <button type="button" class="btn btn-outline" style="color:white; border-color:#64748b; background:transparent;" onclick="zoomCropPhoto(-0.2)">🔍−</button>
+        <span id="cropZoomText" style="color:white; font-size:0.8rem; font-weight:bold; min-width:48px; text-align:center;">100%</span>
+        <button type="button" class="btn btn-outline" style="color:white; border-color:#64748b; background:transparent;" onclick="zoomCropPhoto(0.2)">🔍＋</button>
+        <button type="button" class="btn btn-amber" style="padding:3px 8px; font-size:0.75rem;" onclick="fitCropPhotoToContainer()">🖼️ 适配全图</button>
       </div>
-      <p style="font-size:0.75rem; color:#64748b; margin-top:4px;">拍照后，在图上拖拽画框，自动裁切题目区域！</p>
+
+      <div id="cropWorkspace">
+        <div id="cropImgWrapper" style="position:relative; display:inline-block;">
+          <img id="cropTargetImg" style="display:block; user-select:none; max-width:none;">
+          <canvas id="cropModalCanvas" style="position:absolute; top:0; left:0; width:100%; height:100%; touch-action:none; cursor:crosshair;"></canvas>
+        </div>
+      </div>
+      <p style="font-size:0.75rem; color:#64748b; margin-top:6px;">💡 提示：点击【适配全图】即可完整查看长图；在图上拖拽画框，拉伸四角调整范围！</p>
     </div>
+
     <div style="display:flex; justify-content:space-between; align-items:center; margin-top:16px;">
-      <span style="font-size:0.75rem; color:#64748b;">提示：保存后窗口保留，方便连续录入</span>
+      <span style="font-size:0.75rem; color:#64748b;">保存后窗口保留，方便连续录入</span>
       <div style="display:flex; gap:8px;"><button class="btn btn-outline" onclick="closeAllModals()">完成/关闭</button><button class="btn btn-primary" onclick="saveSubjectErrorEntry()">💾 保存此题(继续录入)</button></div>
     </div>
   </div>
@@ -492,9 +573,7 @@ const GEMINI_MODELS = [
   "gemini-3.5-flash-lite"
 ];
 
-// ==========================================
-// 🌿 中文真实名家文库（严禁AI虚构，全部选自真实出版书籍与《少年时》）
-// ==========================================
+// 内置经典真实文库
 const AUTHENTIC_CHINESE_BANK = [
   {
     id: "sns_deep_sea",
@@ -515,42 +594,6 @@ const AUTHENTIC_CHINESE_BANK = [
     answer: "透明的头部能像保护罩一样保护眼球，同时能最大化收集上方微弱的光线，体现了生物在极端黑暗环境下顽强演化、适应生存的高超智慧。"
   },
   {
-    id: "wzg_duck_egg",
-    category: "masters",
-    categoryName: "🌿 名家草木与生活散文",
-    title: "高邮的咸鸭蛋",
-    source: "选自 汪曾祺 散文集《人间草木》",
-    paragraphs: [
-      "我的家乡是水乡。出鸭。高邮大麻鸭是著名的鸭种。鸭多，鸭蛋也多。高邮人也善于腌鸭蛋。高邮咸蛋的特点是质细而油多。蛋白柔嫩，不似别处的发干、发粉，入口便觉得温润软糯。",
-      "平常食用，一般都是敲破鸭蛋空头的一角，用筷子挖着吃。筷子头一扎下去，吱——红油就冒出来了！高邮咸蛋的黄是通红的。苏北有一道名菜，叫‘炒红油豆腐’，就是用高邮咸蛋黄炒的，颜色极漂亮，味道也极鲜美。",
-      "孩子们吃鸭蛋还有一种独特的玩头：把鸭蛋吃完，蛋壳留着，洗得干干净净。到了端午节，装在丝线编成的彩色小网囊里，挂在胸前，互相夸耀比美，里面还捉只萤火虫，一闪一闪，这真是童年里最快活的时光。"
-    ],
-    gems: [
-      { word: "温润软糯", meaning: "质地温和柔润，软和而富有黏性，常形容美玉或极其可口的糕点食物。", usage: "描写妈妈做的家乡美食或一道可口的甜点，让细节充满生活质感。" },
-      { word: "快活惬意", meaning: "心情非常愉快，感到舒适满足、无拘无束。", usage: "可用于周末远足、与好友游戏或做完作业在微风中阅读时的心情刻画。" }
-    ],
-    question: "作者写吃咸鸭蛋‘筷子头一扎下去，吱——红油就冒出来了’，这个‘吱’字妙在哪里？",
-    answer: "妙在以声传神。一个‘吱’字化静为动，把红油饱满丰盈、顺着筷孔流出的诱人情态写活了，让人仿佛闻到了咸蛋的浓香。"
-  },
-  {
-    id: "fkz_goose",
-    category: "masters",
-    categoryName: "🌿 名家草木与生活散文",
-    title: "从容不迫的白鹅",
-    source: "选自 丰子恺 散文集《缘缘堂随笔》",
-    paragraphs: [
-      "这白鹅若是傲慢起来，真是威风凛凛。它的步态从容，大模大样的，颇像京剧里的净角出场。它常傲然引吭大叫，凡有生客进来，鹅必然厉声叫嚣；甚至篱笆外有人走路，它也要引吭大叫，引得邻里皆知。",
-      "鹅的吃饭，常常使我们发笑。我们的鹅是吃冷饭的，一日三餐，必须要有三样东西下饭：一样是水，一样是泥，一样是草。先吃一口冷饭，再喝一口水，然后再到泥地里跑去嘴啃一口草，井井有条，从不慌乱。",
-      "即便堂前有猫狗窥伺，它也绝不退让，昂首挺胸，大踏步迈着方步。这种高傲而认真的性格，让人虽然觉得可笑，却又由衷喜爱它的天真与耿直。"
-    ],
-    gems: [
-      { word: "从容不迫", meaning: "态度镇静沉着，不慌不忙，非常沉得住气。", usage: "可用来形容遇到突发情况沉着应对，或者长辈、老师沉稳大气的举止风度。" },
-      { word: "井井有条", meaning: "形容说话办事、收拾物品极有条理，整整齐齐。", usage: "适合描写同桌整理桌面书本时的认真，或班级队伍集合时的整肃有序列。" }
-    ],
-    question: "丰子恺先生笔下的白鹅有什么鲜明的性格特点？作者流露出怎样的情感？",
-    answer: "白鹅性格傲慢、认真、严肃而又逗趣。字里行间流露出作者对白鹅天真个性的喜爱与对朴素日常生活的赞赏。"
-  },
-  {
     id: "sns_tree_net",
     category: "shaonianshi",
     categoryName: "🚀 《少年时》精选科普",
@@ -569,28 +612,25 @@ const AUTHENTIC_CHINESE_BANK = [
     answer: "它像地下互联网一样，在树木之间传递养分（以强扶弱），并能快速发送危险预警化学信号，帮助整片森林协同抵御虫害。"
   },
   {
-    id: "fabre_insect",
-    category: "nature_lit",
-    categoryName: "🐞 经典文学级自然科普",
-    title: "蝉的阳光礼赞",
-    source: "选自 让·亨利·法布尔《昆虫记》（经典文学译本）",
+    id: "wzg_duck_egg",
+    category: "masters",
+    categoryName: "🌿 名家生活散文",
+    title: "高邮的咸鸭蛋",
+    source: "选自 汪曾祺 散文集《人间草木》",
     paragraphs: [
-      "在漫长而寒冷的四年光阴里，幼小的蝉一直蛰伏在暗无天日的泥土之中。它用柔弱的前爪一点点掘开泥石，在没有阳光、没有琴声的地下世界里耐心地等待着。",
-      "终于，在一个炎热清朗的夏夜，它破土而出，爬上了一株挺拔的灌木。背上的裂缝慢慢张开，柔软的蝉翼在微风中一点点舒展，从乳白色渐渐变为翡翠般的透明。当清晨的第一缕朝阳洒在树梢，这只重见天日的歌唱家便振动起胸前的音膜，毫无保留地放声歌唱。",
-      "它要在短暂的五周阳光生活里，把积攒了四年的热情化作整座夏日森林的交响乐。它唱得那样开怀，那样不知疲倦，那是对阳光与自由最庄严的礼赞。"
+      "我的家乡是水乡。出鸭。高邮大麻鸭是著名的鸭种。鸭多，鸭蛋也多。高邮人也善于腌鸭蛋。高邮咸蛋的特点是质细而油多。蛋白柔嫩，不似别处的发干、发粉，入口便觉得温润软糯。",
+      "平常食用，一般都是敲破鸭蛋空头的一角，用筷子挖着吃。筷子头一扎下去，吱——红油就冒出来了！高邮咸蛋的黄是通红的。苏北有一道名菜，叫‘炒红油豆腐’，就是用高邮咸蛋黄炒的，颜色极漂亮，味道也极鲜美。",
+      "孩子们吃鸭蛋还有一种独特的玩头：把鸭蛋吃完，蛋壳留着，洗得干干净净。到了端午节，装在丝线编成的彩色小网囊里，挂在胸前，互相夸耀比美，里面还捉只萤火虫，一闪一闪，这真是童年里最快活的时光。"
     ],
     gems: [
-      { word: "蛰伏积蓄", meaning: "藏伏潜隐以等待时机，多形容在逆境中悄悄积累知识或力量。", usage: "形容同学们在期末或考试前刻苦积累、查漏补缺的勤奋沉潜状态。" },
-      { word: "不知疲倦", meaning: "一点也不感到疲劳，形容工作学习热情极高、精力充沛。", usage: "描写科学家攻克难关、自己沉浸于阅读，或小动物忙碌筑巢时的神态。" }
+      { word: "温润软糯", meaning: "质地温和柔润，软和而富有黏性，常形容美玉或极其可口的糕点食物。", usage: "描写妈妈做的家乡美食或一道可口的甜点，让细节充满生活质感。" },
+      { word: "快活惬意", meaning: "心情非常愉快，感到舒适满足、无拘无束。", usage: "可用于周末远足、与好友游戏或做完作业在微风中阅读时的心情刻画。" }
     ],
-    question: "蝉在地下蛰伏四年，只为夏天的五周放声歌唱，这带给我们什么人生启示？",
-    answer: "启示我们在学习与成长中要耐得住寂寞、默默积累力量，唯有经过沉潜与磨砺，才能在机会到来时绽放属于自己的光芒。"
+    question: "作者写吃咸鸭蛋‘筷子头一扎下去，吱——红油就冒出来了’，这个‘吱’字妙在哪里？",
+    answer: "妙在以声传神。一个‘吱’字化静为动，把红油饱满丰盈、顺着筷孔流出的诱人情态写活了，让人仿佛闻到了咸蛋的浓香。"
   }
 ];
 
-// ==========================================
-// 🇬🇧 英文小学生分级题库设定（蓝思 350L~450L，句式极简）
-// ==========================================
 const ENGLISH_MODES = [
   { id: "adventure", name: "🧭 趣味探险 (Fun Adventure)", promptDesc: "A fun and simple outdoor adventure for primary kids (e.g. finding a shiny stone in a tree hollow, an old treasure map in a bottle, camping under the stars)" },
   { id: "science", name: "🔬 百科奇趣 (Science & Nature)", promptDesc: "An easy-to-read natural wonder for grade 4 (e.g. why bees make honey, how dolphins talk, why the moon changes shapes)" },
@@ -600,14 +640,14 @@ const ENGLISH_MODES = [
 
 const SUBJECTS = {
   math: { id: "math", name: "数学思维", icon: "📐", desc: "WMO竞赛真题、高频几何模型、行程工程与错题攻坚", color: "#2563eb", bg: "#eff6ff", modules: ["几何模型", "行程问题", "数论整除", "计数组合", "计算与数列", "典型应用题", "填空解答"] },
-  chinese: { id: "chinese", name: "语文素养", icon: "📖", desc: "易错生字词打卡、真实名家精读、古诗文默写与作文", color: "#be123c", bg: "#fff1f2", modules: ["字词拼音", "修改病句", "文言诗词", "阅读理解", "表达应用", "其它错题"] },
-  english: { id: "english", name: "英语进阶", icon: "🔤", desc: "易错单词听写、分级阅读探险、语法短语与阅读理解", color: "#059669", bg: "#ecfdf5", modules: ["词汇短语", "语法时态", "完形填空", "阅读理解", "句型转换", "其它错题"] }
+  chinese: { id: "chinese", name: "语文素养", icon: "📖", desc: "易错生字词打卡、长文分辑精读、古诗文默写与作文", color: "#be123c", bg: "#fff1f2", modules: ["字词拼音", "修改病句", "文言诗词", "阅读理解", "表达应用", "其它错题"] },
+  english: { id: "english", name: "英语进阶", icon: "🔤", desc: "善思单词本、分级阅读探险、语法短语与错题归档", color: "#059669", bg: "#ecfdf5", modules: ["词汇短语", "语法时态", "完形填空", "阅读理解", "句型转换", "其它错题"] }
 };
 
-let currentPortalSubject = "math", filterSubject = "", filterModule = "", filterGrade = "", filterStatus = "";
+let currentPortalSubject = "math", filterSubject = "", filterModule = "", filterGrade = "", filterStatus = "", filterFolder = "";
 let showKilledInVault = false;
 let db = null;
-const DB_NAME = "MathVaultDB", STORE_QUESTIONS = "questions", STORE_EXAMS = "exams", STORE_VOCAB = "vocab";
+const DB_NAME = "MathVaultDB", STORE_QUESTIONS = "questions", STORE_EXAMS = "exams", STORE_VOCAB = "vocab", STORE_ARTICLES = "articles";
 let vaultSelectedIdsInOrder = [];
 
 // 模型轮询管道
@@ -656,7 +696,6 @@ async function queryGemini(prompt, images = [], maxTokens = 3500, temperature = 
   throw new Error(lastErr || "AI 接口无响应，请核对 API Key 是否正确");
 }
 
-// KaTeX + Markdown 隔离渲染
 function renderRichContent(el, text) {
   if (!el) return;
   if (!text) { el.innerHTML = ""; return; }
@@ -700,10 +739,7 @@ function renderRichContent(el, text) {
     const span = document.createElement("span");
     try {
       if (window.katex) {
-        katex.render(item.latex, span, {
-          displayMode: item.display,
-          throwOnError: false
-        });
+        katex.render(item.latex, span, { displayMode: item.display, throwOnError: false });
       } else {
         span.textContent = item.display ? `$$${item.latex}$$` : `$${item.latex}$`;
       }
@@ -716,12 +752,13 @@ function renderRichContent(el, text) {
 
 function initDB() {
   return new Promise(resolve => {
-    const req = indexedDB.open(DB_NAME, 7);
+    const req = indexedDB.open(DB_NAME, 9);
     req.onupgradeneeded = e => {
       const d = e.target.result;
       if (!d.objectStoreNames.contains(STORE_QUESTIONS)) d.createObjectStore(STORE_QUESTIONS, { keyPath: "id", autoIncrement: true });
       if (!d.objectStoreNames.contains(STORE_EXAMS)) d.createObjectStore(STORE_EXAMS, { keyPath: "id", autoIncrement: true });
       if (!d.objectStoreNames.contains(STORE_VOCAB)) d.createObjectStore(STORE_VOCAB, { keyPath: "id", autoIncrement: true });
+      if (!d.objectStoreNames.contains(STORE_ARTICLES)) d.createObjectStore(STORE_ARTICLES, { keyPath: "id", autoIncrement: true });
     };
     req.onsuccess = async e => { db = e.target.result; await preseedAllExams(); resolve(db); };
   });
@@ -729,11 +766,7 @@ function initDB() {
 
 async function preseedAllExams() {
   const defaultExams = [
-    { title: "第31届 WMO 地方省测 (四年级)", subject: "math", duration: 90, keysFull: "BBADDCACBACABABC".split(""), faqAns: ["17. (1) 6条; (2) 最少710元", "18. 1元10枚、5角40枚、1角50枚", "19. (1) 2800米; (2) 8点50分", "20. (1) 891; (2) 10个"], pages: [] },
-    { title: "第32届 WMO 地方省测 (四年级)", subject: "math", duration: 90, keysFull: "ACCACB CDBBA BBACB".replace(/\s+/g,'').split(""), faqAns: ["17. (1) 6人; (2) 7人; (3) 6人", "18. (1) C; (2) 185", "19. (1) 1班; (2) 汉堡; (3) 欧欧", "20. (1) E; (2) O"], pages: [] },
-    { title: "第33届 WMO 地方省测 (四年级)", subject: "math", duration: 90, keysFull: "DBCCCD CCBAD BBDCB".replace(/\s+/g,'').split(""), faqAns: ["17. (1) 20只; (2) 32只", "18. (1) 540°; (2) 4次; (3) 三角形", "19. (1) 40厘米; (2) 30厘米", "20. (3)→(1)→(2)→(4)→(5)"], pages: [] },
-    { title: "第34届 WMO 地方省测 (四年级)", subject: "math", duration: 90, keysFull: "CDD BDDD CCBB CBB CB".replace(/\s+/g,'').split(""), faqAns: ["17. (1) 5400元; (2) 5640元; (3) 5616元", "18. (1) 400米; (2) 40秒", "19. (1) 小正方形6cm，大正方形21cm; (2) 300cm²", "20. (1) C; (2) 先, 右, 2格"], pages: [] },
-    { title: "第35届 WMO 地方省测 (四年级)", subject: "math", duration: 90, keysFull: "ACBBAC ABBADC ACBC".replace(/\s+/g,'').split(""), faqAns: ["17. (1) 6分钟; (2) 54分钟", "18. (1) B; (2) 640cm², 52cm", "19. (1) 星期三; (2) 风之店; (3) 土之店", "20. (1) 6; (2) 5; (3) 3"], pages: [] }
+    { title: "第31届 WMO 地方省测 (四年级)", subject: "math", duration: 90, keysFull: "BBADDCACBACABABC".split(""), faqAns: ["17. (1) 6条; (2) 最少710元", "18. 1元10枚、5角40枚、1角50枚", "19. (1) 2800米; (2) 8点50分", "20. (1) 891; (2) 10个"], pages: [] }
   ];
   const cur = await dbGetAll(STORE_EXAMS);
   for (const def of defaultExams) {
@@ -881,7 +914,7 @@ async function renderDashboard() {
         <p style="font-size:0.82rem; color:#64748b; line-height:1.4;">${sub.desc}</p>
       </div>
       <div style="margin-top:16px; border-top:1px solid #f1f5f9; padding-top:10px;">
-        <span style="font-size:0.82rem; font-weight:700; color:${sub.color};">${sub.id==='math'?'进入奥数真题/错题 →':'进入专属错题复习 →'}</span>
+        <span style="font-size:0.82rem; font-weight:700; color:${sub.color};">${sub.id==='math'?'进入奥数真题/错题 →':'进入专属错题与文件夹 →'}</span>
       </div>
     </div>
   `).join('');
@@ -890,37 +923,283 @@ async function renderDashboard() {
 function openSubjectPortal(sId) { currentPortalSubject = sId; switchNav("portal"); }
 
 // ==========================================
-// ⭐ 每日一读模块：中文真名篇 + 英文极简控词
+// 📂 文件夹系统 (Folder Management)
 // ==========================================
+function getFoldersForSubject(sKey) {
+  try {
+    const s = localStorage.getItem("CUSTOM_FOLDERS_" + sKey);
+    let arr = s ? JSON.parse(s) : [];
+    if (!arr.length) {
+      if (sKey === "english") arr = ["善思单词", "RAZ精读", "校内听写", "核心语法"];
+      else if (sKey === "chinese") arr = ["易错字词", "课外好句", "古诗默写"];
+      else arr = ["几何模型", "行程应用", "计算过关"];
+    }
+    return arr;
+  } catch(e) {
+    return ["默认文件夹"];
+  }
+}
+function saveFoldersForSubject(sKey, arr) {
+  localStorage.setItem("CUSTOM_FOLDERS_" + sKey, JSON.stringify(Array.from(new Set(arr))));
+}
+function promptNewFolder() {
+  const fName = prompt("请输入新建分类文件夹名称（例如：善思单词）：");
+  if (fName && fName.trim()) {
+    const name = fName.trim();
+    const arr = getFoldersForSubject(currentPortalSubject);
+    arr.push(name);
+    saveFoldersForSubject(currentPortalSubject, arr);
+    updateFolderDropdownOptions(name);
+  }
+}
+function updateFolderDropdownOptions(selectedName) {
+  const select = document.getElementById("inpEntryFolder");
+  if (!select) return;
+  const folders = getFoldersForSubject(currentPortalSubject);
+  select.innerHTML = folders.map(f => `<option value="${f}" ${f===selectedName?'selected':''}>📁 ${f}</option>`).join('');
+}
 
+// ==========================================
+// 📸 iPad 照片全景缩放与裁剪 (Zoom & Fit Full Screen)
+// ==========================================
+let cropImgScale = 1.0;
+let cropNaturalWidth = 0, cropNaturalHeight = 0;
+let cropLoadedImg = null;
+
+function handleCameraCropFile(file) {
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    const img = document.getElementById("cropTargetImg");
+    img.src = e.target.result;
+    img.onload = () => {
+      cropLoadedImg = img;
+      cropNaturalWidth = img.naturalWidth;
+      cropNaturalHeight = img.naturalHeight;
+      document.getElementById("cropWorkspace").style.display = "block";
+      document.getElementById("cropZoomControls").style.display = "flex";
+      document.getElementById("cameraPhotoText").style.display = "none";
+      fitCropPhotoToContainer();
+    };
+  };
+  reader.readAsDataURL(file);
+}
+
+function fitCropPhotoToContainer() {
+  const ws = document.getElementById("cropWorkspace");
+  const maxW = ws.clientWidth - 20 || 320;
+  const maxH = 340;
+  // 计算恰好能在 iPad 窗口中看清全图的最佳缩放比
+  cropImgScale = Math.min(maxW / cropNaturalWidth, maxH / cropNaturalHeight, 1.0);
+  applyCropImageZoom();
+}
+
+function zoomCropPhoto(delta) {
+  cropImgScale = Math.min(Math.max(0.15, cropImgScale + delta), 2.5);
+  applyCropImageZoom();
+}
+
+function applyCropImageZoom() {
+  const img = document.getElementById("cropTargetImg");
+  const canvas = document.getElementById("cropModalCanvas");
+  const displayW = Math.round(cropNaturalWidth * cropImgScale);
+  const displayH = Math.round(cropNaturalHeight * cropImgScale);
+
+  img.style.width = displayW + "px";
+  img.style.height = displayH + "px";
+  canvas.width = displayW;
+  canvas.height = displayH;
+  document.getElementById("cropZoomText").textContent = Math.round(cropImgScale * 100) + "%";
+  initInteractiveCropCanvas(canvas, img);
+}
+
+function initInteractiveCropCanvas(canvas, img) {
+  const ctx = canvas.getContext("2d");
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  let isD = false, sX = 0, sY = 0;
+
+  canvas.onpointerdown = e => {
+    isD = true; sX = e.offsetX; sY = e.offsetY;
+    canvas.setPointerCapture(e.pointerId);
+  };
+  canvas.onpointermove = e => {
+    if (!isD) return;
+    const rX = Math.min(sX, e.offsetX), rY = Math.min(sY, e.offsetY);
+    const rW = Math.abs(e.offsetX - sX), rH = Math.abs(e.offsetY - sY);
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+    ctx.fillStyle = "rgba(37,99,235,0.25)";
+    ctx.fillRect(rX, rY, rW, rH);
+    ctx.strokeStyle = "#2563eb";
+    ctx.lineWidth = 2;
+    ctx.strokeRect(rX, rY, rW, rH);
+  };
+  canvas.onpointerup = e => {
+    if (!isD) return; isD = false;
+    canvas.releasePointerCapture(e.pointerId);
+    const rX = Math.min(sX, e.offsetX), rY = Math.min(sY, e.offsetY);
+    const rW = Math.abs(e.offsetX - sX), rH = Math.abs(e.offsetY - sY);
+    if (rW > 20 && rH > 20) {
+      // 准确映射回原始高清图片像素
+      const scaleX = cropNaturalWidth / canvas.width;
+      const scaleY = cropNaturalHeight / canvas.height;
+      const off = document.createElement("canvas");
+      off.width = Math.round(rW * scaleX);
+      off.height = Math.round(rH * scaleY);
+      off.getContext("2d").drawImage(
+        img,
+        rX * scaleX, rY * scaleY, off.width, off.height,
+        0, 0, off.width, off.height
+      );
+      activeCameraCropBase64 = off.toDataURL("image/jpeg", 0.92);
+    }
+  };
+}
+
+// ==========================================
+// 📚 语文长文档“智能分辑连载”系统 (Doc Splitter & Series)
+// ==========================================
+let currentReadingArticle = null;
+
+function openSplitDocModal() {
+  document.getElementById("splitDocAlbumTitle").value = "";
+  document.getElementById("splitDocRawText").value = "";
+  document.getElementById("splitFileInput").value = "";
+  document.getElementById("splitProgressNotice").style.display = "none";
+  document.getElementById("splitDocModal").classList.add("active");
+}
+
+async function handleSplitDocFile(file) {
+  if (!file) return;
+  const isPdf = file.name.toLowerCase().endsWith(".pdf");
+  document.getElementById("splitDocAlbumTitle").value = file.name.replace(/\.[^/.]+$/, "");
+  
+  if (isPdf) {
+    document.getElementById("splitProgressNotice").style.display = "block";
+    document.getElementById("splitProgressNotice").textContent = "⏳ 正在提取 PDF 文本，请稍候...";
+    try {
+      const pdf = await pdfjsLib.getDocument({ data: await file.arrayBuffer() }).promise;
+      let fullText = "";
+      for (let i = 1; i <= Math.min(pdf.numPages, 10); i++) {
+        const page = await pdf.getPage(i);
+        const tc = await page.getTextContent();
+        fullText += tc.items.map(it => it.str).join(" ") + "\n\n";
+      }
+      document.getElementById("splitDocRawText").value = fullText.slice(0, 8000);
+      document.getElementById("splitProgressNotice").style.display = "none";
+    } catch(err) {
+      alert("PDF 解析失败：" + err.message);
+      document.getElementById("splitProgressNotice").style.display = "none";
+    }
+  } else {
+    const reader = new FileReader();
+    reader.onload = e => {
+      document.getElementById("splitDocRawText").value = e.target.result.slice(0, 8000);
+    };
+    reader.readAsText(file);
+  }
+}
+
+async function startSplitDocumentToSeries() {
+  const albumTitle = document.getElementById("splitDocAlbumTitle").value.trim() || "课外名篇专栏连载";
+  const rawText = document.getElementById("splitDocRawText").value.trim();
+  const parts = Number(document.getElementById("splitDocTargetParts").value) || 5;
+
+  if (!rawText || rawText.length < 50) {
+    alert("请粘贴或上传足够长篇幅的文档内容！");
+    return;
+  }
+
+  const notice = document.getElementById("splitProgressNotice");
+  notice.style.display = "block";
+  notice.textContent = `⏳ 正在让特级语文助教将长文拆解为 ${parts} 篇精读连载，提炼佳词中...`;
+
+  const prompt = `你是一位小学四年级特级语文教师。请将以下文档内容，智能切分为 ${parts} 篇独立的课外精读短文连载。
+【严格要求】：
+1. 保持原文原汁原味，不随意胡编乱造，每篇约 250~450 字，非常适合四年级一天阅读。
+2. 为每一篇提取 2 个高级成语/雅词，附带通俗释义与四年级写作小练笔指南。
+3. 为每一篇设置 1 个启发性小问题及点拨答案。
+4. 返回严格 JSON 格式（不要包含任何 markdown 反引号包裹）：
+[
+  {
+    "chapterIndex": 1,
+    "title": "短文副标题",
+    "paragraphs": ["段落1...", "段落2..."],
+    "gems": [
+      {"word": "成语", "meaning": "释义", "usage": "练笔指南"}
+    ],
+    "question": "思考问题",
+    "answer": "参考提示"
+  }
+]
+
+文档全文：
+${rawText.slice(0, 4500)}`;
+
+  try {
+    const resText = await queryGemini(prompt, [], 3800, 0.3);
+    const cleaned = resText.replace(/^```json\s*/i, '').replace(/```\s*$/i, '');
+    const match = cleaned.match(/\[[\s\S]*\]/);
+    if (!match) throw new Error("拆分格式解析失败");
+
+    const chapters = JSON.parse(match[0]);
+    const seriesId = "series_" + Date.now();
+
+    for (let ch of chapters) {
+      await dbAdd(STORE_ARTICLES, {
+        seriesId,
+        seriesTitle: albumTitle,
+        seriesIndex: ch.chapterIndex,
+        totalChapters: chapters.length,
+        title: `${albumTitle} · 第${ch.chapterIndex}讲：${ch.title}`,
+        category: "series",
+        categoryName: `📚 专栏连载 · ${albumTitle}`,
+        source: `选自《${albumTitle}》分拆连载`,
+        paragraphs: ch.paragraphs || [],
+        gems: ch.gems || [],
+        question: ch.question || "阅读后谈谈你的感受？",
+        answer: ch.answer || "结合短文中的关键细节进行体会与思考。",
+        isRead: false,
+        createdAt: new Date().toISOString()
+      });
+    }
+
+    closeAllModals();
+    alert(`🎉 成功将《${albumTitle}》拆解为 ${chapters.length} 篇精读短文连载！已直接纳入每日一读。`);
+    localStorage.setItem("READER_CHI_MODE_V85", "series");
+    updateReaderModeSelectUI();
+    renderAuthenticChineseArticle(false);
+  } catch(e) {
+    alert("智能拆分失败：" + e.message);
+  } finally {
+    notice.style.display = "none";
+  }
+}
+
+// 每日一读模块逻辑
 let activeReaderLang = "chinese";
 let currentChineseArticleIndex = 0;
 let currentEnglishKeywordsCache = [];
-let currentEnglishArticleHtml = "";
 
 function updateReaderModeSelectUI() {
   const select = document.getElementById("readerModeSelect");
   if (activeReaderLang === "chinese") {
     select.innerHTML = `
-      <option value="all">🎲 真实名篇全库随机</option>
-      <option value="shaonianshi">🚀 《少年时》前沿科普</option>
-      <option value="masters">🌿 汪曾祺/丰子恺草木生活散文</option>
-      <option value="nature_lit">🐞 《昆虫记》自然文学译本</option>
+      <option value="all">🎲 全部名篇随机轮转</option>
+      <option value="series">📚 长文拆解连载专栏</option>
+      <option value="shaonianshi">🚀 《少年时》精选前沿科普</option>
+      <option value="masters">🌿 汪曾祺/丰子恺/老舍草木散文</option>
     `;
-    select.value = localStorage.getItem("READER_CHI_MODE_V82") || "all";
+    select.value = localStorage.getItem("READER_CHI_MODE_V85") || "all";
   } else {
     select.innerHTML = ENGLISH_MODES.map(m => `<option value="${m.id}">${m.name}</option>`).join('');
-    select.value = localStorage.getItem("READER_ENG_MODE_V82") || "adventure";
+    select.value = localStorage.getItem("READER_ENG_MODE_V85") || "adventure";
   }
 }
 
 function onReaderModeChanged() {
   const val = document.getElementById("readerModeSelect").value;
-  if (activeReaderLang === "chinese") {
-    localStorage.setItem("READER_CHI_MODE_V82", val);
-  } else {
-    localStorage.setItem("READER_ENG_MODE_V82", val);
-  }
+  if (activeReaderLang === "chinese") localStorage.setItem("READER_CHI_MODE_V85", val);
+  else localStorage.setItem("READER_ENG_MODE_V85", val);
   refreshDailyReading();
 }
 
@@ -948,53 +1227,88 @@ function switchReaderLanguage(lang) {
 }
 
 async function loadDailyReadingArticle() {
-  if (activeReaderLang === "chinese") {
-    renderAuthenticChineseArticle(false);
-  } else {
-    await fetchAndGenerateEnglishReading(false);
-  }
+  if (activeReaderLang === "chinese") await renderAuthenticChineseArticle(false);
+  else await fetchAndGenerateEnglishReading(false);
 }
 
 async function refreshDailyReading() {
   stopSpeechReading();
-  if (activeReaderLang === "chinese") {
-    renderAuthenticChineseArticle(true);
-  } else {
-    await fetchAndGenerateEnglishReading(true);
-  }
+  if (activeReaderLang === "chinese") await renderAuthenticChineseArticle(true);
+  else await fetchAndGenerateEnglishReading(true);
 }
 
-// 🌿 渲染真实的中文名篇（严格禁止 AI 生成，保证文字灵气）
-function renderAuthenticChineseArticle(next = true) {
+async function getAllChineseArticles() {
+  const customList = await dbGetAll(STORE_ARTICLES);
+  return [...customList, ...AUTHENTIC_CHINESE_BANK];
+}
+
+async function renderAuthenticChineseArticle(next = true) {
   const container = document.getElementById("readingArticleContainer");
-  const mode = localStorage.getItem("READER_CHI_MODE_V82") || "all";
+  const mode = localStorage.getItem("READER_CHI_MODE_V85") || "all";
+  const allArticles = await getAllChineseArticles();
   
-  let pool = AUTHENTIC_CHINESE_BANK;
-  if (mode !== "all") {
-    pool = AUTHENTIC_CHINESE_BANK.filter(a => a.category === mode);
-    if (!pool.length) pool = AUTHENTIC_CHINESE_BANK;
+  let pool = allArticles;
+  if (mode === "series") {
+    pool = allArticles.filter(a => a.category === "series");
+    if (!pool.length) {
+      container.innerHTML = `
+        <div style="text-align:center; padding:60px 20px; color:#78716c;">
+          <h3>📚 暂无长文连载专栏</h3>
+          <p style="margin:10px 0 16px; font-size:0.9rem;">你可以把整本《少年时》或长篇名作上传，系统将自动切分为每日一篇！</p>
+          <button class="btn btn-primary" style="background:#059669;" onclick="openSplitDocModal()">📂 上传整本长文进行拆分</button>
+        </div>
+      `;
+      return;
+    }
+  } else if (mode !== "all") {
+    pool = allArticles.filter(a => a.category === mode);
+    if (!pool.length) pool = allArticles;
   }
 
-  if (next) {
-    currentChineseArticleIndex = (currentChineseArticleIndex + 1) % pool.length;
-  } else {
-    // 每日稳定展示同一篇
-    const today = getTodayDateStr();
-    let seed = 0;
-    for (let i = 0; i < today.length; i++) seed += today.charCodeAt(i);
-    currentChineseArticleIndex = seed % pool.length;
+  if (next) currentChineseArticleIndex = (currentChineseArticleIndex + 1) % pool.length;
+  else {
+    const unread = pool.findIndex(a => !a.isRead);
+    currentChineseArticleIndex = unread !== -1 ? unread : 0;
   }
 
   const art = pool[currentChineseArticleIndex];
+  currentReadingArticle = art;
+
+  // 连载专栏专属进度栏显示
+  let seriesProgressHtml = "";
+  if (art.seriesId) {
+    const seriesItems = (await dbGetAll(STORE_ARTICLES)).filter(a => a.seriesId === art.seriesId);
+    const readCount = seriesItems.filter(a => a.isRead).length;
+    const totalCount = seriesItems.length || art.totalChapters || 1;
+    const pct = Math.round((readCount / totalCount) * 100);
+
+    seriesProgressHtml = `
+      <div class="series-card-banner">
+        <div style="flex:1;">
+          <div style="display:flex; justify-content:space-between; align-items:center; font-size:0.88rem; font-weight:bold; color:#166534;">
+            <span>📖 连载进度：已完成 ${readCount} / ${totalCount} 篇 (${pct}%)</span>
+            <span>${art.isRead ? '✅ 本篇已打卡' : '⏱️ 今日待读'}</span>
+          </div>
+          <div class="series-progress-bar-wrap">
+            <div class="series-progress-fill" style="width:${pct}%;"></div>
+          </div>
+        </div>
+        <button class="btn btn-success" style="padding:4px 10px; font-size:0.78rem;" onclick="markCurrentSeriesArticleRead(${art.id})">
+          ${art.isRead ? '↺ 重新学习' : '✅ 标记完成并读下一篇'}
+        </button>
+      </div>
+    `;
+  }
 
   container.innerHTML = `
+    ${seriesProgressHtml}
     <h1 style="font-size:1.6rem; color:#0f172a; margin-bottom:10px; font-weight:800;">${art.title}</h1>
     <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap; margin-bottom:18px;">
       <span style="background:#fef3c7; color:#b45309; padding:3px 10px; border-radius:12px; font-size:0.8rem; font-weight:bold;">
-        ${art.categoryName}
+        ${art.categoryName || '名家篇目'}
       </span>
       <span style="font-size:0.82rem; color:#78716c; font-weight:600;">
-        📖 ${art.source} (真实人类出版名作)
+        📖 ${art.source}
       </span>
     </div>
 
@@ -1028,14 +1342,56 @@ function renderAuthenticChineseArticle(next = true) {
   `;
 }
 
-// 🇬🇧 生成极度控词、低难度、重兴趣的英文探险阅读
+async function markCurrentSeriesArticleRead(artId) {
+  if (!artId) return;
+  const item = (await dbGetAll(STORE_ARTICLES)).find(x => x.id === artId);
+  if (item) {
+    item.isRead = !item.isRead;
+    await dbAdd(STORE_ARTICLES, item);
+    playPleasantSound();
+    performCheckin(1, true);
+    renderAuthenticChineseArticle(true);
+  }
+}
+
+// 文库管理
+async function openArticleManageModal() {
+  const list = await dbGetAll(STORE_ARTICLES);
+  const container = document.getElementById("articleManageList");
+  if (!list.length) {
+    container.innerHTML = `<div style="text-align:center; padding:30px; color:#94a3b8;">暂无自定义拆解或导入的名篇。</div>`;
+  } else {
+    container.innerHTML = list.map(art => `
+      <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px; padding:10px 14px; display:flex; justify-content:space-between; align-items:center;">
+        <div>
+          <b>${art.title}</b>
+          <div style="font-size:0.8rem; color:#64748b; margin-top:2px;">${art.source} · 状态: ${art.isRead ? '<span style="color:#15803d; font-weight:bold;">✅已读</span>' : '<span style="color:#d97706;">待读</span>'}</div>
+        </div>
+        <div style="display:flex; gap:6px;">
+          <button class="btn btn-danger" style="padding:3px 8px; font-size:0.75rem;" onclick="deleteCustomArticle(${art.id})">删除</button>
+        </div>
+      </div>
+    `).join('');
+  }
+  document.getElementById("articleManageModal").classList.add("active");
+}
+
+async function deleteCustomArticle(id) {
+  if (confirm("确定要删除这篇连载短文吗？")) {
+    await dbDelete(STORE_ARTICLES, id);
+    openArticleManageModal();
+    renderAuthenticChineseArticle(false);
+  }
+}
+
+// 英文分级探险短文生成
 async function fetchAndGenerateEnglishReading(forceNew = false) {
   const container = document.getElementById("readingArticleContainer");
-  const modeId = localStorage.getItem("READER_ENG_MODE_V82") || "adventure";
+  const modeId = localStorage.getItem("READER_ENG_MODE_V85") || "adventure";
   const selMode = ENGLISH_MODES.find(m => m.id === modeId) || ENGLISH_MODES[0];
   const today = getTodayDateStr();
 
-  const cacheKey = `ENG_READING_V82_${modeId}_${today}`;
+  const cacheKey = `ENG_READING_V85_${modeId}_${today}`;
   if (!forceNew) {
     const cached = localStorage.getItem(cacheKey);
     if (cached) {
@@ -1096,7 +1452,6 @@ Please return valid JSON format strictly as follows (no markdown backticks):
     const res = JSON.parse(match[0]);
     currentEnglishKeywordsCache = res.keywords || [];
 
-    // 格式化正文（将 **word** 渲染为醒目绿色高亮）
     const formattedParagraphs = res.paragraphs.map(p => {
       return p.replace(/\*\*(.*?)\*\*/g, '<b style="color:#059669; background:#dcfce7; padding:1px 6px; border-radius:4px;">$1</b>');
     });
@@ -1159,13 +1514,13 @@ Please return valid JSON format strictly as follows (no markdown backticks):
   }
 }
 
-// 核心词汇一键无缝存入生词本 (IndexedDB)
 async function saveEnglishKeywordDirect(idx, btn) {
   const item = currentEnglishKeywordsCache[idx];
   if (!item) return;
   await dbAdd(STORE_VOCAB, {
     text: item.word,
     type: "english",
+    folder: "善思单词",
     phoneticOrPinyin: item.phonetic || "",
     meaning: item.meaning || "来自每日一读精选核心词",
     sentence: "来自每日一读分级探险短文",
@@ -1226,7 +1581,7 @@ function hideQuickCollectBubble() { document.getElementById("quickCollectBubble"
 async function quickCollectCurrentSelection() {
   if (!currentSelectedWord) return;
   await dbAdd(STORE_VOCAB, {
-    text: currentSelectedWord, type: activeReaderLang, phoneticOrPinyin: "",
+    text: currentSelectedWord, type: activeReaderLang, folder: activeReaderLang==='english'?'善思单词':'课外字词', phoneticOrPinyin: "",
     meaning: "来自每日一读，点击【💡 AI释义】自动获取", sentence: "",
     grade: localStorage.getItem("READER_GRADE") || "四上", status: "🔴 待记住", createdAt: new Date().toISOString()
   });
@@ -1265,6 +1620,7 @@ async function renderVocabGrid() {
           <div>
             <span style="font-size:1.35rem; font-weight:800; color:${isChi?'var(--chinese)':'var(--english)'}; cursor:pointer;" onclick="deepAnalyzeVocab(${v.id})" title="点击查看深度分析">${v.text}</span>
             <span style="font-size:0.85rem; color:#64748b; margin-left:8px;">${v.phoneticOrPinyin || ''}</span>
+            ${v.folder ? `<span style="font-size:0.75rem; background:#ecfdf5; color:#065f46; padding:2px 8px; border-radius:10px; margin-left:6px;">📁 ${v.folder}</span>`: ''}
           </div>
           <div>
             <span style="cursor:pointer; font-size:0.8rem; font-weight:bold;" onclick="cycleVocabStatus(${v.id}, '${v.status}')">${v.status || '🔴 待记住'} ⟳</span>
@@ -1330,6 +1686,7 @@ async function saveNewVocabItem() {
   if (!text) { alert("请输入生词或短语！"); return; }
   await dbAdd(STORE_VOCAB, {
     text, type: document.getElementById("newVocabType").value, grade: document.getElementById("newVocabGrade").value,
+    folder: document.getElementById("newVocabType").value === "english" ? "善思单词" : "课外词汇",
     phoneticOrPinyin: document.getElementById("newVocabPhonetic").value.trim(),
     meaning: document.getElementById("newVocabMeaning").value.trim() || "暂无释义",
     sentence: document.getElementById("newVocabSentence").value.trim(),
@@ -1384,7 +1741,7 @@ function playPleasantSound() {
   } catch(e) {}
 }
 
-// 错题复习总库：按勾选次序复习
+// 错题复习总库
 let reviewQueue = [], reviewCurrentIdx = 0, reviewTimerInterval = null, reviewSeconds = 0, reviewKilledCount = 0;
 
 function handleVaultCheckboxChange(id, isChecked) {
@@ -1457,7 +1814,7 @@ function renderCurrentReviewCard() {
   document.getElementById("reviewStageCard").innerHTML = `
     <div>
       <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
-        <span style="font-size:0.85rem; background:${subInfo.bg}; color:${subInfo.color}; padding:3px 10px; border-radius:12px; font-weight:800;">${subInfo.name} · ${q.grade || '四上'}</span>
+        <span style="font-size:0.85rem; background:${subInfo.bg}; color:${subInfo.color}; padding:3px 10px; border-radius:12px; font-weight:800;">${subInfo.name} · ${q.grade || '四上'} ${q.folder?`· 📁 ${q.folder}`:''}</span>
         <span style="font-size:0.82rem; font-weight:bold; color:#d97706;">状态: ${q.status || '🔴 待攻克'}</span>
       </div>
       ${guide} ${visual} ${ext}
@@ -1515,7 +1872,7 @@ function exitSmartReview() {
 
 async function renderSubjectPortal() {
   const sub = SUBJECTS[currentPortalSubject] || SUBJECTS.math;
-  document.getElementById("portalSubjectTitle").textContent = `${sub.icon} ${sub.name} · ${currentPortalSubject==='math'?'奥数真题与错题空间':'日常错题复习空间'}`;
+  document.getElementById("portalSubjectTitle").textContent = `${sub.icon} ${sub.name} · ${currentPortalSubject==='math'?'奥数真题与错题空间':'日常错题与分类文件夹'}`;
   document.getElementById("portalActionBtnContainer").innerHTML = (currentPortalSubject === "math")
     ? `<div style="display:flex; gap:6px;"><button class="btn btn-primary" onclick="openUploadExamModal()">＋ 录入真题试卷</button><button class="btn btn-outline" onclick="openSubjectErrorEntryModal('math')">＋ 录入错题(拍照裁剪)</button></div>`
     : `<button class="btn btn-primary" style="background:${sub.color};" onclick="openSubjectErrorEntryModal('${currentPortalSubject}')">＋ 录入错题</button>`;
@@ -1542,17 +1899,26 @@ async function renderSubjectPortal() {
 let activeEntryTab = "word", activeCameraCropBase64 = "";
 function openSubjectErrorEntryModal(sKey) {
   const sub = SUBJECTS[sKey] || SUBJECTS.chinese;
+  currentPortalSubject = sKey;
   document.getElementById("errorEntryModalTitle").textContent = `${sub.icon} ${sub.name} · 录入错题`;
   document.getElementById("entrySuccessNotice").textContent = "";
   document.getElementById("inpEntryGrade").value = localStorage.getItem("LAST_GRADE_TAG") || "四上";
+  
+  updateFolderDropdownOptions();
+
   const lastMod = localStorage.getItem("LAST_MODULE_" + sKey) || sub.modules[0];
   document.getElementById("inpEntryModule").innerHTML = sub.modules.map(m => `<option value="${m}" ${m===lastMod?'selected':''}>${m}</option>`).join('');
-  document.getElementById("inpWordText").value = ""; activeCameraCropBase64 = "";
-  document.getElementById("cropWorkspace").style.display = "none"; document.getElementById("cameraPhotoText").style.display = "block";
+  document.getElementById("inpWordText").value = ""; 
+  activeCameraCropBase64 = "";
+  document.getElementById("cropWorkspace").style.display = "none"; 
+  document.getElementById("cropZoomControls").style.display = "none";
+  document.getElementById("cameraPhotoText").style.display = "block";
 
   const subTabs = document.getElementById("errorEntryModalSubtabs");
-  if (sKey === "math") { subTabs.style.display = "none"; switchErrorEntryTab("photo"); }
-  else {
+  if (sKey === "math") { 
+    subTabs.style.display = "none"; 
+    switchErrorEntryTab("photo"); 
+  } else {
     subTabs.style.display = "flex";
     document.getElementById("tabEntryWord").innerHTML = (sKey === 'english') ? "🔤 1. 单词/短语录入" : "✍️ 1. 错字/词语录入";
     document.getElementById("lblWordTitle").textContent = (sKey === 'english') ? "输入单词 / 词组短语" : "输入错字 / 词语 / 拼音";
@@ -1560,6 +1926,7 @@ function openSubjectErrorEntryModal(sKey) {
   }
   document.getElementById("errorEntryModal").classList.add("active");
 }
+
 function switchErrorEntryTab(tab) {
   activeEntryTab = tab;
   document.getElementById("tabEntryWord").classList.toggle("active", tab === "word");
@@ -1567,53 +1934,34 @@ function switchErrorEntryTab(tab) {
   document.getElementById("panelEntryWord").style.display = tab === "word" ? "block" : "none";
   document.getElementById("panelEntryPhoto").style.display = tab === "photo" ? "block" : "none";
 }
-function handleCameraCropFile(file) {
-  if (!file) return;
-  const reader = new FileReader();
-  reader.onload = e => {
-    const img = document.getElementById("cropTargetImg"); img.src = e.target.result;
-    img.onload = () => { document.getElementById("cropWorkspace").style.display = "block"; document.getElementById("cameraPhotoText").style.display = "none"; initCropModalCanvas(img); };
-  };
-  reader.readAsDataURL(file);
-}
-function initCropModalCanvas(img) {
-  const canvas = document.getElementById("cropModalCanvas"); canvas.width = img.clientWidth || 320; canvas.height = img.clientHeight || 240;
-  const ctx = canvas.getContext("2d"); ctx.clearRect(0,0,canvas.width,canvas.height);
-  let isD = false, sX = 0, sY = 0;
-  canvas.onpointerdown = e => { isD = true; sX = e.offsetX; sY = e.offsetY; canvas.setPointerCapture(e.pointerId); };
-  canvas.onpointermove = e => {
-    if (!isD) return;
-    const rX = Math.min(sX, e.offsetX), rY = Math.min(sY, e.offsetY), rW = Math.abs(e.offsetX - sX), rH = Math.abs(e.offsetY - sY);
-    ctx.clearRect(0,0,canvas.width,canvas.height); ctx.fillStyle = "rgba(37,99,235,0.25)"; ctx.fillRect(rX, rY, rW, rH);
-    ctx.strokeStyle = "#2563eb"; ctx.lineWidth = 2; ctx.strokeRect(rX, rY, rW, rH);
-  };
-  canvas.onpointerup = e => {
-    if (!isD) return; isD = false; canvas.releasePointerCapture(e.pointerId);
-    const rX = Math.min(sX, e.offsetX), rY = Math.min(sY, e.offsetY), rW = Math.abs(e.offsetX - sX), rH = Math.abs(e.offsetY - sY);
-    if (rW > 20 && rH > 20) {
-      const sX = img.naturalWidth / canvas.width, sY = img.naturalHeight / canvas.height;
-      const off = document.createElement("canvas"); off.width = rW * sX; off.height = rH * sY;
-      off.getContext("2d").drawImage(img, rX * sX, rY * sY, rW * sX, rH * sY, 0, 0, off.width, off.height);
-      activeCameraCropBase64 = off.toDataURL("image/jpeg", 0.9);
-    }
-  };
-}
+
 async function saveSubjectErrorEntry() {
-  const grade = document.getElementById("inpEntryGrade").value, mod = document.getElementById("inpEntryModule").value;
-  localStorage.setItem("LAST_GRADE_TAG", grade); localStorage.setItem("LAST_MODULE_" + currentPortalSubject, mod);
-  let item = { subject: currentPortalSubject, grade, module: mod, status: "🔴 待攻克", updatedAt: new Date().toISOString() };
+  const grade = document.getElementById("inpEntryGrade").value;
+  const mod = document.getElementById("inpEntryModule").value;
+  const folder = document.getElementById("inpEntryFolder").value || "默认分类";
+
+  localStorage.setItem("LAST_GRADE_TAG", grade); 
+  localStorage.setItem("LAST_MODULE_" + currentPortalSubject, mod);
+  
+  let item = { 
+    subject: currentPortalSubject, grade, module: mod, folder,
+    status: "🔴 待攻克", updatedAt: new Date().toISOString() 
+  };
+
   if (activeEntryTab === "word" && currentPortalSubject !== "math") {
     const text = document.getElementById("inpWordText").value.trim();
     if (!text) { alert("请输入词汇或生字！"); return; }
     item.isWord = true; item.note = text; item.ans = ""; item.img = "";
   } else {
     if (!activeCameraCropBase64) { alert("请先拍照并在图片上拖拽画框截题！"); return; }
-    item.isWord = false; item.note = `${grade} · ${mod} 错题`; item.ans = ""; item.img = activeCameraCropBase64;
+    item.isWord = false; item.note = `${grade} · 📁${folder} 错题`; item.ans = ""; item.img = activeCameraCropBase64;
   }
   await dbAdd(STORE_QUESTIONS, item); performCheckin(1, true);
-  document.getElementById("entrySuccessNotice").textContent = `✅ 已成功存入！请继续录入下一题`;
+  document.getElementById("entrySuccessNotice").textContent = `✅ 已成功存入【${folder}】！请继续录入下一题`;
   document.getElementById("inpWordText").value = ""; activeCameraCropBase64 = "";
-  document.getElementById("cropWorkspace").style.display = "none"; document.getElementById("cameraPhotoText").style.display = "block";
+  document.getElementById("cropWorkspace").style.display = "none"; 
+  document.getElementById("cropZoomControls").style.display = "none";
+  document.getElementById("cameraPhotoText").style.display = "block";
   renderSubjectPortal(); renderDashboard();
 }
 
@@ -1623,6 +1971,7 @@ async function renderVault() {
   const filtered = all.filter(q => {
     if (!showKilledInVault && q.status === '🟢 已斩杀' && filterStatus !== '🟢 已斩杀') return false;
     if (filterSubject && (q.subject || 'math') !== filterSubject) return false;
+    if (filterFolder && (q.folder || '默认分类') !== filterFolder) return false;
     if (filterModule && q.module !== filterModule) return false;
     if (filterGrade && q.grade !== filterGrade) return false;
     if (filterStatus && q.status !== filterStatus) return false;
@@ -1662,7 +2011,7 @@ function renderQuestionCardHtml(q) {
       ${q.isWord ? `<div class="word-card-text" style="background:${sub.bg}; color:${sub.color};" onclick="openViewEditModal(${q.id})">${q.note}</div>` : `<div class="q-img-wrap" onclick="openViewEditModal(${q.id})"><img src="${q.img}"></div>`}
       ${ext}
       <div style="display:flex; justify-content:space-between; font-size:0.8rem; color:#64748b; margin-bottom:8px;">
-        <span>${q.grade || '四上'} · <b>${q.module || '基础考点'}</b></span>
+        <span>${q.folder ? `<b style="color:#059669;">📁 ${q.folder}</b> · ` : ''}${q.grade || '四上'} · <b>${q.module || '基础考点'}</b></span>
         <span style="cursor:pointer;" onclick="cycleQuestionStatus(${q.id}, '${q.status}')">${q.status || '🔴 待攻克'} ⟳</span>
       </div>
       <div style="display:grid; grid-template-columns: 1fr 1.15fr 1fr; gap:6px; margin-top:auto; padding-top:8px; border-top:1px solid #e2e8f0;">
@@ -1674,13 +2023,19 @@ function renderQuestionCardHtml(q) {
   `;
 }
 
-function renderFilterChips() {
+async function renderFilterChips() {
   document.getElementById("filterSubjectChips").innerHTML = `<span class="filter-chip ${filterSubject===''?'active':''}" onclick="setFilterSubject('')">全部学科</span>` + Object.values(SUBJECTS).map(s => `<span class="filter-chip ${filterSubject===s.id?'active':''}" onclick="setFilterSubject('${s.id}')">${s.icon} ${s.name}</span>`).join('');
+  
+  const allQ = await dbGetAll(STORE_QUESTIONS);
+  const folders = Array.from(new Set(allQ.map(q => q.folder || '善思单词').filter(Boolean)));
+  document.getElementById("filterFolderChips").innerHTML = `<span class="filter-chip ${filterFolder===''?'active':''}" onclick="setFilterFolder('')">全部文件夹</span>` + folders.map(f => `<span class="filter-chip ${filterFolder===f?'active':''}" onclick="setFilterFolder('${f}')">📁 ${f}</span>`).join('');
+
   let mods = filterSubject && SUBJECTS[filterSubject] ? SUBJECTS[filterSubject].modules : Array.from(new Set(Object.values(SUBJECTS).flatMap(s => s.modules)));
   document.getElementById("filterModuleChips").innerHTML = `<span class="filter-chip ${filterModule===''?'active':''}" onclick="setFilterModule('')">全部模块</span>` + mods.map(m => `<span class="filter-chip ${filterModule===m?'active':''}" onclick="setFilterModule('${m}')">${m}</span>`).join('');
   document.getElementById("filterGradeChips").innerHTML = `<span class="filter-chip ${filterGrade===''?'active':''}" onclick="setFilterGrade('')">全部年级</span>` + ["四上","四下","五上","五下","六上","六下"].map(g => `<span class="filter-chip ${filterGrade===g?'active':''}" onclick="setFilterGrade('${g}')">${g}</span>`).join('');
 }
 function setFilterSubject(s) { filterSubject = s; filterModule = ""; renderVault(); }
+function setFilterFolder(f) { filterFolder = f; renderVault(); }
 function setFilterModule(m) { filterModule = m; renderVault(); }
 function setFilterGrade(g) { filterGrade = g; renderVault(); }
 function setFilterStatus(st) {
@@ -1708,6 +2063,7 @@ async function openViewEditModal(id) {
   document.getElementById("viewModalPreviewContainer").innerHTML = q.isWord ? `<div style="font-size:2.2rem; font-weight:800; color:${sub.color}; padding:20px 0;">${q.note}</div>` : (q.img ? `<img src="${q.img}" style="max-width:100%; max-height:280px; border-radius:6px;">` : `<div style="color:#94a3b8; padding:30px;">无原题图片</div>`);
   document.getElementById("editQSubject").innerHTML = Object.values(SUBJECTS).map(s => `<option value="${s.id}" ${s.id===(q.subject||'math')?'selected':''}>${s.icon} ${s.name}</option>`).join('');
   document.getElementById("editQGrade").value = q.grade || "四上";
+  document.getElementById("editQFolder").value = q.folder || "";
   updateEditModalModules(q.module);
   document.getElementById("editQStatus").value = q.status || "🔴 待攻克";
   document.getElementById("editQNote").value = q.note || "";
@@ -1727,6 +2083,7 @@ async function saveCurrentEditingQuestion() {
   const q = (await dbGetAll(STORE_QUESTIONS)).find(x => x.id === viewingQuestionId); if (!q) return;
   const newSub = document.getElementById("editQSubject").value;
   q.subject = newSub; q.grade = document.getElementById("editQGrade").value;
+  q.folder = document.getElementById("editQFolder").value.trim() || "默认分类";
   q.module = document.getElementById("editQModule").value; q.status = document.getElementById("editQStatus").value;
   q.note = document.getElementById("editQNote").value.trim(); q.ans = document.getElementById("editQAns").value.trim();
   q.customExtension = (newSub === 'math') ? "" : document.getElementById("editQExt").value.trim();
@@ -1790,8 +2147,8 @@ async function doAnalyzeThinking(questions, singleSaveId) {
   box.innerHTML = `⏳ 正在直连极速分析引擎，稍候约 2~4 秒...`;
   document.getElementById("analysisModal").classList.add("active");
 
-  const prompt = `你是一位小学四年级竞赛名师。请给出【极度凝练、直击破题要害】的思路导图（拒绝客套话，250字内）：
-【数学公式规范】：必须使用标准 LaTeX（行内公式用 $...$，独立行用 $$...$$），乘号用 \\times，除号用 \\div。每个公式开头和结尾的 $ 必须严格成对出现！
+  const prompt = `你是一位小学四年级名师。请给出【极度凝练、直击破题要害】的思路导图（拒绝客套话，250字内）：
+【数学公式规范】：必须使用标准 LaTeX（行内公式用 $...$，独立行用 $$...$$），乘号用 \\times，除号用 \\div。每个公式必须严格成对闭合！
 【破题题眼】：一句话找出最关键突破口。
 【极简步骤】：核心算式与推导。
 【避坑指南】：四年级学生最容易栽跟头的思维陷阱。
@@ -1844,7 +2201,7 @@ async function doGenerateSimilar(questions) {
   box.innerHTML = `⏳ 正在由最新 Flash 引擎生成高质量变式题，约 3~5 秒...`;
   document.getElementById("similarModal").classList.add("active");
 
-  const prompt = `你是一位小学四年级数学竞赛命题名师。请针对提供的题目分别出一道【高质量变式题】：
+  const prompt = `你是一位小学四年级竞赛命题名师。请针对提供的题目分别出一道【高质量变式题】：
 【排版与公式格式硬性要求】：
 1. 涉及数学数字运算、未知数、变量名、两位数加横线等，必须严格使用标准的 LaTeX，行内必须使用单个美元符完整包裹（如 $x$、$\\overline{ab}$、$3 \\times 4 = 12$），独立行算式写在 $$...$$ 中！必须保证公式成对闭合！
 2. 乘号严禁直接写英文字母 x 或 *，必须写 \\times；除号必须写 \\div！
@@ -1882,7 +2239,7 @@ function printSimilarContent() {
   w.document.close(); setTimeout(() => w.print(), 500);
 }
 
-// 考场缩放与框选
+// 考场与模考系统
 let activeExam = null, examTimer = null, examSecondsRemaining = 0, userExamAnswers = {};
 let currentZoom = 1.0, pinchStartDist = 0, pinchStartZoom = 1.0;
 
@@ -2086,7 +2443,9 @@ async function confirmSaveSnip() {
 
   await dbAdd(STORE_QUESTIONS, {
     subject: activeExam.subject || 'math', grade: "四上",
-    module: (currentSnipTarget.num >= 17 ? "填空解答" : "真题考点"), status: "🔴 待攻克",
+    module: (currentSnipTarget.num >= 17 ? "填空解答" : "真题考点"),
+    folder: "WMO历年真题",
+    status: "🔴 待攻克",
     note: `${activeExam.title} 第${currentSnipTarget.num}题`, ans: currentSnipTarget.correctOpt,
     ai: `模考原题截图收录。参考答案：${currentSnipTarget.correctOpt}`,
     img: finalBase64, updatedAt: new Date().toISOString()
@@ -2213,7 +2572,7 @@ function submitRunningExam() {
 async function aiGradeExamFull() {
   const reportBox = document.getElementById("aiExamGradeReport");
   reportBox.style.display = "block";
-  reportBox.innerHTML = `⏳ 正在请求 Gemini 对全卷（选择题 + 解答草稿）整体阅卷评分并分析错题，稍候 3~5 秒...`;
+  reportBox.innerHTML = `⏳ 正在请求 Gemini 对全卷进行智能评分与错题诊断...`;
   reportBox.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
 
   const mcqSummary = lastWrongQuestionsToSync.length === 0
@@ -2338,7 +2697,13 @@ function toggleSelectAllVault() {
 }
 
 async function exportData() {
-  const blob = new Blob([JSON.stringify({ version: 8.2, questions: await dbGetAll(STORE_QUESTIONS), exams: await dbGetAll(STORE_EXAMS), vocab: await dbGetAll(STORE_VOCAB) }, null, 2)], { type: "application/json" });
+  const blob = new Blob([JSON.stringify({
+    version: 8.5,
+    questions: await dbGetAll(STORE_QUESTIONS),
+    exams: await dbGetAll(STORE_EXAMS),
+    vocab: await dbGetAll(STORE_VOCAB),
+    articles: await dbGetAll(STORE_ARTICLES)
+  }, null, 2)], { type: "application/json" });
   const a = document.createElement("a"); a.href = URL.createObjectURL(blob);
   a.download = `智学多学科备份_${new Date().getMonth()+1}月${new Date().getDate()}日.json`; a.click();
 }
@@ -2353,6 +2718,7 @@ function importData() {
         if (d.questions) for (let q of d.questions) await dbAdd(STORE_QUESTIONS, q);
         if (d.exams) for (let ex of d.exams) await dbAdd(STORE_EXAMS, ex);
         if (d.vocab) for (let v of d.vocab) await dbAdd(STORE_VOCAB, v);
+        if (d.articles) for (let a of d.articles) await dbAdd(STORE_ARTICLES, a);
         alert("🎉 数据全部恢复成功！"); renderDashboard();
       } catch(err) { alert("恢复失败：" + err.message); }
     };
