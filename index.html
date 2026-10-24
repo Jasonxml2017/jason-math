@@ -83,7 +83,7 @@
   .bubble-btn.correct { background: var(--success); color: white; border-color: var(--success); }
   .bubble-btn.wrong { background: var(--danger); color: white; border-color: var(--danger); }
 
-  /* 弹窗与通用容器 */
+  /* 弹窗容器 */
   .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); display: none; align-items: center; justify-content: center; z-index: 1000; padding: 16px; }
   .modal-overlay.active { display: flex; }
   .modal { background: white; width: 100%; max-width: 680px; max-height: 92vh; border-radius: 16px; padding: 22px; overflow-y: auto; }
@@ -93,7 +93,7 @@
   .ans-reveal { margin-top: 10px; padding: 10px; background: #f1f5f9; border-left: 4px solid var(--primary); border-radius: 4px; display: none; font-size: 0.85rem; }
   .ans-reveal.show { display: block; }
 
-  /* 数学排版与输出框 */
+  /* 排版框 */
   .analysis-output-box {
     background: #f8fafc; border: 1px solid var(--border); border-radius: 10px;
     padding: 16px 20px; font-size: 0.95rem; line-height: 1.8; max-height: 65vh;
@@ -125,6 +125,16 @@
   .series-progress-fill { background: #15803d; height: 100%; transition: width 0.3s; }
   .series-card-banner { background: #f0fdf4; border: 1.5px solid #86efac; border-radius: 10px; padding: 10px 14px; margin-bottom: 16px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px; }
 
+  /* 杂志配图视窗 */
+  .reader-magazine-image-wrap {
+    width: 100%; text-align: center; margin-bottom: 18px; background: #f8fafc;
+    border-radius: 12px; overflow: hidden; border: 1px solid #e2e8f0;
+  }
+  .reader-magazine-image {
+    max-width: 100%; max-height: 380px; object-fit: contain; display: inline-block;
+    cursor: zoom-in; transition: transform 0.2s;
+  }
+
   .comprehension-box { background: #f5efe6; border-left: 4px solid #d97706; padding: 16px; border-radius: 8px; margin-top: 24px; font-size: 0.95rem; }
   .english-keywords-panel { background: #f0fdf4; border: 1.5px solid #86efac; border-radius: 12px; padding: 16px; margin-top: 22px; }
   .vocab-chips-list { display: flex; flex-direction: column; gap: 10px; margin-top: 10px; }
@@ -150,7 +160,7 @@
 <header>
   <div class="brand" onclick="switchNav('dashboard')">
     <span>🍎 智学多学科管家</span>
-    <span style="font-size:0.7rem; font-weight:bold; background:#e0f2fe; color:#0369a1; padding:2px 8px; border-radius:12px;">v8.5 文件夹&长文分辑版</span>
+    <span style="font-size:0.7rem; font-weight:bold; background:#e0f2fe; color:#0369a1; padding:2px 8px; border-radius:12px;">v8.6 博物图文视听版</span>
   </div>
   <div class="nav-tabs">
     <div class="nav-tab active" id="tabNavDashboard" onclick="switchNav('dashboard')">🏠 首页工作台</div>
@@ -219,7 +229,7 @@
   <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px; flex-wrap:wrap; gap:8px;">
     <div>
       <h2 style="font-size:1.3rem;">🎯 错题复习总库</h2>
-      <p style="font-size:0.85rem; color:#64748b;">按勾选次序精准复习（复习完自动清空勾选）；支持按文件夹分类筛查</p>
+      <p style="font-size:0.85rem; color:#64748b;">按勾选次序精准复习；支持按文件夹分类筛查（如：善思单词）</p>
     </div>
     <div style="display:flex; gap:6px; flex-wrap:wrap;">
       <button class="btn btn-primary" id="btnVaultReviewSelected" style="background:#7c3aed;" onclick="startSelectedVaultReview()">⚡ 复习所选题 (0)</button>
@@ -273,14 +283,14 @@
     <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
       <span style="font-size:1.05rem; font-weight:800; color:#065f46;">📖 每日一读</span>
       <div style="display:flex; background:#e7dfd5; padding:2px; border-radius:8px;">
-        <span class="modal-subtab active" id="tabReaderChinese" onclick="switchReaderLanguage('chinese')" style="padding:4px 10px;">🇨🇳 中文真实名篇</span>
+        <span class="modal-subtab active" id="tabReaderChinese" onclick="switchReaderLanguage('chinese')" style="padding:4px 10px;">🇨🇳 中文图文名篇</span>
         <span class="modal-subtab" id="tabReaderEnglish" onclick="switchReaderLanguage('english')" style="padding:4px 10px;">🇬🇧 英文分级探险</span>
       </div>
       <select id="readerModeSelect" onchange="onReaderModeChanged()" style="padding:4px 8px; border-radius:6px; font-size:0.82rem; background:white; border:1px solid #d6cebf; font-weight:bold; color:#0f172a;">
       </select>
     </div>
     <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
-      <button class="btn btn-primary" style="background:#059669;" onclick="openSplitDocModal()">📂 导入整本/长文分辑</button>
+      <button class="btn btn-primary" style="background:#059669;" onclick="openSplitDocModal()">📸 导入《博物》长文/截图分辑</button>
       <button class="btn btn-outline" style="background:white;" onclick="openArticleManageModal()">🗂️ 文库管理</button>
       <button class="btn btn-outline" id="btnSpeechRead" style="background:white;" onclick="toggleSpeechReading()">🔊 朗读本文</button>
       <button class="btn btn-outline" style="background:white;" onclick="refreshDailyReading()">🔄 换一篇</button>
@@ -359,29 +369,33 @@
 
 <!-- ================= 弹窗集合 ================= -->
 
-<!-- 长篇文档拆解为每日短文连载弹窗 -->
+<!-- 长篇文档/图片版《博物》分辑弹窗 -->
 <div class="modal-overlay" id="splitDocModal">
   <div class="modal" style="max-width:720px;">
     <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
-      <h3 style="font-size:1.15rem; color:#059669;">📚 上传文档自动拆分为“每日一篇”连载</h3>
-      <span style="font-size:0.75rem; color:#64748b;">支持 .txt, .pdf 或直接粘贴长文</span>
+      <h3 style="font-size:1.15rem; color:#059669;">📸 导入《博物》长文或杂志截图（图文自动分辑）</h3>
+      <span style="font-size:0.75rem; color:#64748b;">支持 iPad 截图、PDF 页面与图片 OCR</span>
     </div>
     <div style="display:grid; grid-template-columns: 2fr 1fr; gap:10px; margin-bottom:10px;">
-      <div class="form-group"><label>专栏/书籍名称</label><input type="text" id="splitDocAlbumTitle" placeholder="如：《少年时》第48期·深海探秘"></div>
-      <div class="form-group"><label>预计拆分篇数</label><select id="splitDocTargetParts"><option value="3">拆分为 3 篇</option><option value="5" selected>拆分为 5 篇</option><option value="8">拆分为 8 篇</option><option value="12">拆分为 12 篇</option></select></div>
+      <div class="form-group"><label>专栏/书籍名称</label><input type="text" id="splitDocAlbumTitle" placeholder="如：《博物》2025年11月·城乡之间"></div>
+      <div class="form-group"><label>分辑策略</label><select id="splitDocTargetParts"><option value="auto" selected>🤖 AI 自动按动物/主题切分</option><option value="2">切分为 2 篇</option><option value="3">切分为 3 篇</option><option value="5">切分为 5 篇</option></select></div>
     </div>
     <div class="form-group">
-      <label>选择文件上传（.txt 或 .pdf 电子书）</label>
-      <input type="file" id="splitFileInput" accept=".txt,.pdf" onchange="handleSplitDocFile(this.files[0])">
+      <label>选择杂志文件（🔥支持直接选 iPad 截图相片、或 .pdf 电子版）</label>
+      <input type="file" id="splitFileInput" accept="image/*,.pdf,.txt" onchange="handleSplitDocFile(this.files[0])">
+    </div>
+    <div id="splitMediaPreviewWrap" style="display:none; text-align:center; background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px; padding:10px; margin-bottom:10px;">
+      <img id="splitMediaPreviewImg" style="max-height:160px; max-width:100%; border-radius:6px;">
+      <div style="font-size:0.75rem; color:#15803d; font-weight:bold; margin-top:4px;">✅ 已载入杂志配图，将自动随短文一同存入每日一读！</div>
     </div>
     <div class="form-group">
-      <label>文档内容预览 / 或直接在此粘贴长文全文：</label>
-      <textarea id="splitDocRawText" style="height:150px;" placeholder="在此粘贴《少年时》或文学作品的长篇文章内容..."></textarea>
+      <label>正文文字（如已提取可编辑；上传图片/PDF扫描版时可留空，AI将通过视觉眼睛自动识图）：</label>
+      <textarea id="splitDocRawText" style="height:120px;" placeholder="上传图片或PDF时，AI会自动通过多模态识别全文并分辑，无需您手动输入..."></textarea>
     </div>
-    <div id="splitProgressNotice" style="display:none; color:#059669; font-size:0.85rem; font-weight:bold; margin-bottom:10px;">⏳ 正在调用 AI 智能拆解并提炼每日佳词...请稍候</div>
+    <div id="splitProgressNotice" style="display:none; color:#059669; font-size:0.85rem; font-weight:bold; margin-bottom:10px;">⏳ 正在调用 Gemini 视觉多模态大模型智能识别图文并拆解...</div>
     <div style="display:flex; justify-content:flex-end; gap:8px;">
       <button class="btn btn-outline" onclick="closeAllModals()">取消</button>
-      <button class="btn btn-primary" id="btnStartSplitDoc" style="background:#059669;" onclick="startSplitDocumentToSeries()">🚀 开始智能切分并入库</button>
+      <button class="btn btn-primary" id="btnStartSplitDoc" style="background:#059669;" onclick="startSplitDocumentToSeries()">🚀 视觉识别并生成每日一读</button>
     </div>
   </div>
 </div>
@@ -464,7 +478,7 @@
   </div>
 </div>
 
-<!-- 错题录入弹窗（优化 iPad 全局自适应裁剪） -->
+<!-- 错题录入弹窗 -->
 <div class="modal-overlay" id="errorEntryModal">
   <div class="modal">
     <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
@@ -480,7 +494,7 @@
       <div class="form-group">
         <label>📁 分类文件夹（如：善思单词）</label>
         <div style="display:flex; gap:4px;">
-          <select id="inpEntryFolder" onchange="onFolderSelectChanged(this)" style="flex:1;"></select>
+          <select id="inpEntryFolder" style="flex:1;"></select>
           <button type="button" class="btn btn-outline" style="padding:2px 8px;" onclick="promptNewFolder()">＋新建</button>
         </div>
       </div>
@@ -497,7 +511,6 @@
         <input type="file" id="cameraPhotoFile" accept="image/*" capture="environment" style="display:none;" onchange="handleCameraCropFile(this.files[0])">
       </div>
       
-      <!-- 视窗与全景缩放控制条 -->
       <div class="crop-zoom-bar" id="cropZoomControls" style="display:none;">
         <button type="button" class="btn btn-outline" style="color:white; border-color:#64748b; background:transparent;" onclick="zoomCropPhoto(-0.2)">🔍−</button>
         <span id="cropZoomText" style="color:white; font-size:0.8rem; font-weight:bold; min-width:48px; text-align:center;">100%</span>
@@ -573,7 +586,7 @@ const GEMINI_MODELS = [
   "gemini-3.5-flash-lite"
 ];
 
-// 内置经典真实文库
+// 内置初始种子库
 const AUTHENTIC_CHINESE_BANK = [
   {
     id: "sns_deep_sea",
@@ -592,42 +605,6 @@ const AUTHENTIC_CHINESE_BANK = [
     ],
     question: "深海后肛鱼的脑袋为什么是完全透明的？这体现了生物怎样的生存智慧？",
     answer: "透明的头部能像保护罩一样保护眼球，同时能最大化收集上方微弱的光线，体现了生物在极端黑暗环境下顽强演化、适应生存的高超智慧。"
-  },
-  {
-    id: "sns_tree_net",
-    category: "shaonianshi",
-    categoryName: "🚀 《少年时》精选科普",
-    title: "树木之间的“秘密互联网”",
-    source: "选自《少年时》前沿自然科普 · 植物智慧",
-    paragraphs: [
-      "漫步在静谧的森林里，你可能会以为每一棵参天大树都是孤立生长的。然而地下深处，却隐藏着一个比人类光纤网络更庞大复杂的‘菌根互联网’。",
-      "无数细小的真菌菌丝像电线一样，悄悄将整片森林中不同树木的根系连接在一起。当一棵大树沐浴在充足的阳光下制造了过剩的糖分，它会顺着这条地下管道，把营养无私地输送给树荫下快要饿死的小树苗；而当某棵树遭遇害虫猛烈袭击时，它会立刻通过真菌网络发送‘化学警报信号’，提醒下风口的其他邻居赶紧在树叶里合成苦味防御素。",
-      "植物不是冷冰冰的木头。它们互通有无、守望相助。整座森林宛如一个巨大的生命共同体，在无声中展现着自然界最深沉的互助与爱。"
-    ],
-    gems: [
-      { word: "守望相助", meaning: "为了防备外来的侵害或困难，邻近各方互相协同照应、互相支援。", usage: "可用于形容邻里之间、同学们互相帮助，或自然界动植物共生的和谐关系。" },
-      { word: "互通有无", meaning: "拿出自己多余的物资，与别人换取自己没有的，互相接济。", usage: "适合写作时描写小组合作分享资料，或集市贸易互换心爱物品的场景。" }
-    ],
-    question: "森林地下的‘真菌网络’起到了什么关键作用？",
-    answer: "它像地下互联网一样，在树木之间传递养分（以强扶弱），并能快速发送危险预警化学信号，帮助整片森林协同抵御虫害。"
-  },
-  {
-    id: "wzg_duck_egg",
-    category: "masters",
-    categoryName: "🌿 名家生活散文",
-    title: "高邮的咸鸭蛋",
-    source: "选自 汪曾祺 散文集《人间草木》",
-    paragraphs: [
-      "我的家乡是水乡。出鸭。高邮大麻鸭是著名的鸭种。鸭多，鸭蛋也多。高邮人也善于腌鸭蛋。高邮咸蛋的特点是质细而油多。蛋白柔嫩，不似别处的发干、发粉，入口便觉得温润软糯。",
-      "平常食用，一般都是敲破鸭蛋空头的一角，用筷子挖着吃。筷子头一扎下去，吱——红油就冒出来了！高邮咸蛋的黄是通红的。苏北有一道名菜，叫‘炒红油豆腐’，就是用高邮咸蛋黄炒的，颜色极漂亮，味道也极鲜美。",
-      "孩子们吃鸭蛋还有一种独特的玩头：把鸭蛋吃完，蛋壳留着，洗得干干净净。到了端午节，装在丝线编成的彩色小网囊里，挂在胸前，互相夸耀比美，里面还捉只萤火虫，一闪一闪，这真是童年里最快活的时光。"
-    ],
-    gems: [
-      { word: "温润软糯", meaning: "质地温和柔润，软和而富有黏性，常形容美玉或极其可口的糕点食物。", usage: "描写妈妈做的家乡美食或一道可口的甜点，让细节充满生活质感。" },
-      { word: "快活惬意", meaning: "心情非常愉快，感到舒适满足、无拘无束。", usage: "可用于周末远足、与好友游戏或做完作业在微风中阅读时的心情刻画。" }
-    ],
-    question: "作者写吃咸鸭蛋‘筷子头一扎下去，吱——红油就冒出来了’，这个‘吱’字妙在哪里？",
-    answer: "妙在以声传神。一个‘吱’字化静为动，把红油饱满丰盈、顺着筷孔流出的诱人情态写活了，让人仿佛闻到了咸蛋的浓香。"
   }
 ];
 
@@ -640,7 +617,7 @@ const ENGLISH_MODES = [
 
 const SUBJECTS = {
   math: { id: "math", name: "数学思维", icon: "📐", desc: "WMO竞赛真题、高频几何模型、行程工程与错题攻坚", color: "#2563eb", bg: "#eff6ff", modules: ["几何模型", "行程问题", "数论整除", "计数组合", "计算与数列", "典型应用题", "填空解答"] },
-  chinese: { id: "chinese", name: "语文素养", icon: "📖", desc: "易错生字词打卡、长文分辑精读、古诗文默写与作文", color: "#be123c", bg: "#fff1f2", modules: ["字词拼音", "修改病句", "文言诗词", "阅读理解", "表达应用", "其它错题"] },
+  chinese: { id: "chinese", name: "语文素养", icon: "📖", desc: "《博物》图文分辑精读、易错生字词打卡、写作佳词积累", color: "#be123c", bg: "#fff1f2", modules: ["字词拼音", "修改病句", "文言诗词", "阅读理解", "表达应用", "其它错题"] },
   english: { id: "english", name: "英语进阶", icon: "🔤", desc: "善思单词本、分级阅读探险、语法短语与错题归档", color: "#059669", bg: "#ecfdf5", modules: ["词汇短语", "语法时态", "完形填空", "阅读理解", "句型转换", "其它错题"] }
 };
 
@@ -752,7 +729,7 @@ function renderRichContent(el, text) {
 
 function initDB() {
   return new Promise(resolve => {
-    const req = indexedDB.open(DB_NAME, 9);
+    const req = indexedDB.open(DB_NAME, 10);
     req.onupgradeneeded = e => {
       const d = e.target.result;
       if (!d.objectStoreNames.contains(STORE_QUESTIONS)) d.createObjectStore(STORE_QUESTIONS, { keyPath: "id", autoIncrement: true });
@@ -922,9 +899,7 @@ async function renderDashboard() {
 
 function openSubjectPortal(sId) { currentPortalSubject = sId; switchNav("portal"); }
 
-// ==========================================
-// 📂 文件夹系统 (Folder Management)
-// ==========================================
+// 文件夹系统
 function getFoldersForSubject(sKey) {
   try {
     const s = localStorage.getItem("CUSTOM_FOLDERS_" + sKey);
@@ -959,12 +934,9 @@ function updateFolderDropdownOptions(selectedName) {
   select.innerHTML = folders.map(f => `<option value="${f}" ${f===selectedName?'selected':''}>📁 ${f}</option>`).join('');
 }
 
-// ==========================================
-// 📸 iPad 照片全景缩放与裁剪 (Zoom & Fit Full Screen)
-// ==========================================
+// iPad 照片缩放与裁剪视窗
 let cropImgScale = 1.0;
 let cropNaturalWidth = 0, cropNaturalHeight = 0;
-let cropLoadedImg = null;
 
 function handleCameraCropFile(file) {
   if (!file) return;
@@ -973,7 +945,6 @@ function handleCameraCropFile(file) {
     const img = document.getElementById("cropTargetImg");
     img.src = e.target.result;
     img.onload = () => {
-      cropLoadedImg = img;
       cropNaturalWidth = img.naturalWidth;
       cropNaturalHeight = img.naturalHeight;
       document.getElementById("cropWorkspace").style.display = "block";
@@ -989,7 +960,6 @@ function fitCropPhotoToContainer() {
   const ws = document.getElementById("cropWorkspace");
   const maxW = ws.clientWidth - 20 || 320;
   const maxH = 340;
-  // 计算恰好能在 iPad 窗口中看清全图的最佳缩放比
   cropImgScale = Math.min(maxW / cropNaturalWidth, maxH / cropNaturalHeight, 1.0);
   applyCropImageZoom();
 }
@@ -1039,7 +1009,6 @@ function initInteractiveCropCanvas(canvas, img) {
     const rX = Math.min(sX, e.offsetX), rY = Math.min(sY, e.offsetY);
     const rW = Math.abs(e.offsetX - sX), rH = Math.abs(e.offsetY - sY);
     if (rW > 20 && rH > 20) {
-      // 准确映射回原始高清图片像素
       const scaleX = cropNaturalWidth / canvas.width;
       const scaleY = cropNaturalHeight / canvas.height;
       const off = document.createElement("canvas");
@@ -1056,14 +1025,16 @@ function initInteractiveCropCanvas(canvas, img) {
 }
 
 // ==========================================
-// 📚 语文长文档“智能分辑连载”系统 (Doc Splitter & Series)
+// 📸 《博物》图文多模态识别与智能分辑系统
 // ==========================================
-let currentReadingArticle = null;
+let pendingSplitImageBase64 = "";
 
 function openSplitDocModal() {
   document.getElementById("splitDocAlbumTitle").value = "";
   document.getElementById("splitDocRawText").value = "";
   document.getElementById("splitFileInput").value = "";
+  pendingSplitImageBase64 = "";
+  document.getElementById("splitMediaPreviewWrap").style.display = "none";
   document.getElementById("splitProgressNotice").style.display = "none";
   document.getElementById("splitDocModal").classList.add("active");
 }
@@ -1071,26 +1042,43 @@ function openSplitDocModal() {
 async function handleSplitDocFile(file) {
   if (!file) return;
   const isPdf = file.name.toLowerCase().endsWith(".pdf");
+  const isImg = file.type.startsWith("image/");
   document.getElementById("splitDocAlbumTitle").value = file.name.replace(/\.[^/.]+$/, "");
   
-  if (isPdf) {
+  if (isImg) {
+    // 针对用户直接上传的 iPad 杂志截图
+    const reader = new FileReader();
+    reader.onload = e => {
+      pendingSplitImageBase64 = e.target.result;
+      document.getElementById("splitMediaPreviewImg").src = pendingSplitImageBase64;
+      document.getElementById("splitMediaPreviewWrap").style.display = "block";
+    };
+    reader.readAsDataURL(file);
+  } else if (isPdf) {
     document.getElementById("splitProgressNotice").style.display = "block";
-    document.getElementById("splitProgressNotice").textContent = "⏳ 正在提取 PDF 文本，请稍候...";
+    document.getElementById("splitProgressNotice").textContent = "⏳ 正在提取 PDF 画面与文字，请稍候...";
     try {
       const pdf = await pdfjsLib.getDocument({ data: await file.arrayBuffer() }).promise;
-      let fullText = "";
-      for (let i = 1; i <= Math.min(pdf.numPages, 10); i++) {
-        const page = await pdf.getPage(i);
-        const tc = await page.getTextContent();
-        fullText += tc.items.map(it => it.str).join(" ") + "\n\n";
-      }
-      document.getElementById("splitDocRawText").value = fullText.slice(0, 8000);
+      // 提取第1页作为画面并检测文字
+      const page = await pdf.getPage(1);
+      const viewport = page.getViewport({ scale: 1.5 });
+      const canvas = document.createElement("canvas");
+      canvas.width = viewport.width; canvas.height = viewport.height;
+      await page.render({ canvasContext: canvas.getContext("2d"), viewport }).promise;
+      pendingSplitImageBase64 = canvas.toDataURL("image/jpeg", 0.88);
+      document.getElementById("splitMediaPreviewImg").src = pendingSplitImageBase64;
+      document.getElementById("splitMediaPreviewWrap").style.display = "block";
+
+      const tc = await page.getTextContent();
+      const txt = tc.items.map(it => it.str).join(" ").trim();
+      document.getElementById("splitDocRawText").value = txt;
       document.getElementById("splitProgressNotice").style.display = "none";
     } catch(err) {
       alert("PDF 解析失败：" + err.message);
       document.getElementById("splitProgressNotice").style.display = "none";
     }
   } else {
+    // 纯文本 .txt
     const reader = new FileReader();
     reader.onload = e => {
       document.getElementById("splitDocRawText").value = e.target.result.slice(0, 8000);
@@ -1100,46 +1088,47 @@ async function handleSplitDocFile(file) {
 }
 
 async function startSplitDocumentToSeries() {
-  const albumTitle = document.getElementById("splitDocAlbumTitle").value.trim() || "课外名篇专栏连载";
+  const albumTitle = document.getElementById("splitDocAlbumTitle").value.trim() || "《博物》精选图文连载";
   const rawText = document.getElementById("splitDocRawText").value.trim();
-  const parts = Number(document.getElementById("splitDocTargetParts").value) || 5;
+  const notice = document.getElementById("splitProgressNotice");
 
-  if (!rawText || rawText.length < 50) {
-    alert("请粘贴或上传足够长篇幅的文档内容！");
+  if (!rawText && !pendingSplitImageBase64) {
+    alert("请上传杂志截图图片，或者粘贴文章文字！");
     return;
   }
 
-  const notice = document.getElementById("splitProgressNotice");
   notice.style.display = "block";
-  notice.textContent = `⏳ 正在让特级语文助教将长文拆解为 ${parts} 篇精读连载，提炼佳词中...`;
+  notice.textContent = `⏳ 正在请求 Gemini 视觉大模型深度识别杂志版面并切分短文...请稍候 3~5 秒`;
 
-  const prompt = `你是一位小学四年级特级语文教师。请将以下文档内容，智能切分为 ${parts} 篇独立的课外精读短文连载。
-【严格要求】：
-1. 保持原文原汁原味，不随意胡编乱造，每篇约 250~450 字，非常适合四年级一天阅读。
-2. 为每一篇提取 2 个高级成语/雅词，附带通俗释义与四年级写作小练笔指南。
-3. 为每一篇设置 1 个启发性小问题及点拨答案。
-4. 返回严格 JSON 格式（不要包含任何 markdown 反引号包裹）：
+  const prompt = `你是一位小学四年级特级语文教师兼《博物》科普辅导名师。
+请仔细识别并阅读所提供的杂志页面（包含其中的生物小专栏、标题、细节描写与小对话）：
+【分辑与教学要求】：
+1. 识别页面里的不同独立主题（例如“防城曲腹蛛：化身鸟屎，深度入戏”、“卡氏尾跳蛛：扮演毛毛虫慢慢爬”等），将它们智能切分成 1~3 篇适合四年级晨读的独立短文。
+2. 保持杂志生动、幽默的文学笔触（严格原汁原味还原，不胡编乱造机器味句子）。
+3. 为每一篇提取 2 个高级成语/四字雅词，附带通俗释义与四年级写作小练笔指南（指导如何把这种观察写进作文）。
+4. 为每一篇设计 1 道启发性小问题及参考答案。
+5. 返回严格 JSON 格式（严禁使用 markdown 反引号包裹）：
 [
   {
     "chapterIndex": 1,
-    "title": "短文副标题",
+    "title": "短文副标题（如：防城曲腹蛛的奥斯卡演技）",
     "paragraphs": ["段落1...", "段落2..."],
     "gems": [
-      {"word": "成语", "meaning": "释义", "usage": "练笔指南"}
+      {"word": "深度入戏", "meaning": "形容表演极其投入传神，融入角色。", "usage": "可用于写某位同学看书或做实验时全神贯注的神态。"}
     ],
-    "question": "思考问题",
-    "answer": "参考提示"
+    "question": "防城曲腹蛛为什么要伪装成鸟屎？",
+    "answer": "为了不被鸟儿吃掉，白天常栖在叶背，用高超的伪装保护自己并捕食。"
   }
 ]
+${rawText ? `参考文字内容：\n${rawText.slice(0, 4000)}` : ''}`;
 
-文档全文：
-${rawText.slice(0, 4500)}`;
+  const imgs = pendingSplitImageBase64 ? [pendingSplitImageBase64] : [];
 
   try {
-    const resText = await queryGemini(prompt, [], 3800, 0.3);
+    const resText = await queryGemini(prompt, imgs, 3800, 0.25);
     const cleaned = resText.replace(/^```json\s*/i, '').replace(/```\s*$/i, '');
     const match = cleaned.match(/\[[\s\S]*\]/);
-    if (!match) throw new Error("拆分格式解析失败");
+    if (!match) throw new Error("拆分格式解析不匹配");
 
     const chapters = JSON.parse(match[0]);
     const seriesId = "series_" + Date.now();
@@ -1152,8 +1141,9 @@ ${rawText.slice(0, 4500)}`;
         totalChapters: chapters.length,
         title: `${albumTitle} · 第${ch.chapterIndex}讲：${ch.title}`,
         category: "series",
-        categoryName: `📚 专栏连载 · ${albumTitle}`,
-        source: `选自《${albumTitle}》分拆连载`,
+        categoryName: `🌿 《博物》图文连载`,
+        source: `选自《${albumTitle}》`,
+        image: pendingSplitImageBase64 || "", // 自动关联杂志高清图
         paragraphs: ch.paragraphs || [],
         gems: ch.gems || [],
         question: ch.question || "阅读后谈谈你的感受？",
@@ -1164,12 +1154,12 @@ ${rawText.slice(0, 4500)}`;
     }
 
     closeAllModals();
-    alert(`🎉 成功将《${albumTitle}》拆解为 ${chapters.length} 篇精读短文连载！已直接纳入每日一读。`);
-    localStorage.setItem("READER_CHI_MODE_V85", "series");
+    alert(`🎉 成功将《${albumTitle}》图文切分为 ${chapters.length} 篇精读连载！已直接纳入每日一读。`);
+    localStorage.setItem("READER_CHI_MODE_V86", "series");
     updateReaderModeSelectUI();
     renderAuthenticChineseArticle(false);
   } catch(e) {
-    alert("智能拆分失败：" + e.message);
+    alert("智能识图拆分失败：" + e.message);
   } finally {
     notice.style.display = "none";
   }
@@ -1185,21 +1175,20 @@ function updateReaderModeSelectUI() {
   if (activeReaderLang === "chinese") {
     select.innerHTML = `
       <option value="all">🎲 全部名篇随机轮转</option>
-      <option value="series">📚 长文拆解连载专栏</option>
-      <option value="shaonianshi">🚀 《少年时》精选前沿科普</option>
-      <option value="masters">🌿 汪曾祺/丰子恺/老舍草木散文</option>
+      <option value="series">🌿 《博物》/长文图文连载</option>
+      <option value="shaonianshi">🚀 《少年时》前沿科普</option>
     `;
-    select.value = localStorage.getItem("READER_CHI_MODE_V85") || "all";
+    select.value = localStorage.getItem("READER_CHI_MODE_V86") || "series";
   } else {
     select.innerHTML = ENGLISH_MODES.map(m => `<option value="${m.id}">${m.name}</option>`).join('');
-    select.value = localStorage.getItem("READER_ENG_MODE_V85") || "adventure";
+    select.value = localStorage.getItem("READER_ENG_MODE_V86") || "adventure";
   }
 }
 
 function onReaderModeChanged() {
   const val = document.getElementById("readerModeSelect").value;
-  if (activeReaderLang === "chinese") localStorage.setItem("READER_CHI_MODE_V85", val);
-  else localStorage.setItem("READER_ENG_MODE_V85", val);
+  if (activeReaderLang === "chinese") localStorage.setItem("READER_CHI_MODE_V86", val);
+  else localStorage.setItem("READER_ENG_MODE_V86", val);
   refreshDailyReading();
 }
 
@@ -1244,7 +1233,7 @@ async function getAllChineseArticles() {
 
 async function renderAuthenticChineseArticle(next = true) {
   const container = document.getElementById("readingArticleContainer");
-  const mode = localStorage.getItem("READER_CHI_MODE_V85") || "all";
+  const mode = localStorage.getItem("READER_CHI_MODE_V86") || "all";
   const allArticles = await getAllChineseArticles();
   
   let pool = allArticles;
@@ -1253,9 +1242,9 @@ async function renderAuthenticChineseArticle(next = true) {
     if (!pool.length) {
       container.innerHTML = `
         <div style="text-align:center; padding:60px 20px; color:#78716c;">
-          <h3>📚 暂无长文连载专栏</h3>
-          <p style="margin:10px 0 16px; font-size:0.9rem;">你可以把整本《少年时》或长篇名作上传，系统将自动切分为每日一篇！</p>
-          <button class="btn btn-primary" style="background:#059669;" onclick="openSplitDocModal()">📂 上传整本长文进行拆分</button>
+          <h3>🌿 暂无《博物》图文连载</h3>
+          <p style="margin:10px 0 16px; font-size:0.9rem;">直接点击右上角【📸 导入《博物》长文/截图分辑】，上传 iPad 杂志截图即可！</p>
+          <button class="btn btn-primary" style="background:#059669;" onclick="openSplitDocModal()">📸 立即导入第一篇截图</button>
         </div>
       `;
       return;
@@ -1272,9 +1261,7 @@ async function renderAuthenticChineseArticle(next = true) {
   }
 
   const art = pool[currentChineseArticleIndex];
-  currentReadingArticle = art;
 
-  // 连载专栏专属进度栏显示
   let seriesProgressHtml = "";
   if (art.seriesId) {
     const seriesItems = (await dbGetAll(STORE_ARTICLES)).filter(a => a.seriesId === art.seriesId);
@@ -1300,19 +1287,32 @@ async function renderAuthenticChineseArticle(next = true) {
     `;
   }
 
+  // 渲染杂志配图视窗
+  let magazineImgHtml = "";
+  if (art.image) {
+    magazineImgHtml = `
+      <div class="reader-magazine-image-wrap">
+        <img src="${art.image}" class="reader-magazine-image" onclick="window.open('${art.image}')" title="点击新窗口查看原图细节">
+        <div style="font-size:0.75rem; color:#64748b; padding:4px 0; background:#f1f5f9;">📸 《博物》杂志原版图文对照（点击图片可查看原尺寸）</div>
+      </div>
+    `;
+  }
+
   container.innerHTML = `
     ${seriesProgressHtml}
     <h1 style="font-size:1.6rem; color:#0f172a; margin-bottom:10px; font-weight:800;">${art.title}</h1>
     <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap; margin-bottom:18px;">
       <span style="background:#fef3c7; color:#b45309; padding:3px 10px; border-radius:12px; font-size:0.8rem; font-weight:bold;">
-        ${art.categoryName || '名家篇目'}
+        ${art.categoryName || '博物图文'}
       </span>
       <span style="font-size:0.82rem; color:#78716c; font-weight:600;">
         📖 ${art.source}
       </span>
     </div>
 
-    <div style="font-size:1.15rem; line-height:2.0; color:#292524;">
+    ${magazineImgHtml}
+
+    <div style="font-size:1.15rem; line-height:2.0; color:#292524;" id="readingParagraphsContent">
       ${art.paragraphs.map(p => `<p style="margin-bottom:14px; text-indent:2em;">${p}</p>`).join('')}
     </div>
 
@@ -1365,7 +1365,7 @@ async function openArticleManageModal() {
       <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px; padding:10px 14px; display:flex; justify-content:space-between; align-items:center;">
         <div>
           <b>${art.title}</b>
-          <div style="font-size:0.8rem; color:#64748b; margin-top:2px;">${art.source} · 状态: ${art.isRead ? '<span style="color:#15803d; font-weight:bold;">✅已读</span>' : '<span style="color:#d97706;">待读</span>'}</div>
+          <div style="font-size:0.8rem; color:#64748b; margin-top:2px;">${art.source} ${art.image?'· 📸含配图':''} · 状态: ${art.isRead ? '<span style="color:#15803d; font-weight:bold;">✅已读</span>' : '<span style="color:#d97706;">待读</span>'}</div>
         </div>
         <div style="display:flex; gap:6px;">
           <button class="btn btn-danger" style="padding:3px 8px; font-size:0.75rem;" onclick="deleteCustomArticle(${art.id})">删除</button>
@@ -1384,14 +1384,14 @@ async function deleteCustomArticle(id) {
   }
 }
 
-// 英文分级探险短文生成
+// 英文分级生成
 async function fetchAndGenerateEnglishReading(forceNew = false) {
   const container = document.getElementById("readingArticleContainer");
-  const modeId = localStorage.getItem("READER_ENG_MODE_V85") || "adventure";
+  const modeId = localStorage.getItem("READER_ENG_MODE_V86") || "adventure";
   const selMode = ENGLISH_MODES.find(m => m.id === modeId) || ENGLISH_MODES[0];
   const today = getTodayDateStr();
 
-  const cacheKey = `ENG_READING_V85_${modeId}_${today}`;
+  const cacheKey = `ENG_READING_V86_${modeId}_${today}`;
   if (!forceNew) {
     const cached = localStorage.getItem(cacheKey);
     if (cached) {
@@ -1467,7 +1467,7 @@ Please return valid JSON format strictly as follows (no markdown backticks):
         </span>
       </div>
 
-      <div style="font-size:1.15rem; line-height:2.0; color:#292524;">
+      <div style="font-size:1.15rem; line-height:2.0; color:#292524;" id="readingParagraphsContent">
         ${formattedParagraphs.map(p => `<p style="margin-bottom:14px;">${p}</p>`).join('')}
       </div>
 
@@ -1548,15 +1548,26 @@ let synth = window.speechSynthesis, isSpeaking = false;
 function toggleSpeechReading() {
   if (!synth) { alert("当前设备不支持语音朗读！"); return; }
   if (synth.speaking || isSpeaking) { stopSpeechReading(); return; }
-  const text = document.getElementById("readingArticleContainer").innerText;
+  
+  // 提取正文文本，天然自动过滤图片
+  const textEl = document.getElementById("readingParagraphsContent");
+  const text = textEl ? textEl.innerText : document.getElementById("readingArticleContainer").innerText;
   if (!text) return;
+
   const utter = new SpeechSynthesisUtterance(text);
   utter.lang = activeReaderLang === "chinese" ? "zh-CN" : "en-US";
   utter.rate = activeReaderLang === "chinese" ? 0.95 : 0.85;
   utter.onend = utter.onerror = () => stopSpeechReading();
-  synth.speak(utter); isSpeaking = true; document.getElementById("btnSpeechRead").innerHTML = "⏹ 停止朗读";
+  synth.speak(utter); 
+  isSpeaking = true; 
+  document.getElementById("btnSpeechRead").innerHTML = "⏹ 停止朗读";
 }
-function stopSpeechReading() { if (synth) synth.cancel(); isSpeaking = false; const b = document.getElementById("btnSpeechRead"); if (b) b.innerHTML = "🔊 朗读本文"; }
+function stopSpeechReading() { 
+  if (synth) synth.cancel(); 
+  isSpeaking = false; 
+  const b = document.getElementById("btnSpeechRead"); 
+  if (b) b.innerHTML = "🔊 朗读本文"; 
+}
 
 let currentSelectedWord = "";
 function initReaderWordLookupListener() {
@@ -1581,7 +1592,7 @@ function hideQuickCollectBubble() { document.getElementById("quickCollectBubble"
 async function quickCollectCurrentSelection() {
   if (!currentSelectedWord) return;
   await dbAdd(STORE_VOCAB, {
-    text: currentSelectedWord, type: activeReaderLang, folder: activeReaderLang==='english'?'善思单词':'课外字词', phoneticOrPinyin: "",
+    text: currentSelectedWord, type: activeReaderLang, folder: activeReaderLang==='english'?'善思单词':'课外词汇', phoneticOrPinyin: "",
     meaning: "来自每日一读，点击【💡 AI释义】自动获取", sentence: "",
     grade: localStorage.getItem("READER_GRADE") || "四上", status: "🔴 待记住", createdAt: new Date().toISOString()
   });
@@ -1966,7 +1977,7 @@ async function saveSubjectErrorEntry() {
 }
 
 async function renderVault() {
-  renderFilterChips();
+  await renderFilterChips();
   const all = await dbGetAll(STORE_QUESTIONS);
   const filtered = all.filter(q => {
     if (!showKilledInVault && q.status === '🟢 已斩杀' && filterStatus !== '🟢 已斩杀') return false;
@@ -2187,7 +2198,7 @@ function printAnalysisContent() {
   w.document.close(); setTimeout(() => w.print(), 500);
 }
 
-// 变式题生成业务
+// 变式题生成
 async function generateSimilarSingleById(id) { const q = (await dbGetAll(STORE_QUESTIONS)).find(x => x.id === id); if (q) doGenerateSimilar([q]); }
 async function generateSimilarWithGemini() {
   if (!vaultSelectedIdsInOrder.length) { alert("请先勾选需要出变式题的错题！"); return; }
@@ -2201,9 +2212,9 @@ async function doGenerateSimilar(questions) {
   box.innerHTML = `⏳ 正在由最新 Flash 引擎生成高质量变式题，约 3~5 秒...`;
   document.getElementById("similarModal").classList.add("active");
 
-  const prompt = `你是一位小学四年级竞赛命题名师。请针对提供的题目分别出一道【高质量变式题】：
+  const prompt = `你是一位小学四年级数学竞赛命题名师。请针对提供的题目分别出一道【高质量变式题】：
 【排版与公式格式硬性要求】：
-1. 涉及数学数字运算、未知数、变量名、两位数加横线等，必须严格使用标准的 LaTeX，行内必须使用单个美元符完整包裹（如 $x$、$\\overline{ab}$、$3 \\times 4 = 12$），独立行算式写在 $$...$$ 中！必须保证公式成对闭合！
+1. 涉及数学数字运算、未知数、变量名等，必须严格使用标准的 LaTeX，行内必须使用单个美元符完整包裹（如 $x$、$\\overline{ab}$、$3 \\times 4 = 12$），独立行算式写在 $$...$$ 中！保证公式成对闭合！
 2. 乘号严禁直接写英文字母 x 或 *，必须写 \\times；除号必须写 \\div！
 3. 题目与步骤必须完整输出，不要截断。
 4. 考点思维模型保持一致，情境或数字逻辑必须有深度变化，不做简单的换数练习。
@@ -2239,7 +2250,7 @@ function printSimilarContent() {
   w.document.close(); setTimeout(() => w.print(), 500);
 }
 
-// 考场与模考系统
+// 考场系统
 let activeExam = null, examTimer = null, examSecondsRemaining = 0, userExamAnswers = {};
 let currentZoom = 1.0, pinchStartDist = 0, pinchStartZoom = 1.0;
 
@@ -2698,7 +2709,7 @@ function toggleSelectAllVault() {
 
 async function exportData() {
   const blob = new Blob([JSON.stringify({
-    version: 8.5,
+    version: 8.6,
     questions: await dbGetAll(STORE_QUESTIONS),
     exams: await dbGetAll(STORE_EXAMS),
     vocab: await dbGetAll(STORE_VOCAB),
