@@ -125,10 +125,6 @@
   .progress-slider-wrap { flex: 1; min-width: 200px; display: flex; align-items: center; gap: 10px; }
   .progress-slider-wrap input[type=range] { flex: 1; cursor: pointer; accent-color: #15803d; }
 
-  /* 杂志配图视窗 */
-  .reader-magazine-image-wrap { width: 100%; text-align: center; margin-bottom: 18px; background: #f8fafc; border-radius: 12px; overflow: hidden; border: 1px solid #e2e8f0; }
-  .reader-magazine-image { max-width: 100%; max-height: 380px; object-fit: contain; display: inline-block; cursor: zoom-in; }
-
   .comprehension-box { background: #f5efe6; border-left: 4px solid #d97706; padding: 18px; border-radius: 10px; margin-top: 28px; font-size: 0.95rem; }
   .english-keywords-panel { background: #f0fdf4; border: 1.5px solid #86efac; border-radius: 12px; padding: 16px; margin-top: 22px; }
   .vocab-chips-list { display: flex; flex-direction: column; gap: 10px; margin-top: 10px; }
@@ -147,7 +143,7 @@
 <header>
   <div class="brand" onclick="switchNav('dashboard')">
     <span>🍎 智学多学科管家</span>
-    <span style="font-size:0.7rem; font-weight:bold; background:#e0f2fe; color:#0369a1; padding:2px 8px; border-radius:12px;">v9.0 全篇名著畅读版</span>
+    <span style="font-size:0.7rem; font-weight:bold; background:#e0f2fe; color:#0369a1; padding:2px 8px; border-radius:12px;">v9.2 长篇图文欢歌版</span>
   </div>
   <div class="nav-tabs">
     <div class="nav-tab active" id="tabNavDashboard" onclick="switchNav('dashboard')">🏠 首页工作台</div>
@@ -277,7 +273,7 @@
       </select>
     </div>
     <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
-      <button class="btn btn-primary" style="background:#059669;" onclick="openImportArticleModal()">📥 导入杂志/优秀长文</button>
+      <button class="btn btn-primary" style="background:#059669;" onclick="openImportArticleModal()">📥 导入杂志/长文(支持25+页)</button>
       <button class="btn btn-outline" style="background:white;" onclick="openArticleManageModal()">🗂️ 文库管理与重命名</button>
       <button class="btn btn-outline" id="btnSpeechRead" style="background:white;" onclick="toggleSpeechReading()">🔊 朗读本文</button>
       <button class="btn btn-outline" style="background:white;" onclick="closeDailyReadingModal()">退出阅读</button>
@@ -355,21 +351,21 @@
 
 <!-- ================= 弹窗集合 ================= -->
 
-<!-- 1. 导入杂志/文章弹窗（优化后：支持大PDF选页提取、图片OCR、文字粘贴） -->
+<!-- 1. 导入杂志/文章弹窗（支持超20页平稳提取） -->
 <div class="modal-overlay" id="importArticleModal">
   <div class="modal" style="max-width:720px;">
     <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
-      <h3 style="font-size:1.15rem; color:#059669;">📥 导入杂志或优秀长文（整篇智能扫描）</h3>
-      <span style="font-size:0.75rem; color:#64748b;">支持 iPad 截图、PDF 选页与长文粘贴</span>
+      <h3 style="font-size:1.15rem; color:#059669;">📥 导入杂志或优秀长文（支持超20页整篇识别）</h3>
+      <span style="font-size:0.75rem; color:#64748b;">支持 iPad 截图、PDF 自由选页与长文粘贴</span>
     </div>
     <div style="display:grid; grid-template-columns: 2fr 1fr; gap:10px; margin-bottom:10px;">
       <div class="form-group">
         <label>文章/期刊自定义名称</label>
-        <input type="text" id="inpImportDocTitle" placeholder="如：《博物》2025年11月·林中拟态、朱自清《春》">
+        <input type="text" id="inpImportDocTitle" placeholder="如：《博物》2025年1月·蛇有多厉害就有多萌">
       </div>
       <div class="form-group">
         <label>来源/出处标签</label>
-        <input type="text" id="inpImportDocSource" placeholder="如：《博物》杂志、初中文学精读">
+        <input type="text" id="inpImportDocSource" placeholder="如：《博物》杂志特辑">
       </div>
     </div>
 
@@ -378,14 +374,14 @@
       <input type="file" id="inpImportDocFile" accept="image/*,.pdf,.txt" onchange="handleImportDocFile(this.files[0])">
     </div>
 
-    <!-- 大 PDF 选页提取控制面板，防止 100M+ PDF 挤爆浏览器内存 -->
+    <!-- 突破页码限制面板 -->
     <div id="pdfRangeWrap" style="display:none; background:#ecfdf5; border:1px solid #a7f3d0; padding:10px; border-radius:8px; margin-bottom:10px;">
-      <div style="font-size:0.85rem; font-weight:bold; color:#065f46; margin-bottom:4px;">📑 检测到大文件 PDF，为保持极佳流畅度，请指定提取页码：</div>
+      <div style="font-size:0.85rem; font-weight:bold; color:#065f46; margin-bottom:4px;">📑 请输入想完整精读的跨页范围（支持 1~25 页长篇连续提取）：</div>
       <div style="display:flex; align-items:center; gap:8px; font-size:0.85rem;">
         <span>从第</span>
-        <input type="number" id="inpPdfStartPage" value="1" min="1" style="width:65px; padding:4px 8px;">
+        <input type="number" id="inpPdfStartPage" value="1" min="1" style="width:70px; padding:4px 8px;">
         <span>页，到第</span>
-        <input type="number" id="inpPdfEndPage" value="3" min="1" style="width:65px; padding:4px 8px;">
+        <input type="number" id="inpPdfEndPage" value="12" min="1" style="width:70px; padding:4px 8px;">
         <span>页</span>
         <span id="pdfTotalPageHint" style="color:#64748b; font-size:0.78rem;"></span>
       </div>
@@ -393,7 +389,7 @@
 
     <div id="importDocPreviewWrap" style="display:none; text-align:center; background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px; padding:10px; margin-bottom:10px;">
       <img id="importDocPreviewImg" style="max-height:160px; max-width:100%; border-radius:6px;">
-      <div style="font-size:0.75rem; color:#15803d; font-weight:bold; margin-top:4px;">✅ 已成功载入封面/原图！</div>
+      <div style="font-size:0.75rem; color:#15803d; font-weight:bold; margin-top:4px;">✅ 已成功载入封面/首页！</div>
     </div>
 
     <div class="form-group">
@@ -401,7 +397,7 @@
       <textarea id="inpImportDocText" style="height:140px;" placeholder="在此处粘贴网上的优秀长文/散文；如果上传了截图或PDF，此处可留空，AI将通过多模态视觉引擎完整识别..."></textarea>
     </div>
 
-    <div id="importDocNotice" style="display:none; color:#059669; font-size:0.85rem; font-weight:bold; margin-bottom:10px;">⏳ 正在调用 Gemini 视觉大模型进行文字扫描与好词好句精析...</div>
+    <div id="importDocNotice" style="display:none; color:#059669; font-size:0.85rem; font-weight:bold; margin-bottom:10px;">⏳ 正在调用 Gemini 视觉与文本大模型...</div>
 
     <div style="display:flex; justify-content:flex-end; gap:8px;">
       <button class="btn btn-outline" onclick="closeAllModals()">取消</button>
@@ -614,6 +610,91 @@ let showKilledInVault = false;
 let db = null;
 const DB_NAME = "MathVaultDB", STORE_QUESTIONS = "questions", STORE_EXAMS = "exams", STORE_VOCAB = "vocab", STORE_ARTICLES = "articles";
 let vaultSelectedIdsInOrder = [];
+
+// ==========================================
+// 🎵 欢快全音效引擎（Web Audio API 原生无延迟）
+// ==========================================
+let audioCtx = null;
+function getAudioContext() {
+  if (!audioCtx) {
+    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  }
+  if (audioCtx.state === 'suspended') {
+    audioCtx.resume();
+  }
+  return audioCtx;
+}
+
+// 1. “巩固中”轻快三音阶 (C5 - E5 - G5)
+function playConsolidatingSound() {
+  try {
+    const ctx = getAudioContext();
+    const notes = [523.25, 659.25, 783.99]; // C5, E5, G5
+    notes.forEach((freq, idx) => {
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(freq, ctx.currentTime + idx * 0.08);
+      gain.gain.setValueAtTime(0, ctx.currentTime + idx * 0.08);
+      gain.gain.linearRampToValueAtTime(0.18, ctx.currentTime + idx * 0.08 + 0.02);
+      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + idx * 0.08 + 0.25);
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.start(ctx.currentTime + idx * 0.08);
+      osc.stop(ctx.currentTime + idx * 0.08 + 0.26);
+    });
+  } catch(e) {}
+}
+
+// 2. “直接斩杀”欢快大胜利音效 (C5 - E5 - G5 - C6 琶音 + 泛音)
+function playKilledVictorySound() {
+  try {
+    const ctx = getAudioContext();
+    const notes = [523.25, 659.25, 783.99, 1046.50]; // C5, E5, G5, C6
+    notes.forEach((freq, i) => {
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = (i === notes.length - 1) ? 'triangle' : 'sine';
+      osc.frequency.setValueAtTime(freq, ctx.currentTime + i * 0.07);
+      gain.gain.setValueAtTime(0, ctx.currentTime + i * 0.07);
+      gain.gain.linearRampToValueAtTime(0.25, ctx.currentTime + i * 0.07 + 0.02);
+      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + i * 0.07 + 0.38);
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.start(ctx.currentTime + i * 0.07);
+      osc.stop(ctx.currentTime + i * 0.07 + 0.4);
+    });
+  } catch(e) {}
+}
+
+// 3. “完成每日攻坚”全通关凯旋庆祝大号音效 (壮阔的大调号角双琶音)
+function playMissionCompleteCelebration() {
+  try {
+    const ctx = getAudioContext();
+    const fanfares = [
+      { f: 523.25, t: 0.00, d: 0.12 }, // C5
+      { f: 659.25, t: 0.12, d: 0.12 }, // E5
+      { f: 783.99, t: 0.24, d: 0.15 }, // G5
+      { f: 1046.50, t: 0.40, d: 0.35 },// C6 (长音)
+      { f: 880.00, t: 0.80, d: 0.14 }, // A5
+      { f: 1046.50, t: 0.95, d: 0.14 },// C6
+      { f: 1318.51, t: 1.10, d: 0.60 } // E6 (胜利收尾)
+    ];
+    fanfares.forEach(item => {
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = 'triangle';
+      osc.frequency.setValueAtTime(item.f, ctx.currentTime + item.t);
+      gain.gain.setValueAtTime(0, ctx.currentTime + item.t);
+      gain.gain.linearRampToValueAtTime(0.28, ctx.currentTime + item.t + 0.02);
+      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + item.t + item.d);
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.start(ctx.currentTime + item.t);
+      osc.stop(ctx.currentTime + item.t + item.d + 0.05);
+    });
+  } catch(e) {}
+}
 
 // 模型轮询管道
 async function queryGemini(prompt, images = [], maxTokens = 3500, temperature = 0.25) {
@@ -1012,9 +1093,9 @@ function initInteractiveCropCanvas(canvas, img) {
 }
 
 // ==========================================
-// 📥 升级后的导入与全篇扫描系统 (无机械分割)
+// 📥 升级后的杂志长文导入系统 (支持25+页连续扫描)
 // ==========================================
-let pendingImportCoverImgBase64 = "";
+let pendingImportCoverImgBase64 = [];
 let loadedPdfDocument = null;
 
 function openImportArticleModal() {
@@ -1025,7 +1106,7 @@ function openImportArticleModal() {
   document.getElementById("pdfRangeWrap").style.display = "none";
   document.getElementById("importDocPreviewWrap").style.display = "none";
   document.getElementById("importDocNotice").style.display = "none";
-  pendingImportCoverImgBase64 = "";
+  pendingImportCoverImgBase64 = [];
   loadedPdfDocument = null;
   document.getElementById("importArticleModal").classList.add("active");
 }
@@ -1062,15 +1143,13 @@ async function handleImportDocFile(file) {
       const numPages = loadedPdfDocument.numPages;
       
       document.getElementById("pdfRangeWrap").style.display = "block";
-      document.getElementById("pdfTotalPageHint").textContent = `(全刊共 ${numPages} 页，建议每次选择一篇文章的跨页，如 4-7 页)`;
+      document.getElementById("pdfTotalPageHint").textContent = `(全刊共 ${numPages} 页，支持提取整篇长文 1~25 页)`;
       document.getElementById("inpPdfStartPage").max = numPages;
       document.getElementById("inpPdfEndPage").max = numPages;
-      
-      // 默认提供第 1 篇正文推荐范围，如果是整本杂志，建议默认 4 到 7 页（跳过封面和目录）
       document.getElementById("inpPdfStartPage").value = 1;
-      document.getElementById("inpPdfEndPage").value = Math.min(5, numPages);
+      document.getElementById("inpPdfEndPage").value = Math.min(10, numPages);
 
-      // 预览第一页
+      // 提取第1页作为预览
       const page1 = await loadedPdfDocument.getPage(1);
       const viewport = page1.getViewport({ scale: 0.8 });
       const canvas = document.createElement("canvas");
@@ -1079,7 +1158,7 @@ async function handleImportDocFile(file) {
       document.getElementById("importDocPreviewImg").src = canvas.toDataURL("image/jpeg", 0.7);
       document.getElementById("importDocPreviewWrap").style.display = "block";
 
-      notice.textContent = "✅ PDF 载入成功！请在上方输入想提取的文章页码范围（例如某篇文章在第 12 到 15 页）。";
+      notice.textContent = "✅ PDF 载入成功！可输入需要精读的跨页范围（支持连续提取多达 25 页！）。";
     } catch(err) {
       alert("PDF 解析失败：" + err.message);
       notice.style.display = "none";
@@ -1100,44 +1179,50 @@ async function startImportWholeDocument() {
   let rawText = document.getElementById("inpImportDocText").value.trim();
   const notice = document.getElementById("importDocNotice");
 
-  let pageImagesBase64 = []; // 存储该范围内所有页面的高清渲染图
+  let pageImagesBase64 = []; // 存储该范围内所有页面的图，用于顶部画廊展示
+  let visionAiImages = [];   // 发送给 AI 视觉模型的高效精炼图
 
   if (loadedPdfDocument) {
     const sPage = Math.max(1, parseInt(document.getElementById("inpPdfStartPage").value, 10) || 1);
     const ePage = Math.min(loadedPdfDocument.numPages, parseInt(document.getElementById("inpPdfEndPage").value, 10) || sPage);
-    
-    // 限制单次提取页数在 1~8 页之间（保证大模型 Token 与图片上限，同时也是一篇长文的黄金长度）
-    if (ePage - sPage + 1 > 10) {
-      alert("为保证识别准确率与精读深度，建议单次提取单篇文章（1~8页）。请调小页码范围！");
+    const totalCount = ePage - sPage + 1;
+
+    // 页码限制放宽至 25 页以上，满足 10 多页超长图文整篇导入
+    if (totalCount > 28) {
+      alert("为了保证大模型请求稳定性与浏览器顺畅，建议单次提取长文在 1~25 页以内！");
       return;
     }
 
     notice.style.display = "block";
     let extractedPagesText = [];
 
-    // 逐页渲染图片 + 提取文字
+    // 逐页高清提取，同时防止内存暴涨
     for (let p = sPage; p <= ePage; p++) {
-      notice.textContent = `⏳ 正在逐页高清扫描：第 ${p} / ${ePage} 页...`;
+      notice.textContent = `⏳ 正在逐页高清扫描：第 ${p} / ${ePage} 页 (共 ${totalCount} 页)...`;
       const page = await loadedPdfDocument.getPage(p);
 
-      // 1. 尝试抓取文本层
+      // 1. 尝试提取文字
       try {
         const tc = await page.getTextContent();
         const pStr = tc.items.map(it => it.str).join(" ").trim();
-        if (pStr.length > 30) {
+        if (pStr.length > 25) {
           extractedPagesText.push(`--- 第 ${p} 页文字 ---\n` + pStr);
         }
       } catch(e) {}
 
-      // 2. 无论有没有文本层，都把该页渲染成图片，作为 Gemini 视觉多模态的“眼睛”
-      // 采用适度缩放比例（1.2~1.5），清晰且不撑爆内存
-      const viewport = page.getViewport({ scale: 1.3 });
+      // 2. 渲染为高清画廊图（兼顾轻量与清晰度）
+      const viewport = page.getViewport({ scale: 1.15 });
       const canvas = document.createElement("canvas");
       canvas.width = viewport.width; canvas.height = viewport.height;
       await page.render({ canvasContext: canvas.getContext("2d"), viewport }).promise;
       
-      const imgData = canvas.toDataURL("image/jpeg", 0.82);
+      const imgData = canvas.toDataURL("image/jpeg", 0.78);
       pageImagesBase64.push(imgData);
+
+      // 如果纯文字偏少（扫描版），智能纳入视觉图发给 Gemini
+      if (visionAiImages.length < 10) {
+        visionAiImages.push(imgData);
+      }
     }
 
     if (extractedPagesText.length > 0) {
@@ -1145,6 +1230,7 @@ async function startImportWholeDocument() {
     }
   } else if (Array.isArray(pendingImportCoverImgBase64)) {
     pageImagesBase64 = pendingImportCoverImgBase64;
+    visionAiImages = pendingImportCoverImgBase64;
   }
 
   if (!rawText && pageImagesBase64.length === 0) {
@@ -1153,15 +1239,15 @@ async function startImportWholeDocument() {
   }
 
   notice.style.display = "block";
-  notice.textContent = `⏳ 正在调用 Gemini 视觉大模型全篇逐页扫描，聚合整篇长文并精析好词好句...`;
+  notice.textContent = `⏳ 正在调用 Gemini 视觉与语言大模型，进行整篇文章扫描并提炼好词好句...`;
 
   const prompt = `你是一位小学四年级特级语文名师。
-我提供了这本杂志中连续的 ${pageImagesBase64.length} 页高清页面图片（可能附带有提取的文本片断）。
-请运用强大的多模态视觉识图能力，将这几页的内容【完整、系统地还原为一篇适合孩子精读的连贯文章】：
+我提供了这本杂志中连续的 ${pageImagesBase64.length} 页内容。
+请将这连续多页的内容【完整、系统地还原为一篇适合四年级孩子精读的连贯长文】：
 
 【核心识别与清洗规则】：
-1. 【跨页全篇完整抓取】：请把这几页图片中所有的故事、科普说明、观察记录、小对话等正文全部 OCR 识别出来，按逻辑顺序自然拼接。绝对不要只读第一页！
-2. 【过滤杂质与广告】：自动剔除封面代码、邮发代号、条形码、价格、ISSN、无意义广告等。如果第一页是封面，只需提取主题标题，重点提取后续内页的真实科普故事正文。
+1. 【长篇跨页完整抓取】：请把这几页图片中所有的故事、科普说明、观察记录、小对话等正文全部 OCR 识别出来，按逻辑顺序自然拼接。绝对不要只读第一页，必须完整阅读后续所有页面！
+2. 【过滤杂质与广告】：自动剔除封面代码、邮发代号、条形码、价格、ISSN、无意义广告等。如果第 1 页是封面，只需提取主题标题，重点提取内页的真实科普故事正文。
 3. 【整理成自然段落】：段落要清晰完整，原汁原味还原杂志的文学趣味和科普严谨度。
 4. 【深度提炼 3~5 个四字雅词/高级成语】：从全文中挑选适合四年级积累的雅词，提供通俗释义与【四年级写作小练笔指南】。
 5. 【主旨探究题】：设计 1 道启发思考的理解题与参考答案。
@@ -1183,11 +1269,10 @@ async function startImportWholeDocument() {
   "question": "紧扣文章主旨的问题？",
   "answer": "参考解答点拨"
 }
-${rawText ? `部分提取的文字参考：\n${rawText.slice(0, 4000)}` : ''}`;
+${rawText ? `部分提取的文字参考：\n${rawText.slice(0, 7000)}` : ''}`;
 
   try {
-    // 将选中的所有页面图片一起发给 Gemini 多模态识别
-    const resText = await queryGemini(prompt, pageImagesBase64, 4000, 0.2);
+    const resText = await queryGemini(prompt, visionAiImages, 4000, 0.2);
     const cleaned = resText.replace(/^```json\s*/i, '').replace(/```\s*$/i, '');
     const match = cleaned.match(/\{[\s\S]*\}/);
     if (!match) throw new Error("AI 识别返回格式有误，请重试");
@@ -1197,7 +1282,6 @@ ${rawText ? `部分提取的文字参考：\n${rawText.slice(0, 4000)}` : ''}`;
     const articleItem = {
       title: parsed.title || title,
       source: source,
-      // 保存所有页面的原图，方便读者在正文上方翻看原版杂志图
       galleryImages: pageImagesBase64,
       coverImg: pageImagesBase64[0] || "",
       paragraphs: (parsed.paragraphs && parsed.paragraphs.length) ? parsed.paragraphs : [rawText],
@@ -1216,13 +1300,14 @@ ${rawText ? `部分提取的文字参考：\n${rawText.slice(0, 4000)}` : ''}`;
     updateReaderModeSelectUI();
     renderCustomChineseArticle();
   } catch(e) {
-    alert("跨页扫描失败：" + e.message);
+    alert("长篇扫描失败：" + e.message);
   } finally {
     notice.style.display = "none";
   }
 }
+
 // ==========================================
-// 📖 每日一读阅读器系统（完整篇章沉浸式）
+// 📖 每日一读阅读器系统（完整篇章沉浸式 + 多页画廊）
 // ==========================================
 let activeReaderLang = "chinese";
 let currentReadingArticleId = null;
@@ -1415,7 +1500,7 @@ async function saveArticleProgress(id, val) {
     art.progressPct = Number(val);
     await dbAdd(STORE_ARTICLES, art);
     if (art.progressPct >= 100) {
-      playPleasantSound();
+      playKilledVictorySound();
       performCheckin(1, true);
     }
   }
@@ -1426,7 +1511,7 @@ async function markArticleFullyFinished(id) {
   if (art) {
     art.progressPct = 100;
     await dbAdd(STORE_ARTICLES, art);
-    playPleasantSound();
+    playKilledVictorySound();
     performCheckin(1, true);
     renderCustomChineseArticle();
   }
@@ -1449,7 +1534,7 @@ async function collectGemToVocabBook(artId, gemIdx, btn) {
     createdAt: new Date().toISOString()
   });
 
-  playPleasantSound();
+  playConsolidatingSound();
   performCheckin(1, true);
   if (btn) {
     btn.textContent = "✅ 已入生词本";
@@ -1651,7 +1736,7 @@ async function saveEnglishKeywordDirect(idx, btn) {
     createdAt: new Date().toISOString()
   });
   performCheckin(1, true);
-  playPleasantSound();
+  playConsolidatingSound();
   if (btn) {
     btn.textContent = "✅ 已入生词本";
     btn.disabled = true;
@@ -1713,11 +1798,14 @@ function hideQuickCollectBubble() { document.getElementById("quickCollectBubble"
 async function quickCollectCurrentSelection() {
   if (!currentSelectedWord) return;
   await dbAdd(STORE_VOCAB, {
-    text: currentSelectedWord, type: activeReaderLang, folder: activeReaderLang==='english'?'善思单词':'课外词汇', phoneticOrPinyin: "",
+    text: currentSelectedWord, type: activeReaderLang, folder: activeReaderLang==='english'?'善思单词':'课外好句', phoneticOrPinyin: "",
     meaning: "来自每日一读，点击【💡 AI释义】自动获取", sentence: "",
     grade: "四上", status: "🔴 待记住", createdAt: new Date().toISOString()
   });
-  hideQuickCollectBubble(); performCheckin(1, true); alert(`⭐ 已收藏【${currentSelectedWord}】到生词好句本！`);
+  hideQuickCollectBubble();
+  performCheckin(1, true);
+  playConsolidatingSound();
+  alert(`⭐ 已收藏【${currentSelectedWord}】到生词好句本！`);
 }
 
 // 生词好句本
@@ -1774,10 +1862,18 @@ async function renderVocabGrid() {
 async function cycleVocabStatus(id, cur) {
   const v = (await dbGetAll(STORE_VOCAB)).find(x => x.id === id);
   if (!v) return;
-  if (!cur || cur.includes("待记住")) { v.status = "🟡 巩固中"; playPleasantSound(); }
-  else if (cur.includes("巩固")) { v.status = "🟢 已掌握"; playPleasantSound(); }
-  else { v.status = "🔴 待记住"; }
-  await dbAdd(STORE_VOCAB, v); performCheckin(1, true); renderVocabGrid();
+  if (!cur || cur.includes("待记住")) { 
+    v.status = "🟡 巩固中"; 
+    playConsolidatingSound(); 
+  } else if (cur.includes("巩固")) { 
+    v.status = "🟢 已掌握"; 
+    playKilledVictorySound(); 
+  } else { 
+    v.status = "🔴 待记住"; 
+  }
+  await dbAdd(STORE_VOCAB, v); 
+  performCheckin(1, true); 
+  renderVocabGrid();
 }
 
 async function deleteVocabItem(id) {
@@ -1825,7 +1921,9 @@ async function saveNewVocabItem() {
     status: "🔴 待记住", createdAt: new Date().toISOString()
   });
   document.getElementById("addVocabModal").classList.remove("active");
-  performCheckin(1, true); renderVocabGrid();
+  performCheckin(1, true); 
+  playConsolidatingSound();
+  renderVocabGrid();
 }
 
 async function deepAnalyzeVocab(id) {
@@ -1852,25 +1950,13 @@ async function autoCompleteVocabWithGemini(id) {
     if (match) {
       const p = JSON.parse(match[0]);
       v.phoneticOrPinyin = p.pinyin || ""; v.meaning = p.meaning || ""; v.sentence = p.sentence || "";
-      await dbAdd(STORE_VOCAB, v); performCheckin(1, true); renderVocabGrid(); alert(`🎉 已补全【${v.text}】释义！`);
+      await dbAdd(STORE_VOCAB, v); 
+      performCheckin(1, true); 
+      playConsolidatingSound();
+      renderVocabGrid(); 
+      alert(`🎉 已补全【${v.text}】释义！`);
     }
   } catch(e) { alert("AI 繁忙：" + e.message); }
-}
-
-function playPleasantSound() {
-  try {
-    const ctx = new (window.AudioContext || window.webkitAudioContext)();
-    if (ctx.state === 'suspended') ctx.resume();
-    [523.25, 659.25, 783.99, 1046.50].forEach((freq, i) => {
-      const osc = ctx.createOscillator(), gain = ctx.createGain();
-      osc.type = 'sine'; osc.frequency.setValueAtTime(freq, ctx.currentTime + i * 0.08);
-      gain.gain.setValueAtTime(0, ctx.currentTime + i * 0.08);
-      gain.gain.linearRampToValueAtTime(0.18, ctx.currentTime + i * 0.08 + 0.02);
-      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + i * 0.08 + 0.35);
-      osc.connect(gain); gain.connect(ctx.destination);
-      osc.start(ctx.currentTime + i * 0.08); osc.stop(ctx.currentTime + i * 0.08 + 0.36);
-    });
-  } catch(e) {}
 }
 
 // 错题总库
@@ -1960,7 +2046,7 @@ function renderCurrentReviewCard() {
       <div style="font-size:0.82rem; color:#64748b; margin-bottom:8px; text-align:center;">评定本次掌握状态：</div>
       <div style="display:grid; grid-template-columns: 1fr 1fr 1fr; gap:8px;">
         <button class="btn" style="background:#fee2e2; color:#b91c1c; justify-content:center; padding:10px;" onclick="stepReviewQuestion('🔴 待攻克')">🔴 没做对</button>
-        <button class="btn" style="background:#fef3c7; color:#b45309; justify-content:center; padding:10px;" onclick="stepReviewQuestion('🟡 巩固中')">🟡 掌握中</button>
+        <button class="btn" style="background:#fef3c7; color:#b45309; justify-content:center; padding:10px; font-weight:bold;" onclick="stepReviewQuestion('🟡 巩固中')">🟡 掌握中</button>
         <button class="btn" style="background:#dcfce7; color:#15803d; justify-content:center; padding:10px; font-weight:800;" onclick="stepReviewQuestion('🟢 已斩杀')">🟢 直接斩杀!</button>
       </div>
     </div>
@@ -1971,21 +2057,34 @@ function renderCurrentReviewCard() {
 function toggleReviewAnswerVisibility() {
   const d = document.getElementById("reviewAnswerDrawer"); d.style.display = (d.style.display === "none") ? "block" : "none";
 }
+
+// 攻坚单题评分切换（带欢快音频）
 async function stepReviewQuestion(st) {
   const q = reviewQueue[reviewCurrentIdx];
   if (q) {
     q.status = st;
-    if (st === "🟡 巩固中" || st === "🟢 已斩杀") playPleasantSound();
-    if (st === "🟢 已斩杀") reviewKilledCount++;
-    await dbAdd(STORE_QUESTIONS, q); performCheckin(1, true);
+    if (st === "🟡 巩固中") {
+      playConsolidatingSound(); // 欢快三音阶
+    } else if (st === "🟢 已斩杀") {
+      playKilledVictorySound(); // 胜利琶音
+      reviewKilledCount++;
+    }
+    await dbAdd(STORE_QUESTIONS, q); 
+    performCheckin(1, true);
   }
-  reviewCurrentIdx++; renderCurrentReviewCard();
+  reviewCurrentIdx++; 
+  renderCurrentReviewCard();
 }
 
+// 每日攻坚通关（触发大号凯旋欢快音乐）
 function finishSmartReview() {
   clearInterval(reviewTimerInterval);
-  const m = Math.max(1, Math.round(reviewSeconds / 60)); performCheckin(m, true);
-  alert(`🎉 恭喜完成错题复习打卡！\n\n⏱️ 本次专注时长：${m} 分钟\n🏆 成功斩杀题目：${reviewKilledCount} 道！`);
+  const m = Math.max(1, Math.round(reviewSeconds / 60)); 
+  performCheckin(m, true);
+  playMissionCompleteCelebration(); // 🎵 播放通关大捷凯旋音效
+  setTimeout(() => {
+    alert(`🎉 恭喜完成错题复习打卡！\n\n⏱️ 本次专注时长：${m} 分钟\n🏆 成功斩杀题目：${reviewKilledCount} 道！`);
+  }, 100);
   vaultSelectedIdsInOrder = [];
   updateVaultSelectedCountBadge();
   exitSmartReview();
@@ -2181,6 +2280,8 @@ function setFilterStatus(st) {
 async function cycleQuestionStatus(id, cur) {
   const q = (await dbGetAll(STORE_QUESTIONS)).find(x => x.id === id); if (!q) return;
   q.status = (!cur || cur.includes("待攻克")) ? "🟡 巩固中" : (cur.includes("巩固") ? "🟢 已斩杀" : "🔴 待攻克");
+  if (q.status === "🟡 巩固中") playConsolidatingSound();
+  if (q.status === "🟢 已斩杀") playKilledVictorySound();
   await dbAdd(STORE_QUESTIONS, q); renderVault();
 }
 
@@ -2584,6 +2685,7 @@ async function confirmSaveSnip() {
 
   const btn = document.getElementById(`snip-btn-${currentSnipTarget.num}`);
   if (btn) { btn.textContent = "✅ 已保存"; btn.disabled = true; }
+  playKilledVictorySound();
   alert(`🎉 第 ${currentSnipTarget.num} 题已保存到错题库！`);
   exitSnippingMode();
 }
@@ -2670,6 +2772,9 @@ function submitRunningExam() {
   document.getElementById("examResultPanel").style.display = "block";
 
   const m = Math.max(1, Math.round((activeExam.duration * 60 - examSecondsRemaining) / 60)); performCheckin(m, true);
+  if (mcqScore >= 60) playMissionCompleteCelebration();
+  else playConsolidatingSound();
+
   const container = document.getElementById("wrongItemsContainer");
 
   let wrongHtml = "";
@@ -2829,7 +2934,7 @@ function toggleSelectAllVault() {
 
 async function exportData() {
   const blob = new Blob([JSON.stringify({
-    version: 9.0,
+    version: 9.2,
     questions: await dbGetAll(STORE_QUESTIONS),
     exams: await dbGetAll(STORE_EXAMS),
     vocab: await dbGetAll(STORE_VOCAB),
