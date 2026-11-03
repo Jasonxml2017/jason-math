@@ -2293,11 +2293,19 @@ function setFilterStatus(st) {
   renderVault();
 }
 async function cycleQuestionStatus(id, cur) {
-  const q = (await dbGetAll(STORE_QUESTIONS)).find(x => x.id === id); if (!q) return;
+  const q = (await dbGetAll(STORE_QUESTIONS)).find(x => x.id === id); 
+  if (!q) return;
   q.status = (!cur || cur.includes("待攻克")) ? "🟡 巩固中" : (cur.includes("巩固") ? "🟢 已斩杀" : "🔴 待攻克");
-  if (q.status === "🟡 巩固中") playConsolidatingSound();
-  if (q.status === "🟢 已斩杀") playKilledVictorySound();
-  await dbAdd(STORE_QUESTIONS, q); renderVault();
+  
+  if (q.status === "🟡 巩固中") {
+    playConsolidatingSound();
+  } else if (q.status === "🟢 已斩杀") {
+    playKilledVictorySound();
+  }
+  
+  await dbAdd(STORE_QUESTIONS, q); 
+  performCheckin(1, true);
+  renderVault();
 }
 
 let viewingQuestionId = null;
