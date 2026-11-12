@@ -143,7 +143,7 @@
 <header>
   <div class="brand" onclick="switchNav('dashboard')">
     <span>🍎 智学多学科管家</span>
-    <span style="font-size:0.7rem; font-weight:bold; background:#e0f2fe; color:#0369a1; padding:2px 8px; border-radius:12px;">v9.2 长篇图文欢歌版</span>
+    <span style="font-size:0.7rem; font-weight:bold; background:#e0f2fe; color:#0369a1; padding:2px 8px; border-radius:12px;">v9.5 超长篇文澜版</span>
   </div>
   <div class="nav-tabs">
     <div class="nav-tab active" id="tabNavDashboard" onclick="switchNav('dashboard')">🏠 首页工作台</div>
@@ -165,7 +165,8 @@
       <div class="checkin-status-bar">
         <span id="checkinBadge" class="checkin-badge-todo" style="cursor:default;">⚠️ 今日尚未完成每日攻坚</span>
         <span>🔥 连续打卡: <b id="streakDaysText" style="color:#c2410c;">0</b> 天</span>
-        <span>⏱️ 今日专注时长: <b id="todayStudyMinutesText" style="color:#2563eb; cursor:pointer;" onclick="promptEditMinutes()" title="点击修改补录">0</b> 分钟</span>
+        <span>⏱️ 今日专注: <b id="todayStudyMinutesText" style="color:#2563eb; cursor:pointer;" onclick="promptEditMinutes()" title="点击修改今日时长">0</b> 分钟</span>
+        <span>📅 本周专注: <b id="weekStudyMinutesText" style="color:#059669; font-weight:bold;">0</b> 分钟</span>
       </div>
     </div>
     <div class="countdown-container">
@@ -273,7 +274,7 @@
       </select>
     </div>
     <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
-      <button class="btn btn-primary" style="background:#059669;" onclick="openImportArticleModal()">📥 导入杂志/长文(支持25+页)</button>
+      <button class="btn btn-primary" style="background:#059669;" onclick="openImportArticleModal()">📥 导入长篇杂志(支持50+页)</button>
       <button class="btn btn-outline" style="background:white;" onclick="openArticleManageModal()">🗂️ 文库管理与重命名</button>
       <button class="btn btn-outline" id="btnSpeechRead" style="background:white;" onclick="toggleSpeechReading()">🔊 朗读本文</button>
       <button class="btn btn-outline" style="background:white;" onclick="closeDailyReadingModal()">退出阅读</button>
@@ -351,12 +352,12 @@
 
 <!-- ================= 弹窗集合 ================= -->
 
-<!-- 1. 导入杂志/文章弹窗（支持超20页平稳提取） -->
+<!-- 1. 导入杂志/文章弹窗（支持超50页平稳提取） -->
 <div class="modal-overlay" id="importArticleModal">
-  <div class="modal" style="max-width:720px;">
+  <div class="modal" style="max-width:740px;">
     <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
-      <h3 style="font-size:1.15rem; color:#059669;">📥 导入杂志或优秀长文（支持超20页整篇识别）</h3>
-      <span style="font-size:0.75rem; color:#64748b;">支持 iPad 截图、PDF 自由选页与长文粘贴</span>
+      <h3 style="font-size:1.15rem; color:#059669;">📥 导入长篇杂志/优秀文萃（支持 50+ 页超长篇）</h3>
+      <span style="font-size:0.75rem; color:#64748b;">支持 iPad 截图、PDF 选页与文字直接粘贴</span>
     </div>
     <div style="display:grid; grid-template-columns: 2fr 1fr; gap:10px; margin-bottom:10px;">
       <div class="form-group">
@@ -370,18 +371,18 @@
     </div>
 
     <div class="form-group">
-      <label>选择文件（支持大 PDF 杂志、相册截图、或直接下方粘贴文字）：</label>
+      <label>选择文件（支持 100M+ 大 PDF 杂志、相册截图、或直接下方粘贴长文）：</label>
       <input type="file" id="inpImportDocFile" accept="image/*,.pdf,.txt" onchange="handleImportDocFile(this.files[0])">
     </div>
 
-    <!-- 突破页码限制面板 -->
+    <!-- 超长页码控制面板（已解除25页限制，放宽至60页） -->
     <div id="pdfRangeWrap" style="display:none; background:#ecfdf5; border:1px solid #a7f3d0; padding:10px; border-radius:8px; margin-bottom:10px;">
-      <div style="font-size:0.85rem; font-weight:bold; color:#065f46; margin-bottom:4px;">📑 请输入想完整精读的跨页范围（支持 1~25 页长篇连续提取）：</div>
+      <div style="font-size:0.85rem; font-weight:bold; color:#065f46; margin-bottom:4px;">📑 请输入想精读的跨页范围（已解除页数限制，单次支持多达 50~60 页超长篇提取）：</div>
       <div style="display:flex; align-items:center; gap:8px; font-size:0.85rem;">
         <span>从第</span>
         <input type="number" id="inpPdfStartPage" value="1" min="1" style="width:70px; padding:4px 8px;">
         <span>页，到第</span>
-        <input type="number" id="inpPdfEndPage" value="12" min="1" style="width:70px; padding:4px 8px;">
+        <input type="number" id="inpPdfEndPage" value="20" min="1" style="width:70px; padding:4px 8px;">
         <span>页</span>
         <span id="pdfTotalPageHint" style="color:#64748b; font-size:0.78rem;"></span>
       </div>
@@ -393,7 +394,7 @@
     </div>
 
     <div class="form-group">
-      <label>正文内容（可直接粘贴网上的优秀散文、课文，或由 AI 自动扫描识别提取）：</label>
+      <label>正文内容（可直接粘贴网上的优秀散文、名家专栏，或由 AI 自动扫描识别提取）：</label>
       <textarea id="inpImportDocText" style="height:140px;" placeholder="在此处粘贴网上的优秀长文/散文；如果上传了截图或PDF，此处可留空，AI将通过多模态视觉引擎完整识别..."></textarea>
     </div>
 
@@ -612,7 +613,7 @@ const DB_NAME = "MathVaultDB", STORE_QUESTIONS = "questions", STORE_EXAMS = "exa
 let vaultSelectedIdsInOrder = [];
 
 // ==========================================
-// 🎵 欢快全音效引擎（iPad 深度优化、抗截断、无延迟）
+// 🎵 欢快全音效引擎（iPad 深度加固、无延迟）
 // ==========================================
 let audioCtx = null;
 function getAudioContext() {
@@ -626,11 +627,9 @@ function getAudioContext() {
   return audioCtx;
 }
 
-// 页面任意第一次触摸或点击时立即激活 iPad 声卡
 window.addEventListener('touchstart', () => getAudioContext(), { once: true, passive: true });
 window.addEventListener('click', () => getAudioContext(), { once: true, passive: true });
 
-// 1. “掌握中”轻快三音阶 (C5 - E5 - G5)
 function playConsolidatingSound() {
   try {
     const ctx = getAudioContext();
@@ -653,7 +652,6 @@ function playConsolidatingSound() {
   } catch(e) {}
 }
 
-// 2. “直接斩杀”欢快胜利音效 (C5 - E5 - G5 - C6 琶音 + 泛音)
 function playKilledVictorySound() {
   try {
     const ctx = getAudioContext();
@@ -676,7 +674,6 @@ function playKilledVictorySound() {
   } catch(e) {}
 }
 
-// 3. “完成每日攻坚”全通关凯旋庆祝大号音效 (壮阔的双琶音，时长约 1.5 秒)
 function playMissionCompleteCelebration() {
   try {
     const ctx = getAudioContext();
@@ -705,7 +702,7 @@ function playMissionCompleteCelebration() {
       osc.stop(now + item.t + item.d + 0.05);
     });
   } catch(e) {}
-  }
+}
 
 // 模型轮询管道
 async function queryGemini(prompt, images = [], maxTokens = 3500, temperature = 0.25) {
@@ -848,6 +845,9 @@ function switchNav(v) {
   if (v === "portal") renderSubjectPortal();
 }
 
+// ==========================================
+// ⏱️ 今日与本周专注时长统计引擎
+// ==========================================
 let lastActiveTimestamp = Date.now();
 function initActiveTimeTracker() {
   const today = getTodayDateStr();
@@ -873,6 +873,20 @@ function getTodayDateStr() {
   const d = new Date(); return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
 }
 
+// 计算本周从周一到今天的全部累计专注分钟数
+function getThisWeekTotalMinutes() {
+  const now = new Date();
+  const dayOfWeek = now.getDay() === 0 ? 7 : now.getDay(); // 周一为1，周日为7
+  let totalWeekM = 0;
+  for (let i = 1; i <= dayOfWeek; i++) {
+    const d = new Date(now);
+    d.setDate(now.getDate() - (dayOfWeek - i));
+    const dStr = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+    totalWeekM += Number(localStorage.getItem("TODAY_MINUTES_" + dStr) || 0);
+  }
+  return totalWeekM;
+}
+
 function performCheckin(minutesToAdd = 0, forceCheckin = true) {
   const today = getTodayDateStr(), last = localStorage.getItem("LAST_CHECKIN_DATE");
   let streak = Number(localStorage.getItem("CHECKIN_STREAK") || 0);
@@ -895,6 +909,7 @@ async function renderCheckinStatus() {
   const today = getTodayDateStr(), last = localStorage.getItem("LAST_CHECKIN_DATE");
   const streak = Number(localStorage.getItem("CHECKIN_STREAK") || 0);
   const minutes = Number(localStorage.getItem("TODAY_MINUTES_" + today) || 0);
+  const weekMinutes = getThisWeekTotalMinutes();
   const qList = await dbGetAll(STORE_QUESTIONS);
   const pending = qList.filter(q => q.status !== '🟢 已斩杀').length;
 
@@ -902,6 +917,8 @@ async function renderCheckinStatus() {
   badge.style.display = (last === today || pending === 0) ? "none" : "inline-block";
   document.getElementById("streakDaysText").textContent = streak;
   document.getElementById("todayStudyMinutesText").textContent = minutes;
+  const weekEl = document.getElementById("weekStudyMinutesText");
+  if (weekEl) weekEl.textContent = weekMinutes;
 }
 
 function promptEditMinutes() {
@@ -1104,7 +1121,7 @@ function initInteractiveCropCanvas(canvas, img) {
 }
 
 // ==========================================
-// 📥 升级后的杂志长文导入系统 (支持25+页连续扫描)
+// 📥 升级后的长篇杂志导入系统 (支持 50+ 页超长篇)
 // ==========================================
 let pendingImportCoverImgBase64 = [];
 let loadedPdfDocument = null;
@@ -1154,11 +1171,11 @@ async function handleImportDocFile(file) {
       const numPages = loadedPdfDocument.numPages;
       
       document.getElementById("pdfRangeWrap").style.display = "block";
-      document.getElementById("pdfTotalPageHint").textContent = `(全刊共 ${numPages} 页，支持提取整篇长文 1~25 页)`;
+      document.getElementById("pdfTotalPageHint").textContent = `(全刊共 ${numPages} 页，支持提取多达 50~60 页超长篇)`;
       document.getElementById("inpPdfStartPage").max = numPages;
       document.getElementById("inpPdfEndPage").max = numPages;
       document.getElementById("inpPdfStartPage").value = 1;
-      document.getElementById("inpPdfEndPage").value = Math.min(10, numPages);
+      document.getElementById("inpPdfEndPage").value = Math.min(25, numPages);
 
       // 提取第1页作为预览
       const page1 = await loadedPdfDocument.getPage(1);
@@ -1169,7 +1186,7 @@ async function handleImportDocFile(file) {
       document.getElementById("importDocPreviewImg").src = canvas.toDataURL("image/jpeg", 0.7);
       document.getElementById("importDocPreviewWrap").style.display = "block";
 
-      notice.textContent = "✅ PDF 载入成功！可输入需要精读的跨页范围（支持连续提取多达 25 页！）。";
+      notice.textContent = "✅ PDF 载入成功！可输入需要精读的跨页范围（支持多达 50+ 页超长篇提取！）。";
     } catch(err) {
       alert("PDF 解析失败：" + err.message);
       notice.style.display = "none";
@@ -1198,46 +1215,51 @@ async function startImportWholeDocument() {
     const ePage = Math.min(loadedPdfDocument.numPages, parseInt(document.getElementById("inpPdfEndPage").value, 10) || sPage);
     const totalCount = ePage - sPage + 1;
 
-    // 页码限制放宽至 25 页以上，满足 10 多页超长图文整篇导入
-    if (totalCount > 28) {
-      alert("为了保证大模型请求稳定性与浏览器顺畅，建议单次提取长文在 1~25 页以内！");
+    // 页码限制放宽至 60 页，满足 30~50 页长篇杂志特辑一次性导入
+    if (totalCount > 60) {
+      alert("单次导入已支持多达 50~60 页！请将选页范围控制在 60 页以内以保证设备流畅运行。");
       return;
     }
 
     notice.style.display = "block";
     let extractedPagesText = [];
 
-    // 逐页高清提取，同时防止内存暴涨
+    // 逐页提取文字 + 画廊图
     for (let p = sPage; p <= ePage; p++) {
-      notice.textContent = `⏳ 正在逐页高清扫描：第 ${p} / ${ePage} 页 (共 ${totalCount} 页)...`;
+      notice.textContent = `⏳ 正在深度扫描：第 ${p} / ${ePage} 页 (共 ${totalCount} 页)...`;
       const page = await loadedPdfDocument.getPage(p);
 
-      // 1. 尝试提取文字
+      // 1. 尝试穿透提取纯文字
       try {
         const tc = await page.getTextContent();
         const pStr = tc.items.map(it => it.str).join(" ").trim();
-        if (pStr.length > 25) {
+        if (pStr.length > 20) {
           extractedPagesText.push(`--- 第 ${p} 页文字 ---\n` + pStr);
         }
       } catch(e) {}
 
-      // 2. 渲染为高清画廊图（兼顾轻量与清晰度）
-      const viewport = page.getViewport({ scale: 1.15 });
+      // 2. 渲染为轻量高清画廊图（兼顾画质与内存）
+      const viewport = page.getViewport({ scale: 1.1 });
       const canvas = document.createElement("canvas");
       canvas.width = viewport.width; canvas.height = viewport.height;
       await page.render({ canvasContext: canvas.getContext("2d"), viewport }).promise;
       
-      const imgData = canvas.toDataURL("image/jpeg", 0.78);
+      const imgData = canvas.toDataURL("image/jpeg", 0.72);
       pageImagesBase64.push(imgData);
-
-      // 如果纯文字偏少（扫描版），智能纳入视觉图发给 Gemini
-      if (visionAiImages.length < 10) {
-        visionAiImages.push(imgData);
-      }
     }
 
     if (extractedPagesText.length > 0) {
       rawText = extractedPagesText.join("\n\n");
+    }
+
+    // 视觉多模态保护采样：如果超过 12 张图片，等距均匀采样 12 张给大模型，防止 HTTP Payload 超限
+    if (pageImagesBase64.length <= 12) {
+      visionAiImages = [...pageImagesBase64];
+    } else {
+      const step = (pageImagesBase64.length - 1) / 11;
+      for (let i = 0; i < 12; i++) {
+        visionAiImages.push(pageImagesBase64[Math.round(i * step)]);
+      }
     }
   } else if (Array.isArray(pendingImportCoverImgBase64)) {
     pageImagesBase64 = pendingImportCoverImgBase64;
@@ -1253,11 +1275,11 @@ async function startImportWholeDocument() {
   notice.textContent = `⏳ 正在调用 Gemini 视觉与语言大模型，进行整篇文章扫描并提炼好词好句...`;
 
   const prompt = `你是一位小学四年级特级语文名师。
-我提供了这本杂志中连续的 ${pageImagesBase64.length} 页内容。
+我提供了这本杂志中连续的 ${pageImagesBase64.length} 页长篇内容。
 请将这连续多页的内容【完整、系统地还原为一篇适合四年级孩子精读的连贯长文】：
 
 【核心识别与清洗规则】：
-1. 【长篇跨页完整抓取】：请把这几页图片中所有的故事、科普说明、观察记录、小对话等正文全部 OCR 识别出来，按逻辑顺序自然拼接。绝对不要只读第一页，必须完整阅读后续所有页面！
+1. 【长篇跨页完整抓取】：请把这连续多页图片与文本中所有的故事、科普说明、观察记录、小对话等正文全部 OCR 识别出来，按逻辑顺序自然拼接。必须完整贯穿所有页码！
 2. 【过滤杂质与广告】：自动剔除封面代码、邮发代号、条形码、价格、ISSN、无意义广告等。如果第 1 页是封面，只需提取主题标题，重点提取内页的真实科普故事正文。
 3. 【整理成自然段落】：段落要清晰完整，原汁原味还原杂志的文学趣味和科普严谨度。
 4. 【深度提炼 3~5 个四字雅词/高级成语】：从全文中挑选适合四年级积累的雅词，提供通俗释义与【四年级写作小练笔指南】。
@@ -1280,7 +1302,7 @@ async function startImportWholeDocument() {
   "question": "紧扣文章主旨的问题？",
   "answer": "参考解答点拨"
 }
-${rawText ? `部分提取的文字参考：\n${rawText.slice(0, 7000)}` : ''}`;
+${rawText ? `提取的文字参考：\n${rawText.slice(0, 10000)}` : ''}`;
 
   try {
     const resText = await queryGemini(prompt, visionAiImages, 4000, 0.2);
@@ -1305,7 +1327,7 @@ ${rawText ? `部分提取的文字参考：\n${rawText.slice(0, 7000)}` : ''}`;
 
     const newId = await dbAdd(STORE_ARTICLES, articleItem);
     closeAllModals();
-    alert(`🎉 成功识别跨页长文《${articleItem.title}》（共扫描 ${pageImagesBase64.length} 页）！已收录到每日一读。`);
+    alert(`🎉 成功识别跨页长文《${articleItem.title}》（共扫描收录 ${pageImagesBase64.length} 页）！已纳入每日一读。`);
     
     currentReadingArticleId = newId;
     updateReaderModeSelectUI();
@@ -1415,7 +1437,7 @@ async function renderCustomChineseArticle() {
 
   const curPct = art.progressPct || 0;
 
-  // 1. 组装多页原版画廊（替代原有的单张 coverHtml）
+  // 1. 组装多页原版画廊
   let galleryHtml = "";
   const images = art.galleryImages || (art.coverImg ? [art.coverImg] : []);
   if (images.length > 0) {
@@ -2069,15 +2091,14 @@ function toggleReviewAnswerVisibility() {
   const d = document.getElementById("reviewAnswerDrawer"); d.style.display = (d.style.display === "none") ? "block" : "none";
 }
 
-// 复习打卡模式中点击：没做对 / 掌握中 / 直接斩杀
 async function stepReviewQuestion(st) {
   const q = reviewQueue[reviewCurrentIdx];
   if (q) {
     q.status = st;
     if (st === "🟡 巩固中") {
-      playConsolidatingSound(); // 触发掌握中欢快音效
+      playConsolidatingSound();
     } else if (st === "🟢 已斩杀") {
-      playKilledVictorySound();  // 触发直接斩杀胜利音效
+      playKilledVictorySound();
       reviewKilledCount++;
     }
     await dbAdd(STORE_QUESTIONS, q); 
@@ -2087,16 +2108,11 @@ async function stepReviewQuestion(st) {
   renderCurrentReviewCard();
 }
 
-// 全部勾选题/每日攻坚全部做完通关
 function finishSmartReview() {
   clearInterval(reviewTimerInterval);
   const m = Math.max(1, Math.round(reviewSeconds / 60)); 
   performCheckin(m, true);
-
-  // 1. 立即播放通关音乐
   playMissionCompleteCelebration();
-
-  // 2. 关键优化：给 iPad 预留 1.2 秒播放时间，避免弹窗直接掐断音效
   setTimeout(() => {
     alert(`🎉 恭喜完成错题复习打卡！\n\n⏱️ 本次专注时长：${m} 分钟\n🏆 成功斩杀题目：${reviewKilledCount} 道！`);
     vaultSelectedIdsInOrder = [];
@@ -2292,17 +2308,12 @@ function setFilterStatus(st) {
   document.querySelectorAll("#filterStatusChips .filter-chip").forEach(c => c.classList.toggle("active", c.textContent.includes(st) || (st==='' && c.textContent==='全部状态')));
   renderVault();
 }
+
 async function cycleQuestionStatus(id, cur) {
-  const q = (await dbGetAll(STORE_QUESTIONS)).find(x => x.id === id); 
-  if (!q) return;
+  const q = (await dbGetAll(STORE_QUESTIONS)).find(x => x.id === id); if (!q) return;
   q.status = (!cur || cur.includes("待攻克")) ? "🟡 巩固中" : (cur.includes("巩固") ? "🟢 已斩杀" : "🔴 待攻克");
-  
-  if (q.status === "🟡 巩固中") {
-    playConsolidatingSound();
-  } else if (q.status === "🟢 已斩杀") {
-    playKilledVictorySound();
-  }
-  
+  if (q.status === "🟡 巩固中") playConsolidatingSound();
+  if (q.status === "🟢 已斩杀") playKilledVictorySound();
   await dbAdd(STORE_QUESTIONS, q); 
   performCheckin(1, true);
   renderVault();
@@ -2879,26 +2890,40 @@ ${faqData}
 }
 
 function exitExam() {
-  if (confirm("确定退出考场吗？")) { clearInterval(examTimer); exitSnippingMode(); document.getElementById("examView").style.display = "none"; }
+  if (confirm("确定退出考场吗？")) { 
+    clearInterval(examTimer); 
+    exitSnippingMode(); 
+    document.getElementById("examView").style.display = "none"; 
+  }
 }
 
 let editingExamId = null, tempNewExamPages = [];
 function openUploadExamModal() {
-  editingExamId = null; document.getElementById("modalExamTitleText").textContent = "录入新试卷";
-  document.getElementById("newExamTitle").value = ""; document.getElementById("newExamDuration").value = 90;
-  document.getElementById("newExamKeys").value = ""; document.getElementById("newExamFaqAns").value = "";
-  tempNewExamPages = []; document.getElementById("newExamPreview").innerHTML = "";
+  editingExamId = null; 
+  document.getElementById("modalExamTitleText").textContent = "录入新试卷";
+  document.getElementById("newExamTitle").value = ""; 
+  document.getElementById("newExamDuration").value = 90;
+  document.getElementById("newExamKeys").value = ""; 
+  document.getElementById("newExamFaqAns").value = "";
+  tempNewExamPages = []; 
+  document.getElementById("newExamPreview").innerHTML = "";
   document.getElementById("uploadExamModal").classList.add("active");
 }
+
 async function editExam(id) {
-  const ex = (await dbGetAll(STORE_EXAMS)).find(x => x.id === id); if (!ex) return;
-  editingExamId = id; document.getElementById("modalExamTitleText").textContent = "编辑试卷";
-  document.getElementById("newExamTitle").value = ex.title || ""; document.getElementById("newExamDuration").value = ex.duration || 90;
+  const ex = (await dbGetAll(STORE_EXAMS)).find(x => x.id === id); 
+  if (!ex) return;
+  editingExamId = id; 
+  document.getElementById("modalExamTitleText").textContent = "编辑试卷";
+  document.getElementById("newExamTitle").value = ex.title || ""; 
+  document.getElementById("newExamDuration").value = ex.duration || 90;
   document.getElementById("newExamKeys").value = ex.keys || (ex.keysFull ? ex.keysFull.join('') : '');
   document.getElementById("newExamFaqAns").value = (ex.faqAns || []).join('\n');
-  tempNewExamPages = [...(ex.pages || [])]; renderExamPreview();
+  tempNewExamPages = [...(ex.pages || [])]; 
+  renderExamPreview();
   document.getElementById("uploadExamModal").classList.add("active");
 }
+
 function renderExamPreview() {
   document.getElementById("newExamPreview").innerHTML = tempNewExamPages.map((src, idx) => `
     <div style="position:relative; display:inline-block;">
@@ -2907,45 +2932,67 @@ function renderExamPreview() {
     </div>
   `).join('');
 }
+
 async function handleExamFiles(files) {
   for (const file of Array.from(files)) {
     if (file.type === "application/pdf" || file.name.toLowerCase().endsWith(".pdf")) {
       const pdf = await pdfjsLib.getDocument({ data: await file.arrayBuffer() }).promise;
       for (let i = 1; i <= pdf.numPages; i++) {
         const page = await pdf.getPage(i), viewport = page.getViewport({ scale: 1.8 });
-        const canvas = document.createElement("canvas"); canvas.height = viewport.height; canvas.width = viewport.width;
+        const canvas = document.createElement("canvas"); 
+        canvas.height = viewport.height; 
+        canvas.width = viewport.width;
         await page.render({ canvasContext: canvas.getContext("2d"), viewport }).promise;
         tempNewExamPages.push(canvas.toDataURL("image/jpeg", 0.88));
       }
     } else {
-      const reader = new FileReader(); reader.onload = e => { tempNewExamPages.push(e.target.result); renderExamPreview(); }; reader.readAsDataURL(file);
+      const reader = new FileReader(); 
+      reader.onload = e => { 
+        tempNewExamPages.push(e.target.result); 
+        renderExamPreview(); 
+      }; 
+      reader.readAsDataURL(file);
     }
   }
   renderExamPreview();
 }
+
 async function saveNewExam() {
   const title = document.getElementById("newExamTitle").value.trim();
   const keysStr = document.getElementById("newExamKeys").value.trim().toUpperCase().replace(/[^A-D]/g, '');
   if (!title) { alert("请输入试卷名称！"); return; }
   const item = {
-    title, subject: currentPortalSubject, duration: Number(document.getElementById("newExamDuration").value) || 90,
-    keys: keysStr, keysFull: keysStr.split(''), faqAns: document.getElementById("newExamFaqAns").value.split('\n').filter(Boolean),
+    title, 
+    subject: currentPortalSubject, 
+    duration: Number(document.getElementById("newExamDuration").value) || 90,
+    keys: keysStr, 
+    keysFull: keysStr.split(''), 
+    faqAns: document.getElementById("newExamFaqAns").value.split('\n').filter(Boolean),
     pages: tempNewExamPages
   };
   if (editingExamId) item.id = editingExamId;
-  await dbAdd(STORE_EXAMS, item); closeAllModals();
-  renderSubjectPortal(); alert("保存成功！");
+  await dbAdd(STORE_EXAMS, item); 
+  closeAllModals();
+  renderSubjectPortal(); 
+  alert("保存成功！");
 }
+
 async function deleteExam(id) {
-  if (confirm("确定要删除这套试卷吗？")) { await dbDelete(STORE_EXAMS, id); renderSubjectPortal(); }
+  if (confirm("确定要删除这套试卷吗？")) { 
+    await dbDelete(STORE_EXAMS, id); 
+    renderSubjectPortal(); 
+  }
 }
+
 async function deleteSingleQuestion(id) {
   if (confirm("确定要删除此错题吗？")) {
     await dbDelete(STORE_QUESTIONS, id);
     vaultSelectedIdsInOrder = vaultSelectedIdsInOrder.filter(x => x !== id);
-    renderVault(); renderDashboard();
+    renderVault(); 
+    renderDashboard();
   }
 }
+
 function toggleSelectAllVault() {
   const boxes = document.querySelectorAll(".vault-checkbox");
   const anyUnchecked = Array.from(boxes).some(b => !b.checked);
@@ -2957,19 +3004,25 @@ function toggleSelectAllVault() {
 
 async function exportData() {
   const blob = new Blob([JSON.stringify({
-    version: 9.2,
+    version: 9.5,
     questions: await dbGetAll(STORE_QUESTIONS),
     exams: await dbGetAll(STORE_EXAMS),
     vocab: await dbGetAll(STORE_VOCAB),
     articles: await dbGetAll(STORE_ARTICLES)
   }, null, 2)], { type: "application/json" });
-  const a = document.createElement("a"); a.href = URL.createObjectURL(blob);
-  a.download = `智学多学科备份_${new Date().getMonth()+1}月${new Date().getDate()}日.json`; a.click();
+  const a = document.createElement("a"); 
+  a.href = URL.createObjectURL(blob);
+  a.download = `智学多学科备份_${new Date().getMonth()+1}月${new Date().getDate()}日.json`; 
+  a.click();
 }
+
 function importData() {
-  const input = document.createElement("input"); input.type = "file"; input.accept = ".json";
+  const input = document.createElement("input"); 
+  input.type = "file"; 
+  input.accept = ".json";
   input.onchange = async e => {
-    const file = e.target.files[0]; if (!file) return;
+    const file = e.target.files[0]; 
+    if (!file) return;
     const reader = new FileReader();
     reader.onload = async evt => {
       try {
@@ -2978,21 +3031,37 @@ function importData() {
         if (d.exams) for (let ex of d.exams) await dbAdd(STORE_EXAMS, ex);
         if (d.vocab) for (let v of d.vocab) await dbAdd(STORE_VOCAB, v);
         if (d.articles) for (let a of d.articles) await dbAdd(STORE_ARTICLES, a);
-        alert("🎉 数据全部恢复成功！"); renderDashboard();
-      } catch(err) { alert("恢复失败：" + err.message); }
+        alert("🎉 数据全部恢复成功！"); 
+        renderDashboard();
+      } catch(err) { 
+        alert("恢复失败：" + err.message); 
+      }
     };
     reader.readAsText(file);
   };
   input.click();
 }
 
-function openKeyModal() { document.getElementById("inpApiKey").value = localStorage.getItem("GEMINI_API_KEY") || ""; document.getElementById("keyModal").classList.add("active"); }
-function saveApiKey() { localStorage.setItem("GEMINI_API_KEY", document.getElementById("inpApiKey").value.trim()); closeAllModals(); alert("Key 已保存！"); }
-function closeAllModals() { document.querySelectorAll(".modal-overlay").forEach(m => m.classList.remove("active")); }
+function openKeyModal() { 
+  document.getElementById("inpApiKey").value = localStorage.getItem("GEMINI_API_KEY") || ""; 
+  document.getElementById("keyModal").classList.add("active"); 
+}
+
+function saveApiKey() { 
+  localStorage.setItem("GEMINI_API_KEY", document.getElementById("inpApiKey").value.trim()); 
+  closeAllModals(); 
+  alert("Key 已保存！"); 
+}
+
+function closeAllModals() { 
+  document.querySelectorAll(".modal-overlay").forEach(m => m.classList.remove("active")); 
+}
 
 function initModalBackdropDismiss() {
   document.querySelectorAll('.modal-overlay').forEach(overlay => {
-    overlay.addEventListener('click', e => { if (e.target === overlay) overlay.classList.remove('active'); });
+    overlay.addEventListener('click', e => { 
+      if (e.target === overlay) overlay.classList.remove('active'); 
+    });
   });
 }
 
